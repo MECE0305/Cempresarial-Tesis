@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+        Gestión Menus
+    </ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Admin Menu" link="/pages/admin/adminMenus.jsf" />
+
+		<div class="ui-fluid" id="divPrincipal">
+
+
+			<h:form id="formPrincipal">
+
+				<p:growl id="mensaje" showDetail="true" widgetVar="mensaje" />
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-danger box-solid" responsive="true">
+					<div style="display: flex; justify-content: flex-end;">
+						<p:commandButton value="SI" type="button"
+							styleClass="btn-material btn-primary ui-confirmdialog-yes"
+							icon="fa fa-check" />
+						<p:commandButton value="NO" type="button"
+							styleClass="btn-material btn-danger ui-confirmdialog-no"
+							icon="fa fa-close" />
+					</div>
+				</p:confirmDialog>
+				<p:dialog id="dlgGuardar" modal="true" widgetVar="pnldGuardar"
+					styleClass="box box-info box-solid" position="center"
+					header="Registrar Menú" draggable="false" closable="false"
+					resizable="false" showEffect="fade" hideEffect="fade"
+					responsive="true">
+					<p:messages id="messages" showDetail="true" closable="false" />
+					<p:panelGrid columns="2" layout="grid" id="opcionesGuardar"
+						style="border:none">
+						<p:commandButton value="Cancelar" styleClass="btn-danger"
+							oncomplete="PF('pnldGuardar').hide()" icon="fa fa-ban"
+							style="width:80%;margin-left:20%">
+						</p:commandButton>
+						<p:commandButton process="@this,datosMenu"
+							styleClass="btn-success"
+							disabled="#{!menuController.renderGuardarMenu}" value="Guardar"
+							actionListener="#{menuController.crearMenu()}"
+							oncomplete="PF('pnldGuardar').hide()" update="formPrincipal"
+							icon="fa fa-user-plus" style="width:80%;margin-left:20%">
+						</p:commandButton>
+					</p:panelGrid>
+				</p:dialog>
+				<p:dialog id="dlgGuardarOpcion" modal="true"
+					styleClass="box box-info box-solid" widgetVar="pnldGuardarOpcion"
+					position="center" header="Registrar Opción" draggable="false"
+					closable="false" resizable="false" showEffect="fade"
+					hideEffect="fade" responsive="true">
+					<p:messages id="msgOpcion" showDetail="true" closable="false" />
+					<p:panelGrid columns="2" layout="grid" id="opcionesGuardarOpcion"
+						style="border:none">
+						<p:commandButton value="Cancelar" styleClass="btn-danger"
+							oncomplete="PF('pnldGuardarOpcion').hide()" icon="fa fa-ban"
+							style="width:80%;margin-left:20%">
+						</p:commandButton>
+						<p:commandButton process="@this,datosOpcion"
+							styleClass="btn-success"
+							disabled="#{!menuController.renderGuardarOpcion}" value="Guardar"
+							actionListener="#{menuController.crearOpcion()}"
+							oncomplete="PF('pnldGuardar').hide()" update="formPrincipal"
+							icon="fa fa-user-plus" style="width:80%;margin-left:20%">
+						</p:commandButton>
+					</p:panelGrid>
+				</p:dialog>
+
+
+
+				<p:panel>
+
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="callout-card callout-info "
+						columnClasses="ui-grid-col-11,ui-grid-col-1">
+						<h2 class="titulosH1">Nuevo Menú</h2>
+
+						<p:menuButton icon="fa fa-gears" title="Opciones de Acción"
+							styleClass="btn-primary">
+
+							<p:menuitem process="@this,datosMenu"
+								update="@([id$=opcionesGuardar],[id$=messages])"
+								oncomplete="PF('pnldGuardar').show()" value="Guardar"
+								actionListener="#{menuController.verificarAtesGuardarMenu()}"
+								icon="fa fa-paper-plane-o" styleClass="btn-info" />
+							<p:menuitem process="@this,datosMenu"
+								update="@([id$=mensaje],[id$=tblDatos])" value="Actualizar"
+								actionListener="#{menuController.actualizarMenu()}"
+								icon="fa fa-refresh" styleClass="btn-warning" />
+							<p:menuitem id="btnCancel" process="@this, btnCancel"
+								actionListener="#{menuController.clear()}" value="Cancelar"
+								update="formPrincipal" icon="fa fa-ban" styleClass="btn-danger" />
+							<p:separator />
+							<p:menuitem icon="fa fa-refresh" id="btnActualizaApp"
+								value="Lista App" styleClass="btn-success"
+								update="@([id$=cmbAplicacion],[id$=cmbAplicacionOpcion],[id$=mensaje],[id$=tblDatos])"
+								process="@this, btnActualizaApp"
+								actionListener="#{menuController.actualizarListAplicaciones()}" />
+						</p:menuButton>
+
+					</p:panelGrid>
+					<p:panelGrid columns="3"
+						columnClasses="ui-grid-col-4, ui-grid-col-4, ui-grid-col-4"
+						layout="grid" style="border:none" id="datosMenu">
+
+
+						<p:outputLabel value="Aplicación" />
+						<p:outputLabel value="Nombre" />
+						<p:outputLabel value="Descripción" />
+
+						<p:selectOneMenu id="cmbAplicacion"
+							value="#{menuController.idAplicacionMenu}"
+							style="FONT-FAMILY: arial;" required="false"
+							requiredMessage="Seleccione una Aplicación" effect="fade"
+							filter="true" filterMatchMode="contains">
+							<f:selectItem itemLabel="Seleccione una Aplicación" itemValue="0" />
+							<f:selectItems value="#{menuController.listAplicacion}"
+								var="item" itemLabel="#{item.nombre}"
+								itemValue="#{item.idAplicacion}"
+								itemDescription="#{item.descripcion}" />
+
+							<p:ajax event="change" process="cmbAplicacion" />
+
+						</p:selectOneMenu>
+
+
+						<p:inputText placeholder="Nombre"
+							value="#{menuController.menu.nombre}">
+						</p:inputText>
+						<p:inputText placeholder="Descripción"
+							value="#{menuController.menu.descripcion}">
+						</p:inputText>
+
+						<p:outputLabel value="Orden de Menú" />
+						<p:outputLabel value="Tipo MENÚ (Por Defecto)" />
+						<p:outputLabel value="" />
+
+						<p:inputText placeholder="Orden"
+							value="#{menuController.menu.orden}">
+						</p:inputText>
+						<p:inputText placeholder="Tipo MENU (Por Defecto)" readonly="true"
+							value="#{menuController.menu.tipo}">
+						</p:inputText>
+
+						<p:panelGrid columns="2" layout="grid" style="border: none">
+							<p:outputLabel value="Activo?:" style="  FONT-WEIGHT: bold;" />
+							<p:inputSwitch value="#{menuController.menu.activo}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" update="outActivo" />
+							</p:inputSwitch>
+							<p:outputLabel id="outActivo"
+								styleClass="#{menuController.menu.activo ? 'label label-success':'label label-default'}"
+								value="#{menuController.menu.activo ? 'ACTIVO':'INACTIVO'}" />
+						</p:panelGrid>
+
+						<p:outputLabel value="Ícono" />
+						<p:outputLabel value="Posición Ícono" />
+						<p:outputLabel value="" />
+						<p:inputText value="#{menuController.menu.icon}" />
+						<p:selectOneMenu value="#{menuController.menu.iconPosition}">
+							<f:selectItem itemLabel="Izquierda" itemValue="left" />
+							<f:selectItem itemLabel="Derecha" itemValue="right" />
+						</p:selectOneMenu>
+
+
+						<p:panelGrid columns="4" layout="grid" style="border: none">
+							<p:outputLabel value="Span Color" style="  FONT-WEIGHT: bold;" />
+							<p:selectOneMenu value="#{menuController.menu.spanColor}">
+								<f:selectItem itemLabel="label-success"
+									itemValue="label-success" />
+								<f:selectItem itemLabel="label-warning"
+									itemValue="label-warning" />
+								<f:selectItem itemLabel="label-info" itemValue="label-info" />
+								<f:selectItem itemLabel="label-danger" itemValue="label-danger" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Span Valor" style="  FONT-WEIGHT: bold;" />
+							<p:inputText value="#{menuController.menu.spanValor}"
+								placeholder="nota corta" />
+
+						</p:panelGrid>
+					</p:panelGrid>
+					<p:separator />
+
+
+
+
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="callout-card callout-info "
+						columnClasses="ui-grid-col-11,ui-grid-col-1">
+						<h2 class="titulosH1">Nueva Opción</h2>
+
+						<p:menuButton icon="fa fa-gears" title="Opciones de Acción"
+							styleClass="btn-primary">
+
+							<p:menuitem process="@this,datosOpcion"
+								update="@([id$=opcionesGuardarOpcion],[id$=msgOpcion])"
+								oncomplete="PF('pnldGuardarOpcion').show()" value="Guardar"
+								actionListener="#{menuController.verificarAtesGuardarOpcion()}"
+								icon="fa fa-paper-plane-o" styleClass="btn-info" />
+							<p:menuitem process="@this,datosOpcion"
+								update="@([id$=mensaje],[id$=tblDatos])" value="Actualizar"
+								actionListener="#{menuController.actualizarOpcion()}"
+								icon="fa fa-refresh" styleClass="btn-warning" />
+							<p:menuitem id="btnCancelOpcion" process="@this, btnCancelOpcion"
+								actionListener="#{menuController.clear()}" value="Cancelar"
+								update="formPrincipal" icon="fa fa-ban" styleClass="btn-danger" />
+							<p:separator />
+							<p:menuitem icon="fa fa-refresh" value="Lista App &amp; Menu"
+								id="btnActualizaAppMenuP" styleClass="btn-success"
+								update="@([id$=cmbAplicacion],[id$=cmbAplicacionOpcion],[id$=mensaje],[id$=tblDatos],[id$=cmbMenuPadre])"
+								process="@this, btnActualizaAppMenuP"
+								actionListener="#{menuController.actualizarListAPlicacionesenuPadre()}" />
+						</p:menuButton>
+					</p:panelGrid>
+
+					<p:panelGrid columns="3"
+						columnClasses="ui-grid-col-4, ui-grid-col-4, ui-grid-col-4"
+						layout="grid" style="border:none" id="datosOpcion">
+
+
+						<p:outputLabel value="Aplicación" />
+						<p:outputLabel value="Menú Padre" />
+						<p:outputLabel value="Nombre " />
+
+
+						<p:selectOneMenu id="cmbAplicacionOpcion"
+							value="#{menuController.idAplicacionOpcion}"
+							style="FONT-FAMILY: arial;" required="false"
+							requiredMessage="Seleccione una Aplicación" effect="fade"
+							filter="true" filterMatchMode="contains">
+							<f:selectItem itemLabel="Seleccione una Aplicación" itemValue="0" />
+							<f:selectItems value="#{menuController.listAplicacion}"
+								var="item" itemLabel="#{item.nombre}"
+								itemValue="#{item.idAplicacion}"
+								itemDescription="#{item.descripcion}" />
+
+							<p:ajax event="change" process="cmbAplicacionOpcion" />
+
+						</p:selectOneMenu>
+
+						<p:selectOneMenu id="cmbMenuPadre"
+							value="#{menuController.idMenuPadre}" style="FONT-FAMILY: arial;"
+							required="false" requiredMessage="Seleccione un Padre"
+							effect="fade" filter="true" filterMatchMode="contains">
+							<f:selectItem itemLabel="Seleccione un Padre" itemValue="0" />
+							<f:selectItems value="#{menuController.listMenuPadre}" var="item"
+								itemLabel="#{item.nombre}" itemValue="#{item.idMenu}"
+								itemDescription="#{item.descripcion}" />
+
+							<p:ajax event="change" process="cmbMenuPadre" />
+
+						</p:selectOneMenu>
+
+
+						<p:inputText placeholder="Nombre"
+							value="#{menuController.opcion.nombre}">
+						</p:inputText>
+
+
+						<p:outputLabel value="Descripción" />
+						<p:outputLabel value="URL" />
+						<p:outputLabel value="Orden de Menú" />
+
+
+						<p:inputText placeholder="Descripción"
+							value="#{menuController.opcion.descripcion}">
+						</p:inputText>
+						<p:inputText placeholder="URL"
+							value="#{menuController.opcion.url}">
+						</p:inputText>
+						<p:inputText placeholder="Orden"
+							value="#{menuController.opcion.orden}">
+						</p:inputText>
+
+						<p:outputLabel value="Tipo OPCIÓN (Por Defecto)" />
+						<p:outputLabel value="" />
+						<p:outputLabel value="" />
+						<p:inputText placeholder="Tipo OPCION (Por Defecto)"
+							readonly="true" value="#{menuController.opcion.tipo}">
+						</p:inputText>
+
+						<p:panelGrid columns="2" layout="grid" style="border: none">
+							<p:outputLabel value="Activo?:" style="  FONT-WEIGHT: bold;" />
+							<p:inputSwitch value="#{menuController.opcion.activo}"
+								onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" update="outActivo1" />
+							</p:inputSwitch>
+							<p:outputLabel id="outActivo1"
+								styleClass="#{menuController.opcion.activo ? 'label label-success':'label label-default'}"
+								value="#{menuController.opcion.activo ? 'ACTIVO':'INACTIVO'}" />
+						</p:panelGrid>
+						<p:outputLabel value="" />
+
+
+						<p:outputLabel value="Ícono" />
+						<p:outputLabel value="Posición Ícono" />
+						<p:outputLabel value="" />
+						<p:inputText value="#{menuController.opcion.icon}" />
+						<p:selectOneMenu value="#{menuController.opcion.iconPosition}">
+							<f:selectItem itemLabel="Izquierda" itemValue="left" />
+							<f:selectItem itemLabel="Derecha" itemValue="right" />
+						</p:selectOneMenu>
+						<p:panelGrid columns="4" layout="grid" style="border: none">
+							<p:outputLabel value="Span Color" style="  FONT-WEIGHT: bold;" />
+							<p:selectOneMenu value="#{menuController.opcion.spanColor}">
+								<f:selectItem itemLabel="label-success"
+									itemValue="label-success" />
+								<f:selectItem itemLabel="label-warning"
+									itemValue="label-warning" />
+								<f:selectItem itemLabel="label-info" itemValue="label-info" />
+								<f:selectItem itemLabel="label-danger" itemValue="label-danger" />
+							</p:selectOneMenu>
+
+							<p:outputLabel value="Span Valor" style="  FONT-WEIGHT: bold;" />
+							<p:inputText value="#{menuController.opcion.spanValor}"
+								placeholder="nota corta" />
+
+						</p:panelGrid>
+					</p:panelGrid>
+					<p:separator />
+
+
+
+
+					<h2 class="titulosH1 callout-card callout-info">Menus del
+						Sistema</h2>
+					<p:separator />
+					<p:dataTable var="item" value="#{menuController.listMenu}"
+						styleClass="box box-primary" widgetVar="tblDatos" id="tblDatos"
+						emptyMessage="No exiten Registros"
+						filteredValue="#{menuController.listMenuSelect}" reflow="true"
+						rows="10" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15">
+
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="tblDatos"
+											fileName="Menús del Sistema" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('tblDatos').filter();hideBar()"
+										style="width:150px" placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="tblDatos" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-success"
+									title="Actualizar Lista"
+									action="#{menuController.actualizarLista()}" update="tblDatos" />
+							</p:panelGrid>
+						</f:facet>
+
+
+
+						<p:column filterBy="#{item.aplicacion.nombre}"
+							headerText="Aplicación" filterMatchMode="exact">
+							<f:facet name="filter">
+								<p:selectOneMenu onchange="PF('tblDatos').filter()"
+									styleClass="custom-filter">
+									<f:selectItem itemLabel="Escojer" itemValue="#{null}"
+										noSelectionOption="true" />
+									<f:selectItems value="#{menuController.listAplicacion}"
+										var="iten" itemLabel="#{iten.nombre}"
+										itemValue="#{iten.nombre}" />
+								</p:selectOneMenu>
+							</f:facet>
+							<h:outputText value="#{item.aplicacion.nombre}" />
+						</p:column>
+
+						<p:column filterBy="#{item.menuPadre.nombre}" headerText="Padre"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.menuPadre.nombre}" />
+						</p:column>
+
+						<p:column filterBy="#{item.nombre}" headerText="Nombre"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.nombre}" />
+						</p:column>
+
+						<p:column filterBy="#{item.descripcion}" headerText="Descripción"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.descripcion}" />
+						</p:column>
+
+						<p:column filterBy="#{item.url}" headerText="URL"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.url}" />
+						</p:column>
+
+						<p:column filterBy="#{item.orden}" headerText="Orden"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.orden}" />
+						</p:column>
+
+						<p:column filterBy="#{item.activo}" headerText="Activo ?"
+							filterMatchMode="contains">
+							<p:outputLabel id="outActivo"
+								styleClass="#{item.activo ? 'label label-success':'label label-default'}"
+								value="#{item.activo ? 'ACTIVO':'INACTIVO'}" />
+						</p:column>
+
+						<p:column filterBy="#{item.tipo}" headerText="Tipo"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.tipo}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.spanValor}" headerText="Span"
+							filterMatchMode="contains">
+							<p:outputLabel value="#{item.spanValor}"
+								class="label #{item.spanColor}" />
+						</p:column>
+
+
+
+
+						<p:column headerText="Opciones">
+							<p:panelGrid columns="3" layout="grid" style="border:none">
+
+								<p:commandButton action="#{menuController.eliminarMenu(item)}"
+									update="@([id$=mensaje],[id$=tblDatos])" icon="fa fa-trash"
+									process="tblDatos" title="Eliminar" styleClass="btn-danger">
+									<p:confirm header="Confirmación"
+										message="Está seguro de eliminar el MENÚ?"
+										icon="fa fa-exclamation-triangle" />
+								</p:commandButton>
+								<p:commandButton update="@([id$=datosMenu])"
+									title="Actualizar Menú"
+									action="#{menuController.pasarIdsMenu()}"
+									rendered="#{item.tipo.trim().equals('menu')}" icon="fa fa-gear"
+									process="tblDatos" styleClass="btn-warning">
+									<f:setPropertyActionListener value="#{item}"
+										target="#{menuController.menu}" />
+								</p:commandButton>
+								<p:commandButton update="@([id$=datosOpcion])"
+									title="Actualizar Opción"
+									action="#{menuController.pasarIdsOpcion()}"
+									rendered="#{!item.tipo.trim().equals('menu')}"
+									icon="fa fa-gears" process="tblDatos" styleClass="btn-warning">
+									<f:setPropertyActionListener value="#{item}"
+										target="#{menuController.opcion}" />
+								</p:commandButton>
+								<p:commandButton update="@([id$=datosMenu],[id$=tblDatos])"
+									action="#{menuController.activaDesactivaMenu(item)}"
+									title="Activa/Desactiva"
+									styleClass="#{item.activo ? 'btn-success':'btn-default'}"
+									icon="#{item.activo ? 'fa fa-check-square-o' : 'fa fa-check-square'} "
+									process="tblDatos">
+								</p:commandButton>
+							</p:panelGrid>
+						</p:column>
+
+					</p:dataTable>
+
+
+				</p:panel>
+
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

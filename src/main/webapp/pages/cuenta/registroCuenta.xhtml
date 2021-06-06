@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+	<style>
+.transparente>div {
+	background: transparent !important
+}
+</style>
+
+	<ui:define name="title"> 
+        Registro de Cuenta
+	</ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Registro Cuenta"
+			link="/pages/configuracion/registroCuenta.jsf" />
+		<h:form>#{registroCuentaController.clear()}</h:form>
+
+		<h:form id="formPrincipal">
+
+			<p:messages id="messages" showDetail="true" closable="true" />
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+				styleClass="box-danger box-solid" responsive="true">
+				<div style="display: flex; justify-content: flex-end;">
+					<p:commandButton value="SI" type="button"
+						styleClass="btn-material btn-primary ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="NO" type="button"
+						styleClass="btn-material btn-danger ui-confirmdialog-no"
+						icon="fa fa-close" />
+				</div>
+			</p:confirmDialog>
+
+
+			<div style="display: flex; justify-content: flex-end;">
+				<div>
+					<p:commandButton icon="fa fa-trash" process="@this, pnlgDatos"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Eliminar"
+						styleClass="btn-danger"
+						actionListener="#{registroCuentaController.eliminar()}">
+						<p:confirm header="CUENTA"
+							message="Está SEGURO de ELIMINAR la CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-edit" process="@this, pnlgDatos"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Editar"
+						styleClass="btn-warning"
+						actionListener="#{registroCuentaController.actualizar()}">
+						<p:confirm header="CUENTA" message="Desea Actualizar la CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-send" process="@this, pnlgDatos"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Guardar"
+						styleClass="btn-success"
+						actionListener="#{registroCuentaController.guardar()}">
+						<p:confirm header="CUENTA" message="Desea Guardar la CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-plus"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Nuevo"
+						styleClass="btn-info" process="@this"
+						actionListener="#{registroCuentaController.clear()}">
+					</p:commandButton>
+
+
+
+
+				</div>
+			</div>
+
+			<p:separator style="background-color: #33AFDE;" />
+
+
+
+			<div id="divPrincipal" class="ui-fluid" style="display: flex;">
+
+
+				<div>
+					<span style="border-radius: 50%;" class="info-box-icon bg-aqua"><i
+						class="fa fa-user-plus"></i></span>
+				</div>
+
+
+
+
+
+				<p:panelGrid columns="2" layout="grid" id="pnlgDatos"
+					styleClass="box box-info"
+					columnClasses="ui-grid-col-3, ui-grid-col-9"
+					style="background:transparent;">
+
+
+					<p:outputLabel value="Tipo Cuenta (*)" />
+					<p:selectOneMenu id="cmbTipoCuenta"
+						value="#{registroCuentaController.idTipoCuenta}"
+						style="FONT-FAMILY: arial;" required="false"
+						requiredMessage="Seleccione una Tipo" effect="fade" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemLabel="Todos" itemValue="0" />
+						<f:selectItems value="#{registroCuentaController.listaTipoCuenta}"
+							var="item" itemLabel="#{item.nombreTipo}"
+							itemValue="#{item.idTipo}"
+							itemDescription="#{item.idTipo}-#{item.nombreTipo}" />
+
+						<p:ajax event="change" process="cmbTipoCuenta" />
+
+					</p:selectOneMenu>
+					<p:outputLabel value="" />
+					<p:outputLabel value="" />
+
+
+					<p:outputLabel value="Nombre Cuenta (*)" />
+					<p:inputText placeholder="Nombre de Cuenta"
+						value="#{registroCuentaController.cuenta.nombreCuenta}" />
+					<p:outputLabel value="" />
+					<p:outputLabel value="" />
+
+
+					<p:outputLabel value="RUC de Cuenta (*)" />
+					<p:inputText placeholder="RUC de Cuenta (*)"
+						value="#{registroCuentaController.cuenta.rucCuenta}" />
+					<p:outputLabel value="" />
+					<p:outputLabel value="" />
+
+
+					<p:outputLabel value="Email Cuenta (*)" />
+					<p:inputText placeholder="Email de Cuenta" id="email"
+						value="#{registroCuentaController.cuenta.emailCuenta}"
+						validator="ec.incidentes.validators.EmailValidator"
+						validatorMessage="Email Incorrecto">
+						<f:validator validatorId="ec.incidentes.validators.EmailValidator" />
+					</p:inputText>
+					<p:outputLabel value="" />
+					<p:message for="email" />
+
+					<p:outputLabel value="Teléfono de Cuenta (*)" />
+					<p:inputText placeholder="Teléfono de Cuenta"
+						value="#{registroCuentaController.cuenta.telefonoCuenta}" />
+					<p:outputLabel value="" />
+					<p:outputLabel value="" />
+
+
+					<p:outputLabel value="Dirección de Cuenta (*)" />
+					<p:inputText placeholder="Dirección de Cuenta"
+						value="#{registroCuentaController.cuenta.direccionCuenta}" />
+
+
+				</p:panelGrid>
+
+			</div>
+
+
+
+			<p:dataTable var="item" reflow="true"
+				styleClass="box box-solid box-primary"
+				value="#{registroCuentaController.listaCuenta}"
+				filteredValue="#{registroCuentaController.listaCuentaFilter}"
+				widgetVar="tblDatos" id="tblDatos"
+				emptyMessage="No Account found with given criteria">
+
+				<f:facet name="header">
+					<p:outputPanel style="justify-content: flex-end; display: flex;">
+						<h:commandLink title="Exportar Excel">
+							<p:graphicImage value="/resources/images/excel.ico" width="24" />
+							<p:dataExporter type="xls" target="tblDatos" fileName="Cuenta" />
+						</h:commandLink>
+						<p:spacer width="40" />
+						<h:outputText value="Buscar en Todos los Campos:   " />
+						<p:spacer width="20" />
+						<p:inputText id="globalFilter" onkeyup="PF('tblDatos').filter()"
+							style="width:150px" placeholder="Ingrese Parámetro...." />
+					</p:outputPanel>
+				</f:facet>
+
+				<p:column filterBy="#{item.idCuenta}" headerText="Id"
+					exportable="false" filterMatchMode="contains">
+					<h:outputText value="#{item.idCuenta}" />
+					<p:spacer width="50" />
+					<p:commandLink title="Seleccionar"
+						update="@([id$=pnlgDatos],[id$=pnlgDatosPaquete])"
+						styleClass="fa fa-search" process="tblDatos">
+						<f:setPropertyActionListener value="#{item}"
+							target="#{registroCuentaController.cuenta}" />
+						<f:setPropertyActionListener value="#{item.tipoCuenta.idTipo}"
+							target="#{registroCuentaController.idTipoCuenta}"></f:setPropertyActionListener>
+
+					</p:commandLink>
+				</p:column>
+
+				<p:column filterBy="#{item.tipoCuenta.nombreTipo}"
+					headerText="Tipo Cuenta" filterMatchMode="contains">
+					<h:outputText value="#{item.tipoCuenta.nombreTipo}" />
+				</p:column>
+
+				<p:column filterBy="#{item.nombreCuenta}" headerText="Cuenta"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.nombreCuenta}" />
+				</p:column>
+
+				<p:column filterBy="#{item.rucCuenta}" headerText="RUC"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.rucCuenta}" />
+				</p:column>
+
+				<p:column filterBy="#{item.emailCuenta}" headerText="Email"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.emailCuenta}" />
+				</p:column>
+
+				<p:column filterBy="#{item.direccionCuenta}" headerText="Dirección"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.direccionCuenta}" />
+				</p:column>
+
+				<p:column filterBy="#{item.telefonoCuenta}" headerText="Teléfono"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.telefonoCuenta}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

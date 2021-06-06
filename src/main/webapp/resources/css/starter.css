@@ -1,0 +1,101 @@
+#myBtn {
+	display: none;
+	position: fixed;
+	bottom: 20px;
+	right: 30px;
+	z-index: 99;
+	font-size: 18px;
+	border: none;
+	outline: none;
+	background-color: red;
+	color: white;
+	cursor: pointer;
+	padding: 15px;
+	border-radius: 4px;
+}
+
+#myBtn:hover {
+	background-color: #555;
+}
+
+
+.sidebar-form {
+    border-radius: 3px;
+    border: 1px solid #374850;
+    margin: 10px 10px;
+}
+.sidebar-form, .sidebar-menu>li.header {
+    overflow: hidden;
+    text-overflow: clip;
+}
+.ui-dialog {
+    width: 100%;
+}
+#userImage {
+    float: left;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-top: -2px;
+}
+
+ul.dropdown-menu > li.user-header {
+    height: auto!important;
+}
+
+a.dropdown-toggle {
+    background-color: #3c8dbc!important;
+}
+#idCliente{
+    width: 10px;
+}
+
+a#logout {
+    color: #3c8dbc!important;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    body .control-sidebar {
+        padding-top:100px;
+    }
+}
+
+div.ui-button, .ui-splitbutton {
+    display: inline-block;
+    zoom: 1;
+    float: right;
+}
+
+.skin-blue .wrapper, .skin-blue .main-sidebar, .skin-blue .left-side {
+	/* background-color:#222d32; */
+	background-image:
+		url(https://atencioncliente.com/wp-content/uploads/2019/01/acer.jpg)
+		!important;
+	background-size: cover !important;
+}
+.ui-datatable {
+    margin-bottom: 25px
+}
+
+.ui-datatable .ui-datatable-header {
+    text-align: right !important;
+}
+
+.ui-button-text-only .ui-button-text {
+    padding: 0.3em 0.4em;
+}
+
+.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-header .ui-chkbox {
+    visibility: hidden;
+}
+
+.ui-filter-column .ui-column-customfilter .custom-filter {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ui-datatable.borderless tbody td {
+    border-style: none;
+}

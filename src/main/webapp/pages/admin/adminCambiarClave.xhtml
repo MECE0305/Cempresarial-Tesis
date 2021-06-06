@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+        Cambio de Clave
+    </ui:define>
+	<ui:define name="body">
+	<adm:breadcrumb
+			title="Admin Pass"
+			link="/pages/admin/adminCambiarClave.jsf" />
+
+
+		<div class="ui-fluid" id="divPrincipal">
+
+
+			<h:form id="formPrincipal">
+
+				<p:growl id="mensaje" showDetail="true" widgetVar="mensaje" />
+				
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					responsive="true">
+					<p:commandButton value="SI" type="button"
+						styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+				</p:confirmDialog>
+
+
+				<p:panel>
+					<p:panelGrid layout="grid" columns="2" id="pnlgDatos">
+						<p:outputLabel value="Nombre de Usuario: " />
+						<p:inputText value="#{cambioClave.nombreUsuario}" />
+						<p:outputLabel value="Clave Anterior: " />
+						<p:inputText value="#{cambioClave.claveAnterior}" type="password">
+							<p:ajax event="blur" process="@this,pnlgDatos"
+								listener="#{cambioClave.validaClaveAnterior()}"
+								update="@([id$=mensaje])" />
+						</p:inputText>
+						<p:outputLabel value="Nueva Clave: " />
+						<p:inputText value="#{cambioClave.claveNueva}" type="password" />
+						<p:outputLabel value="Confirmar Clave: " />
+						<p:inputText value="#{cambioClave.claveNueva2}" type="password">
+							<p:ajax event="blur" process="@this,pnlgDatos"
+								listener="#{cambioClave.validaClave2()}"
+								update="@([id$=mensaje])" />
+						</p:inputText>
+					</p:panelGrid>
+					<p:commandButton value="Actualizar Clave" icon="fa fa-refresh"
+						action="#{cambioClave.cambiarClave()}" id="btnChangePass" actionListener="#{logoutMB.doLogout}"
+						update="@([id$=mensaje])" styleClass="btn-success"
+						process="@this,pnlgDatos" />
+				</p:panel>
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

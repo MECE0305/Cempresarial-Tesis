@@ -1,0 +1,133 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<h:body>
+
+
+
+		<h:form>
+
+			<div class="ui-fluid">
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-6,ui-grid-col-6">
+
+					<p:outputLabel value="Cliente" />
+					<p:outputLabel value="Empresa" />
+					<p:selectOneMenu id="cmbCliente" value="#{generales.idCliente}"
+						style="width:100%" filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Todos" itemValue="0" />
+						<f:selectItems value="#{generales.listCliente}" var="item"
+							itemLabel="#{item.nombreCliente}" itemValue="#{item.idCliente}" />
+						<p:ajax event="change" process="cmbCliente" update="cmbEmpresa"
+							listener="#{generales.buscarEmpresaPorCliente()}" />
+					</p:selectOneMenu>
+
+
+					<p:selectOneMenu id="cmbEmpresa" value="#{generales.idEmpresa}"
+						style="width:100%" filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Todos" itemValue="0" />
+						<f:selectItems value="#{generales.listEmpresa}" var="item"
+							itemLabel="#{item.nombreEmpresa}" itemValue="#{item.idEmpresa}" />
+						<p:ajax event="change" process="cmbEmpresa" update="pnlDatos"
+							listener="#{generales.graficarPorEmpresa()}" />
+					</p:selectOneMenu>
+
+
+
+
+
+				</p:panelGrid>
+
+				<p:separator />
+
+				<p:panel header="TOP 10 AGENCIAS" class="box-info box" id="pnlDatos">
+
+					<p:barChart model="#{generales.hbarModel}"
+						style="width: 100%; height: 320px;" />
+
+
+
+					<p:barChart model="#{generales.barModel1}"
+						style="width: 100%; height: 320px;" />
+
+
+
+
+
+					<p:dataTable id="dtGeneral" var="item" widgetVar="dtGeneral"
+						reflow="true" value="#{generales.list}"
+						rows="#{generales.list.size()}" styleClass="box box-primary">
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="3" style="float:left"
+									columnClasses="ui-grid-col-3, ui-grid-col-4,ui-grid-col-4">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtGeneral"
+											fileName="indicadores por aspecto" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtGeneral').filter();hideBar()"
+										style="width:150px" placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+
+
+
+								</p:panelGrid>
+							</p:panelGrid>
+						</f:facet>
+
+
+						<p:column filterBy="#{item.agencia.nombreAgencia}"
+							filterMatchMode="contains" headerText="Agencia">
+							<h:outputText value="#{item.agencia.nombreAgencia}" />
+						</p:column>
+
+						<p:column filterBy="#{item.totalBloques}" style="width:200px;"
+							sortBy="#{item.totalBloques}" filterMatchMode="contains"
+							headerText="Total Aspecto">
+							<h:outputText value="#{item.totalBloques}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.totalPreguntas}" style="width:200px;"
+							sortBy="#{item.totalPreguntas}" filterMatchMode="contains"
+							headerText="Total Indicadores">
+							<h:outputText value="#{item.totalPreguntas}" />
+						</p:column>
+
+
+
+
+
+					</p:dataTable>
+
+				</p:panel>
+
+
+
+
+			</div>
+
+		</h:form>
+
+
+
+	</h:body>
+
+
+</ui:composition>

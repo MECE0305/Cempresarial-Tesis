@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="#{layoutMB.template}">
+
+
+    <ui:define name="metadata">
+        <ui:param name="title" value="Empleados"/>
+        <!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: left !important;
+            }
+
+            .ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell {
+                text-align: center;
+            }
+
+            .customPanelGrid .ui-panelgrid-content {
+                align-items: center;
+            }
+
+            .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+                background-color: #8064A2 !important;
+            }
+        </style>
+
+
+    </ui:define>
+
+    <ui:define name="body">
+
+        <h:form>
+            #{empleadoMB.init()}
+        </h:form>
+
+        <div class="ui-fluid">
+
+            <button onclick="topFunction()" id="myBtn" title="Go Top">Top</button>
+
+
+            <h:form id="form" enctype="multipart/form-data">
+
+
+                <p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+                           visible="false" blockScroll="false"
+                           styleClass="box box-info box-solid"
+                           style="width:50%;overflow: auto;">
+
+                    <p:panelGrid layout="grid" columns="1"
+                                 styleClass="box-solid box-primary box customPanelGrid ui-noborder"
+                                 style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+                        <div class="box-body callout callout-info">
+                            <strong><img src="resources/images/ancla.gif" width="3%"
+                                         style="border-radius: 50%"/> Asignación de Rol </strong>
+
+                            <p class="text-muted" style="color: white !important;">Si
+                                desea cambiar de Rol, debe seleccionar uno o varios según
+                                necesite .!</p>
+                        </div>
+                        <p:panelGrid columns="1" layout="grid" id="pnlEmpleadoDetalle">
+
+                            <p:panelGrid columns="2" layout="grid">
+
+                                <p:panelGrid columns="1" layout="grid">
+                                    <p:graphicImage style="width: inherit;height: inherit;"
+                                                    id="fotoDetalle" value="#{empleadoMB.foto}" cache="false"
+                                                    alt="Logo Cliente" title="Logo de La Cliente"
+                                                    rendered="#{empleadoMB.foto != null}"/>
+
+                                    <p:fileUpload mode="advanced" dragDropSupport="true"
+                                                  id="pnlFotoDetalle" listener="#{empleadoMB.upload}"
+                                                  process="@this,pnlFotoDetalle" sizeLimit="50000000"
+                                                  label="Escoger" cancelLabel="Cancelar" uploadLabel="Agregar"
+                                                  showButtons="true" multiple="false"
+                                                  allowTypes="/(\.|\/)(gif|jpg|jpeg|gif|png|PNG|GIF|JPG|JPEG)$/"
+                                                  invalidFileMessage="Tipo de formato incorrecto"
+                                                  invalidSizeMessage="Tamaño no permitido"
+                                                  performVirusScan="true" previewWidth="150"
+                                                  fileLimitMessage="Solo se acepta un archivo"
+                                                  update="@([id$=fotoDetalle])"/>
+                                </p:panelGrid>
+
+                                <p:panelGrid columns="1" layout="grid">
+                                    <p:outputLabel value="Nombre:"/>
+                                    <p:inputText
+                                            value="#{empleadoMB.empleadoSeleccionado.nombreEmpleado}"/>
+
+                                    <h:outputText value="Género: "/>
+                                    <p:selectOneButton styleClass="product-view"
+                                                       style="font-size:10px;"
+                                                       value="#{empleadoMB.empleadoSeleccionado.generoEmpleado}">
+                                        <f:selectItem itemLabel="Masculino" itemValue="Masculino">
+                                        </f:selectItem>
+                                        <f:selectItem itemLabel="Femenino" itemValue="Femenino">
+                                        </f:selectItem>
+
+                                    </p:selectOneButton>
+
+
+                                    <p:outputLabel value="CI/RUC:"/>
+                                    <p:inputText
+                                            value="#{empleadoMB.empleadoSeleccionado.ciEmpleado}"/>
+
+                                    <p:outputLabel value="Teléfono:"/>
+                                    <p:inputText
+                                            value="#{empleadoMB.empleadoSeleccionado.telefonoEmpleado}"/>
+                                </p:panelGrid>
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="2" layout="grid">
+                                <p:outputLabel value="Activo:"/>
+                                <p:outputLabel value="Email:"/>
+                                <p:inputSwitch
+                                        value="#{empleadoMB.empleadoSeleccionado.activoEmpleado}">
+                                </p:inputSwitch>
+                                <p:inputText placeholder="Correo electrónico"
+                                             value="#{empleadoMB.empleadoSeleccionado.mailEmpleado}"/>
+                            </p:panelGrid>
+
+                            <p:outputLabel value="Rol: "/>
+                            <p:selectOneRadio id="cmbRolDetalle" columns="5" layout="grid"
+                                              rendered="false" requiredMessage="Rol Requerido"
+                                              value="#{empleadoMB.idRol}">
+
+                                <f:selectItems value="#{empleadoMB.listaRoles}" var="item"
+                                               itemLabel="#{item.nombreRol}" itemValue="#{item.idRol}"/>
+                                <p:ajax event="change" process="cmbRolDetalle"/>
+                            </p:selectOneRadio>
+
+                            <p:selectManyCheckbox id="grid"
+                                                  value="#{empleadoMB.listaCheckRoles}" layout="grid" columns="5">
+                                <f:selectItems value="#{empleadoMB.listaRoles}" var="item"
+                                               itemLabel="#{item.nombreRol}" itemValue="#{item.idRol}"/>
+                            </p:selectManyCheckbox>
+
+                            <p:panelGrid columns="2" layout="grid"
+                                         styleClass="box box-solid box-primary">
+                                <p:outputLabel value="Agencia: "/>
+                                <p:outputLabel value="Detalle: "/>
+                                <p:selectOneButton
+                                        style="display: flex;padding: 1px;flex-direction: column;"
+                                        id="cmbAgenciaDetalle" value="#{empleadoMB.idAgencia}">
+
+                                    <f:selectItems value="#{empleadoMB.listaAgencias}" var="item"
+                                                   itemLabel="#{item.nombreAgencia}"
+                                                   itemValue="#{item.idAgencia}"/>
+                                    <p:ajax event="change" process="cmbAgenciaDetalle"
+                                            listener="#{empleadoMB.obtenerAgencia()}"
+                                            update="pngDatosAgencia"/>
+                                </p:selectOneButton>
+
+
+                                <p:panelGrid columns="2" id="pngDatosAgencia"
+                                             styleClass="box-body callout callout-info">
+                                    <p:outputLabel value="Ciudad"/>
+                                    <h:outputText
+                                            value="#{empleadoMB.agencia.ciudadIdCiudad.nombreCiudad}"/>
+                                    <p:outputLabel value="Empresa"/>
+                                    <h:outputText
+                                            value="#{empleadoMB.agencia.empresaIdEmpresa.nombreEmpresa}"/>
+                                    <p:outputLabel value="CEO"/>
+                                    <h:outputText value="#{empleadoMB.agencia.ceoAgencia}"/>
+                                    <p:outputLabel value="Dirección"/>
+                                    <h:outputText value="#{empleadoMB.agencia.direccionAgencia}"/>
+                                    <p:outputLabel value="Correo"/>
+                                    <h:outputText value="#{empleadoMB.agencia.emailAgencia}"/>
+                                    <p:outputLabel value="Teléfono"/>
+                                    <h:outputText value="#{empleadoMB.agencia.telefonoAgencia}"/>
+                                </p:panelGrid>
+                            </p:panelGrid>
+
+
+                        </p:panelGrid>
+                        <f:facet name="footer">
+                            <p:commandButton value="Cancel"
+                                             oncomplete="PF('sidebar2').hide()"
+                                             styleClass="btn btn-solid btn-danger"
+                                             style="width: max-content;"/>
+                            <p:commandButton value="Guardar Cambios" icon="fa fa-check"
+                                             actionListener="#{empleadoMB.sideActualiza()}"
+                                             update="@([id$=dtEmpleado],[id$=pnlEmpleadoDetalle])"
+                                             process="@this, pnlEmpleadoDetalle" styleClass="btn btn-success"
+                                             style="width: max-content;"/>
+                        </f:facet>
+                    </p:panelGrid>
+                </p:sidebar>
+
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                 styleClass="box-warning box-solid">
+                    <p:commandButton value="Si" type="button"
+                                     styleClass="btn btn-success ui-confirmdialog-yes"
+                                     icon="fa fa-check"/>
+                    <p:commandButton value="No" type="button"
+                                     styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close"/>
+                </p:confirmDialog>
+
+                <p:panel styleClass="box box-primary">
+                    <p:panelGrid columns="2" layout="grid"
+                                 columnClasses="ui-grid-col-3, ui-grid-col-9"
+                                 styleClass="customPanelGrid ui-noborder">
+
+
+                        <p:panelGrid columns="1" layout="grid">
+
+
+                            <p:graphicImage style="width: inherit;height: inherit;"
+                                            id="fotoPre" rendered="#{empleadoMB.foto != null}" cache="true"
+                                            value="/resources/images/your-logo.png">
+                            </p:graphicImage>
+                            <p:graphicImage style="width: inherit;height: inherit;" id="foto"
+                                            value="#{empleadoMB.foto}" cache="false" alt="Logo Empresa"
+                                            title="Logo de La Empresa" rendered="#{empleadoMB.foto != null}"/>
+
+
+                            <p:fileUpload mode="advanced" dragDropSupport="true" id="pnlFoto"
+                                          listener="#{empleadoMB.upload}" process="@this,pnlFoto"
+                                          sizeLimit="50000000" label="Escoger" cancelLabel="Cancelar"
+                                          uploadLabel="Agregar" showButtons="true" multiple="false"
+                                          allowTypes="/(\.|\/)(gif|jpg|jpeg|gif|png|PNG|GIF|JPG|JPEG)$/"
+                                          invalidFileMessage="Tipo de formato incorrecto"
+                                          invalidSizeMessage="Tamaño no permitido" performVirusScan="true"
+                                          previewWidth="150" fileLimitMessage="Solo se acepta un archivo"
+                                          update="@([id$=foto], [id$=fotoPre])"/>
+
+
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="6" layout="grid"
+                                     columnClasses="ui-grid-col-2, ui-grid-col-3,ui-grid-col-1, ui-grid-col-2,ui-grid-col-3, ui-grid-col-1"
+                                     id="panelEmpleado">
+
+                            <p:outputLabel value="Nombre:">
+                                <span class="text-danger">*</span>
+                            </p:outputLabel>
+                            <p:inputText id="nombreCl"
+                                         value="#{empleadoMB.empleadoSeleccionado.nombreEmpleado}"/>
+                            <p:message for="nombreCl" display="text"/>
+
+                            <p:outputLabel value="Género: "/>
+                            <p:selectOneButton styleClass="product-view"
+                                               style="font-size:10px"
+                                               value="#{empleadoMB.empleadoSeleccionado.generoEmpleado}">
+                                <f:selectItem itemLabel="Masculino" itemValue="Masculino">
+                                </f:selectItem>
+                                <f:selectItem itemLabel="Femenino" itemValue="Femenino">
+                                </f:selectItem>
+
+                            </p:selectOneButton>
+                            <p:outputLabel/>
+
+                            <p:outputLabel value="CI/RUC:"/>
+                            <p:inputText id="cirucCl"
+                                         value="#{empleadoMB.empleadoSeleccionado.ciEmpleado}"/>
+                            <p:outputLabel/>
+
+
+                            <p:outputLabel value="Teléfono:"/>
+                            <p:inputText id="telefonoCl"
+                                         value="#{empleadoMB.empleadoSeleccionado.telefonoEmpleado}"/>
+                            <p:outputLabel/>
+
+                            <p:outputLabel value="Email:"/>
+                            <p:inputText id="mailCl" placeholder="Correo electrónico"
+                                         value="#{empleadoMB.empleadoSeleccionado.mailEmpleado}"/>
+                            <p:outputLabel/>
+
+
+                            <p:outputLabel value="Activo:"/>
+                            <p:inputSwitch
+                                    value="#{empleadoMB.empleadoSeleccionado.activoEmpleado}">
+                            </p:inputSwitch>
+                            <p:outputLabel/>
+
+                            <p:outputLabel for="cmbRol" value="Rol: ">
+                                <span class="text-danger">*</span>
+                            </p:outputLabel>
+                            <p:selectOneMenu id="cmbRol" requiredMessage="Rol Requerido"
+                                             value="#{empleadoMB.idRol}" required="true">
+                                <f:selectItem itemLabel="Seleccionar Rol" itemValue=""/>
+                                <f:selectItems value="#{empleadoMB.listaRoles}" var="item"
+                                               itemLabel="#{item.nombreRol}" itemValue="#{item.idRol}"/>
+                                <p:ajax event="change" process="cmbRol"/>
+                            </p:selectOneMenu>
+                            <p:message for="cmbRol" display="text"/>
+
+                            <p:outputLabel for="cmbCliente" value="Cliente: ">
+                                <span class="text-danger">*</span>
+                            </p:outputLabel>
+                            <p:selectOneMenu id="cmbCliente" tabindex="1" required="true"
+                                             requiredMessage="Cliente es requerido"
+                                             style="width:auto;min-width: auto;"
+                                             value="#{empleadoMB.idCliente}" filter="true"
+                                             filterMatchMode="contains">
+                                <f:selectItem itemLabel="Todos"/>
+                                <f:selectItems var="item" value="#{empleadoMB.listaClientes}"
+                                               itemLabel="#{item.nombreCliente}" itemValue="#{item.idCliente}">
+                                </f:selectItems>
+                                <p:ajax event="change" process="cmbCliente"
+                                        update="@([id$=cmbEmpresa], [id$=cmbAgencia])"
+                                        listener="#{empleadoMB.findByClienteIdCliente}"/>
+
+                            </p:selectOneMenu>
+                            <p:message for="cmbEmpresa" display="text"/>
+
+                            <p:outputLabel for="cmbEmpresa" value="Empresa: ">
+                                <span class="text-danger">*</span>
+                            </p:outputLabel>
+                            <p:selectOneMenu id="cmbEmpresa" tabindex="1" required="true"
+                                             requiredMessage="Empresa es requerida"
+                                             style="width:auto;min-width: auto;"
+                                             value="#{empleadoMB.idEmpresa}" filter="true"
+                                             filterMatchMode="contains">
+                                <f:selectItem itemLabel="Todos"/>
+                                <f:selectItems var="item" value="#{empleadoMB.listaEmpresas}"
+                                               itemLabel="#{item.nombreEmpresa}" itemValue="#{item.idEmpresa}">
+                                </f:selectItems>
+                                <p:ajax event="change" process="cmbEmpresa" update="cmbAgencia"
+                                        listener="#{empleadoMB.findByEmpresaIdEmpresa}"/>
+
+                            </p:selectOneMenu>
+                            <p:message for="cmbEmpresa" display="text"/>
+
+                            <p:outputLabel for="cmbAgencia" value="Agencia: ">
+                                <span class="text-danger">*</span>
+                            </p:outputLabel>
+                            <p:selectOneMenu id="cmbAgencia"
+                                             requiredMessage="Agencia Requerida"
+                                             value="#{empleadoMB.idAgencia}" required="true">
+                                <f:selectItem itemLabel="Seleccionar Agencia" itemValue=""/>
+                                <f:selectItems value="#{empleadoMB.listaAgencias}" var="item"
+                                               itemLabel="#{item.nombreAgencia}" itemValue="#{item.idAgencia}"/>
+                                <p:ajax event="change" process="cmbAgencia"/>
+                            </p:selectOneMenu>
+                            <p:message for="cmbAgencia" display="text"/>
+
+                        </p:panelGrid>
+
+                    </p:panelGrid>
+
+                    <div style="display: flex; justify-content: flex-end;">
+                        <p:commandButton
+                                value="#{empleadoMB.empleadoSeleccionado.idEmpleado == null ? 'Guardar':'Actualizar'}"
+                                icon="fa fa-floppy-o"
+                                styleClass="#{empleadoMB.empleadoSeleccionado.idEmpleado == null ? 'btn-success':'btn-warning'}"
+                                process="@this, panelEmpleado"
+                                update="@([id$=dtEmpleado], [id$=panelEmpleado],[id$=btnGuardar])"
+                                actionListener="#{empleadoMB.guardar()}"
+                                style="width: max-content" id="btnGuardar">
+                        </p:commandButton>
+
+                        <p:commandButton value="Cancelar" icon="fa fa-close"
+                                         styleClass="btn-danger" process="@this" update="@form"
+                                         action="#{empleadoMB.init()}" style="width: max-content"/>
+                    </div>
+                </p:panel>
+
+                <p:dataTable id="dtEmpleado" var="item" widgetVar="dtEmpleado"
+                             reflow="true" value="#{empleadoMB.listaEmpleados}"
+                             filteredValue="#{empleadoMB.listaEmpleadosSelect}" rows="10"
+                             paginator="true" styleClass="box box-primary">
+
+                    <f:facet name="header">
+
+                        <p:panelGrid columns="2" layout="grid"
+                                     styleClass="ui-panelgrid-blank">
+
+                            <p:panelGrid layout="grid" columns="4" style="float:left"
+                                         columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+                                <h:commandLink title="Exportar Excel" immediate="true"
+                                               style="width: min-content;">
+                                    <p:graphicImage value="/resources/images/excel.ico"
+                                                    width="30px"/>
+                                    <p:dataExporter type="xls" target="dtEmpleado"
+                                                    fileName="Empleados"/>
+                                </h:commandLink>
+                                <h:outputText value="Buscar en Todos los Campos:   "/>
+                                <p:inputText id="globalFilter"
+                                             onkeyup="PF('dtEmpleado').filter();hideBar()"
+                                             style="width:150px" placeholder="Ingrese Parámetro....">
+                                    <p:ajax event="keyup"/>
+                                </p:inputText>
+
+                                <p:commandButton style="width: min-content;float:rigth"
+                                                 id="toggler" type="button" icon="fa fa-list"/>
+                                <p:columnToggler datasource="dtEmpleado" trigger="toggler"/>
+
+                            </p:panelGrid>
+                            <p:commandButton icon="fa fa-refresh" style="width: min-content;"
+                                             styleClass="btn-default" title="Actualizar Lista"
+                                             action="#{empleadoMB.actualizarLista()}" update="dtEmpleado"/>
+                        </p:panelGrid>
+
+
+                    </f:facet>
+
+
+                    <p:column id="idCliente" filterBy="#{item.idEmpleado}"
+                              rendered="false" filterMatchMode="contains" headerText="Id"
+                              style="width:40px;">
+                        <h:outputText value="#{item.idEmpleado}"/>
+                    </p:column>
+
+                    <p:column headerText="Logo" width="150" exportable="false">
+                        <p:graphicImage style="width: 100%;" value="#{empleadoMB.image}"
+                                        cache="false" stream="true">
+                            <f:param name="empleadoId" value="#{item.idEmpleado}"/>
+                        </p:graphicImage>
+
+                    </p:column>
+
+                    <p:column filterBy="#{item.nombreEmpleado}"
+                              sortBy="#{item.nombreEmpleado}" filterMatchMode="contains"
+                              headerText="Nombre Cliente">
+                        <h:outputText value="#{item.nombreEmpleado}"
+                                      styleClass="label label-info" style="font-size:12px"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.generoEmpleado}"
+                              sortBy="#{item.generoEmpleado}" filterMatchMode="contains"
+                              headerText="Género">
+                        <h:outputText value="#{item.generoEmpleado}"
+                                      styleClass="#{item.generoEmpleado eq 'Femenino' ? 'label bg-maroon':'label label-primary'}"
+                                      style="font-size:12px"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.agenciaIdAgencia.nombreAgencia}"
+                              sortBy="#{item.agenciaIdAgencia.nombreAgencia}"
+                              filterMatchMode="contains" headerText="Agencia">
+                        <h:outputText value="#{item.agenciaIdAgencia.nombreAgencia}">
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column filterBy="#{item.telefonoEmpleado}"
+                              filterMatchMode="contains" headerText="Teléfono">
+                        <h:outputText value="#{item.telefonoEmpleado}"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.ciEmpleado}" filterMatchMode="contains"
+                              headerText="CI">
+                        <h:outputText value="#{item.ciEmpleado}"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.mailEmpleado}"
+                              filterMatchMode="contains" headerText="Email">
+                        <h:outputText value="#{item.mailEmpleado}"/>
+                    </p:column>
+
+                    <p:column filterBy="#{item.activoEmpleado}"
+                              filterMatchMode="contains" headerText="Activo">
+                        <h:outputText
+                                styleClass="#{item.activoEmpleado ? 'label label-success':'label label-default'}"
+                                value="#{item.activoEmpleado ? 'ACTIVO':'INACTIVO'}"/>
+                        <p:inputSwitch value="#{item.activoEmpleado}" onLabel="ON"
+                                       label="LABEL" offLabel="OFF" showLabels="true">
+                            <p:ajax event="change" process="dtEmpleado"
+                                    listener="#{empleadoMB.switchActiva(item)}" update="dtEmpleado"/>
+                        </p:inputSwitch>
+                    </p:column>
+
+                    <p:column filterBy="#{item.creaEmpleado}"
+                              sortBy="#{item.creaEmpleado}" filterMatchMode="contains"
+                              headerText="Creación">
+                        <h:outputText value="#{item.creaEmpleado}">
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column filterBy="#{empleadoMB.cargarPerfilesUsuario(item)}"
+                              headerText="Perfiles" filterMatchMode="contains">
+                        <h:outputText value="#{empleadoMB.cargarPerfilesUsuario(item)}"/>
+                    </p:column>
+
+
+                    <p:column headerText="Opciones" width="150" exportable="false">
+                        <p:commandButton process="dtEmpleado" icon="fa fa-edit"
+                                         style="width: min-content" title="editar"
+                                         action="#{empleadoMB.pasarDatoseditar(item)}"
+                                         styleClass="btn-primary" immediate="true"
+                                         update="@([id$=panelEmpleado],[id$=foto],[id$=btnGuardar])">
+                        </p:commandButton>
+
+                        <p:commandButton icon="fa fa-eye" process="dtEmpleado"
+                                         action="#{empleadoMB.pasarDatoseditar(item)}" immediate="true"
+                                         oncomplete="PF('sidebar2').show()" style="width: min-content"
+                                         title="ver" styleClass="btn-success"
+                                         update="@([id$=pnlEmpleadoDetalle])">
+                        </p:commandButton>
+
+                        <p:commandButton update="@([id$=dtEmpleado])" icon="fa fa-trash"
+                                         style="width: min-content" title="eliminar" process="dtEmpleado"
+                                         action="#{empleadoMB.eliminar()}" styleClass="btn-danger">
+                            <f:setPropertyActionListener value="#{item}"
+                                                         target="#{empleadoMB.empleadoSeleccionado}"/>
+                            <p:confirm header="Confirmar Eliminación Cliente"
+                                       message="¿Está usted seguro?" icon="fa fa-anchor"/>
+                        </p:commandButton>
+
+                    </p:column>
+
+                </p:dataTable>
+
+
+            </h:form>
+
+        </div>
+
+        <script type="text/javascript">
+            $('.product-view div:nth-child(1) span').addClass('fa fa-mars');
+            $('.product-view div:nth-child(2) span').addClass('fa fa-venus');
+        </script>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Rango Desempeño" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+div.ui-panel .ui-panel-content {
+	height: 100%;
+	padding: 10px 10px;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 30px;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.transparente>div {
+	background: transparent;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+	#{rangoMB.init()}
+	</h:form>
+
+
+		<div class="ui-fluid">
+
+			<h:form id="form" enctype="multipart/form-data">
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-4,ui-grid-col-8 transparente">
+					<p:panel styleClass="box box-solid box-primary"
+						header="Datos de Rangos">
+
+						<div class="card text-white">
+							<img style="width: auto; height: auto"
+								src="https://png.pngtree.com/thumb_back/fh260/back_our/20190617/ourmid/pngtree-award-ceremony-poster-background-image_124292.jpg"
+								class="card-img" alt="..." />
+							<div class="card-header text-primary">Datos de Registro</div>
+							<div class="card-body">
+								<h5 class="card-title"></h5>
+								<p class="card-text">
+									<p:panelGrid columns="1" layout="grid" id="panelRango">
+
+										<p:outputLabel value="Nombre:" />
+										<p:inputText value="#{rangoMB.rango.nombreRango}" />
+										<p:outputLabel value="Descripción:" />
+										<p:inputText value="#{rangoMB.rango.descripcionRango}" />
+
+										<p:selectOneMenu id="cmbEmpresa"
+											requiredMessage="Empresa Requerido"
+											value="#{rangoMB.idEmpresa}" required="true">
+											<f:selectItem itemLabel="Seleccionar Empresa" itemValue="" />
+											<f:selectItems value="#{rangoMB.listEmpresa}" var="item"
+												itemLabel="#{item.nombreEmpresa}"
+												itemValue="#{item.idEmpresa}" />
+											<p:ajax event="change" process="cmbEmpresa" />
+										</p:selectOneMenu>
+
+
+
+										<p:panelGrid columns="2" layout="grid">
+											<p:outputLabel value="Rango Mínimo:" />
+											<p:spinner value="#{rangoMB.rango.minimoRango}"
+												decimalPlaces="2" />
+											<p:outputLabel value="Rango Máximo:" />
+											<p:spinner value="#{rangoMB.rango.maximoRango}"
+												decimalPlaces="2" />
+											<p:outputLabel value="Rating:" />
+											<p:rating value="#{rangoMB.rango.ratingRango}" />
+											<p:outputLabel value="Activo:" />
+											<p:inputSwitch value="#{rangoMB.rango.activoRango}" />
+											<p:outputLabel value="Color: " />
+											<p:colorPicker value="#{rangoMB.rango.colorRango}" />
+
+										</p:panelGrid>
+
+
+
+									</p:panelGrid>
+								</p>
+								<div style="display: flex; justify-content: flex-end;">
+									<p:commandButton
+										value="#{rangoMB.rango.idRango == null ? 'Guardar':'Actualizar'}"
+										icon="fa fa-floppy-o"
+										styleClass="#{rangoMB.rango.idRango == null ? 'btn-success':'btn-warning'}"
+										process="@this, panelRango"
+										update="@([id$=dtRango], [id$=panelRango],[id$=btnGuardar])"
+										actionListener="#{rangoMB.guardar()}"
+										style="width: max-content" id="btnGuardar">
+									</p:commandButton>
+
+									<p:commandButton value="Cancelar" icon="fa fa-close"
+										styleClass="btn-danger" process="@this" update="@form"
+										action="#{rangoMB.init()}" style="width: max-content" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+
+					<p:dataTable id="dtRango" var="item" widgetVar="dtRango"
+						reflow="true" value="#{rangoMB.listaRango}" rows="10"
+						paginator="true" styleClass="box box-primary">
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtRango"
+											fileName="Rango Desempeño" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtRango').filter();hideBar()" style="width:150px"
+										placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="dtRango" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista" action="#{rangoMB.actualizarLista()}"
+									update="dtRango" />
+							</p:panelGrid>
+						</f:facet>
+
+
+						<p:column rendered="false" filterBy="#{item.idRango}"
+							filterMatchMode="contains" headerText="ID" style="width:100px;">
+							<h:outputText value="#{item.idRango}" />
+						</p:column>
+
+						<p:column filterBy="#{item.empresa.nombreEmpresa}"
+							sortBy="#{item.empresa.nombreEmpresa}" filterMatchMode="contains"
+							headerText="Empresa" style="width:100px;">
+							<h:outputText value="#{item.empresa.nombreEmpresa}" />
+						</p:column>
+
+						<p:column filterBy="#{item.nombreRango}"
+							sortBy="#{item.nombreRango}" filterMatchMode="contains"
+							headerText="Nombre">
+							<h:outputText value="#{item.nombreRango}" styleClass="label"
+								style="background-color: ##{item.colorRango}; font-size:small" />
+						</p:column>
+
+						<p:column filterBy="#{item.descripcionRango}"
+							sortBy="#{item.descripcionRango}" filterMatchMode="contains"
+							headerText="Descripción">
+							<h:outputText value="#{item.descripcionRango}" />
+						</p:column>
+
+						<p:column filterBy="#{item.minimoRango}"
+							sortBy="#{item.minimoRango}" filterMatchMode="contains"
+							headerText="Mínimo">
+							<h:outputText value="#{item.minimoRango}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.maximoRango}"
+							sortBy="#{item.maximoRango}" filterMatchMode="contains"
+							headerText="Máximo">
+							<h:outputText value="#{item.maximoRango}" />
+						</p:column>
+
+						<p:column filterBy="#{item.ratingRango}"
+							sortBy="#{item.ratingRango}" filterMatchMode="contains"
+							headerText="rating">
+							<p:rating value="#{item.ratingRango}" readonly="false" stars="5" />
+
+						</p:column>
+
+
+						<p:column filterBy="#{item.activoRango}"
+							filterMatchMode="contains" headerText="Activo">
+							<h:outputText
+								styleClass="#{item.activoRango ? 'label label-success':'label label-default'}"
+								value="#{item.activoRango ? 'ACTIVO':'INACTIVO'}" />
+							<p:inputSwitch value="#{item.activoRango}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" process="dtRango"
+									listener="#{rangoMB.switchActiva(item)}" update="dtRango" />
+							</p:inputSwitch>
+						</p:column>
+
+						<p:column filterBy="#{item.crearango}" sortBy="#{item.crearango}"
+							filterMatchMode="contains" headerText="Creación">
+							<h:outputText value="#{item.crearango}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+						<p:column filterBy="#{item.actualizaRango}"
+							sortBy="#{item.actualizaRango}" filterMatchMode="contains"
+							headerText="Actualización">
+							<h:outputText value="#{item.actualizaRango}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+
+
+						<p:column headerText="Opciones" width="100" exportable="false">
+							<p:commandButton process="dtRango" icon="fa fa-edit"
+								style="width: min-content" title="editar"
+								action="#{rangoMB.pasarDatoseditar(item)}"
+								styleClass="btn-primary"
+								update="@([id$=panelRango],[id$=btnGuardar])">
+							</p:commandButton>
+
+							<p:commandButton update="@([id$=dtRango])" icon="fa fa-trash"
+								style="width: min-content" title="eliminar" process="dtRango"
+								action="#{rangoMB.eliminar()}" styleClass="btn-danger">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{rangoMB.rango}" />
+								<p:confirm header="Confirmar Eliminación"
+									message="¿Está usted seguro al Eliminar el Rango?"
+									icon="fa fa-anchor" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+				</p:panelGrid>
+
+
+			</h:form>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

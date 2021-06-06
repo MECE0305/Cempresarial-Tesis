@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" template="/admin.xhtml">
+
+	<ui:define name="head">
+		<title>CEmpresarial</title>
+		<link rel="shortcut icon" type="image/x-icon"
+			href="https://media.ce-check.eu/CECheck_BlueAndGreen_min.png" />
+		<link rel="shortcut icon" type="image/x-icon"
+			href="https://media.ce-check.eu/CECheck_BlueAndGreen_min.png"
+			sizes="16x16" />
+		<link rel="shortcut icon" type="image/x-icon"
+			href="https://media.ce-check.eu/CECheck_BlueAndGreen_min.png"
+			sizes="32x32" />
+		<link rel="shortcut icon" type="image/x-icon"
+			href="https://media.ce-check.eu/CECheck_BlueAndGreen_min.png"
+			sizes="96x96" />
+		<link rel="manifest" href="manifest.json" />
+		<meta name="theme-color" content="#444" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<f:loadBundle var="msg" basename="starter" />
+		<h:outputStylesheet library="css" name="starter.css" />
+		<h:outputStylesheet library="css" name="video.css" />
+		<h:outputStylesheet name="bootstrap-4.4.1-dist/css/bootstrap.min.css" />
+		<h:outputStylesheet name="primeicons/primeicons.css"
+			library="primefaces" />
+
+		<style type="text/css">
+#myBtn {
+	display: none;
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	z-index: 99;
+	font-size: 18px;
+	border: none;
+	outline: none;
+	background-color: red;
+	color: white;
+	cursor: pointer;
+	padding: 15px;
+	border-radius: 4px;
+}
+
+#myBtn:hover {
+	background-color: #555;
+}
+</style>
+
+		<ui:include src="/sesiontimeout.xhtml" />
+	</ui:define>
+
+	<ui:define name="logo">
+        CEmpresarial
+    </ui:define>
+
+	<ui:define name="logo-mini">
+		<img style="background-color: white"
+			src="https://media.ce-check.eu/CECheck_BlueAndGreen_min.png"
+			width="50%" />
+
+	</ui:define>
+
+	<ui:define name="menu">
+		<ui:include src="/includes/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="top-menu">
+		<ui:include src="/includes/top-bar.xhtml" />
+	</ui:define>
+
+	<!-- below is just an example on how to define more tabs for control sidebar -->
+	<ui:define name="controlsidebar-tabs">
+		<li><a href="#control-sidebar-home-tab" data-toggle="tab"><i
+				class="fa fa-home"></i></a></li>
+		<li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i
+				class="fa fa-gears"></i></a></li>
+	</ui:define>
+
+
+	<ui:define name="controlsidebar-content">
+		<ui:include src="/includes/controlsidebar-tabs-content.xhtml" />
+	</ui:define>
+
+
+	<ui:define name="footer">
+		<a target="_blank" href="https://github.com/adminfaces/">
+			Copyright (C) 2020 - CEmpresarial </a>
+
+		<div class="pull-right hidden-xs" style="color: gray">
+			<i>#{msg['starter.version']}</i>
+		</div>
+
+		<h:outputScript library="js" name="starter.js" target="head" />
+
+		<h:outputScript name="bootstrap-4.4.1-dist/js/bootstrap.min.js" />
+		<h:outputScript library="js" name="video.js" target="head" />
+		<h:outputScript library="js" name="boton.js" target="head" />
+		<h:outputScript library="js" name="goTop.js" target="head" />
+
+
+	</ui:define>
+
+
+</ui:composition>

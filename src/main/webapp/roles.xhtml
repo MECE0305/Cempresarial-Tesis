@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Roles" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+div.ui-panel .ui-panel-content {
+	height: 100%;
+	padding: 10px 10px;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 30px;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.transparente>div {
+	background: transparent;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+	#{rolMB.init()}
+	</h:form>
+
+
+		<div class="ui-fluid">
+
+
+
+			<h:form id="form" enctype="multipart/form-data">
+
+
+
+				<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:40%;overflow: auto;">
+
+
+
+
+					<p:panelGrid layout="grid" columns="1" id="panelRolDetalle"
+						styleClass="box-solid box-primary box "
+						style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h1 class="box-title"></h1>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body callout callout-info">
+
+								<div style="display: flex; justify-content: space-between;">
+									<h1>!Indicaciones!</h1>
+									<img src="resources/images/ancla.gif" width="7%"
+										style="border-radius: 50%" />
+								</div>
+
+								<hr></hr>
+								<strong><i class="fa fa-book margin-r-5"></i> Anclar
+									Empleado e Información de Plantillas</strong>
+
+								<p class="text-muted" style="color: white !important;">Se
+									debe marcar o descarmar según se necesite</p>
+
+
+							</div>
+							<!-- /.box-body -->
+						</div>
+
+						<p:repeat var="item" value="#{rolMB.listaRolEmpleados}">
+							<p:outputLabel value="#{item.nombreEmpleado}" />
+						</p:repeat>
+
+						<p:accordionPanel activeIndex="0" multiple="true"
+							style="width: 100%;height: 100%;">
+							<p:tab>
+								<f:facet name="title">
+									<strong><i class="fa fa-file-archive-o"></i> Datos
+										Roles</strong>
+								</f:facet>
+								<p:panelGrid columns="2" layout="grid">
+
+									<p:outputLabel value="Nombre:" />
+									<p:outputLabel for="cmbAreaEdit" value="Área" />
+
+									<p:inputText id="nombreCl" value="#{rolMB.rol.nombreRol}" />
+									<p:selectOneListbox id="cmbAreaEdit"
+										styleClass="ui-selectonelistbox" filterMatchMode="contains"
+										filter="true" value="#{rolMB.idArea}">
+										<f:selectItems value="#{rolMB.listaArea}" var="item"
+											itemLabel="#{item.nombreArea}" itemValue="#{item.idArea}" />
+										<p:ajax event="change" process="cmbAreaEdit" />
+									</p:selectOneListbox>
+
+									<p:outputLabel value="Activo:" />
+									<p:inputSwitch value="#{rolMB.rol.activoRol}">
+									</p:inputSwitch>
+
+
+								</p:panelGrid>
+							</p:tab>
+						</p:accordionPanel>
+						<p:tabView effect="fade" activeIndex="0">
+
+							<p:tab>
+								<f:facet name="title">
+									<strong><i class="fa fa-users"></i> Rol - Empleados
+										(#{rolMB.listaRolEmpleados.size()})</strong>
+								</f:facet>
+								<p:dataTable id="dtEmpleado" var="item" widgetVar="dtEmpleado"
+									reflow="true" value="#{rolMB.listaRolEmpleados}" rows="10"
+									paginator="true" styleClass="box box-primary">
+
+									<f:facet name="header">
+
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank">
+
+											<p:panelGrid layout="grid" columns="4" style="float:left"
+												columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+												<h:commandLink title="Exportar Excel" immediate="true"
+													style="width: min-content;">
+													<p:graphicImage value="/resources/images/excel.ico"
+														width="30px" />
+													<p:dataExporter type="xls" target="dtEmpleado"
+														fileName="Roles" />
+												</h:commandLink>
+												<h:outputText value="Buscar en Todos los Campos:   " />
+												<p:inputText id="globalFilter"
+													onkeyup="PF('dtEmpleado').filter();hideBar()"
+													style="width:150px" placeholder="Ingrese Parámetro....">
+													<p:ajax event="keyup" />
+												</p:inputText>
+
+												<p:commandButton style="width: min-content;float:rigth"
+													id="toggler" type="button" icon="fa fa-list" />
+												<p:columnToggler datasource="dtEmpleado" trigger="toggler" />
+
+											</p:panelGrid>
+										</p:panelGrid>
+									</f:facet>
+
+
+									<p:column filterBy="#{item.idEmpleado}"
+										filterMatchMode="contains" headerText="ID" style="width:60px;">
+										<h:outputText value="#{item.idEmpleado}" />
+									</p:column>
+
+									<p:column filterBy="#{item.nombreEmpleado}"
+										filterMatchMode="contains" headerText="Empleado">
+										<h:outputText value="#{item.nombreEmpleado}" />
+									</p:column>
+
+									<p:column filterBy="#{item.activoEmpleado}"
+										filterMatchMode="contains" headerText="Activo">
+										<h:outputText
+											styleClass="#{item.activoEmpleado ? 'label label-success':'label label-default'}"
+											value="#{item.activoEmpleado ? 'ACTIVO':'INACTIVO'}" />
+										<p:inputSwitch value="#{item.activoEmpleado}" onLabel="ON"
+											label="LABEL" offLabel="OFF" showLabels="true">
+										</p:inputSwitch>
+									</p:column>
+
+
+									<p:column
+										filterBy="#{item.agenciaIdAgencia.empresaIdEmpresa.nombreEmpresa}"
+										filterMatchMode="contains" headerText="Empresa">
+										<h:outputText
+											value="#{item.agenciaIdAgencia.empresaIdEmpresa.nombreEmpresa}" />
+									</p:column>
+
+									<p:column filterBy="#{item.agenciaIdAgencia.nombreAgencia}"
+										filterMatchMode="contains" headerText="Agencia">
+										<h:outputText value="#{item.agenciaIdAgencia.nombreAgencia}" />
+									</p:column>
+								</p:dataTable>
+							</p:tab>
+							<p:tab>
+								<f:facet name="title">
+									<strong><i class="fa fa-folder-open"></i> Formularios
+										(#{rolMB.listChecklist.size()})</strong>
+								</f:facet>
+
+								<p:dataTable id="dtcl" var="item" widgetVar="dtcl" reflow="true"
+									value="#{rolMB.listChecklist}" rows="10" paginator="true"
+									styleClass="box box-primary">
+
+									<f:facet name="header">
+
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank">
+
+											<p:panelGrid layout="grid" columns="4" style="float:left"
+												columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+												<h:commandLink title="Exportar Excel" immediate="true"
+													style="width: min-content;">
+													<p:graphicImage value="/resources/images/excel.ico"
+														width="30px" />
+													<p:dataExporter type="xls" target="dtcl" fileName="Roles" />
+												</h:commandLink>
+												<h:outputText value="Buscar en Todos los Campos:   " />
+												<p:inputText id="globalFilter"
+													onkeyup="PF('dtcl').filter();hideBar()" style="width:150px"
+													placeholder="Ingrese Parámetro....">
+													<p:ajax event="keyup" />
+												</p:inputText>
+
+												<p:commandButton style="width: min-content;float:rigth"
+													id="toggler" type="button" icon="fa fa-list" />
+												<p:columnToggler datasource="dtcl" trigger="toggler" />
+
+											</p:panelGrid>
+										</p:panelGrid>
+									</f:facet>
+
+
+									<p:column filterBy="#{item.idChecklist}"
+										filterMatchMode="contains" headerText="ID" style="width:60px;">
+										<h:outputText value="#{item.idChecklist}" />
+									</p:column>
+
+									<p:column filterBy="#{item.nombreChecklist}"
+										filterMatchMode="contains" headerText="Formulario">
+										<h:outputText value="#{item.nombreChecklist}" />
+									</p:column>
+
+									<p:column filterBy="#{item.activoChecklist}"
+										filterMatchMode="contains" headerText="Activo">
+										<h:outputText
+											styleClass="#{item.activoChecklist ? 'label label-success':'label label-default'}"
+											value="#{item.activoChecklist ? 'ACTIVO':'INACTIVO'}" />
+										<p:inputSwitch value="#{item.activoChecklist}" onLabel="ON"
+											label="LABEL" offLabel="OFF" showLabels="true">
+										</p:inputSwitch>
+									</p:column>
+
+								</p:dataTable>
+
+
+							</p:tab>
+						</p:tabView>
+
+						<f:facet name="footer">
+							<p:commandButton value="Cancel"
+								oncomplete="PF('sidebar2').hide()"
+								styleClass="btn btn-solid btn-danger"
+								style="width: max-content;" />
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{rolMB.sideActualiza()}" update="dtRol"
+								process="@this, @([id$=panelRolDetalle])"
+								styleClass="btn btn-solid btn-primary"
+								style="width: max-content;" />
+						</f:facet>
+
+					</p:panelGrid>
+				</p:sidebar>
+
+
+
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-4,ui-grid-col-8">
+
+					<p:panel styleClass="box box-solid box-primary"
+						header="Datos de Rol">
+
+						<div class="card text-white">
+							<img style="width: auto; height: auto"
+								src="https://png.pngtree.com/thumb_back/fh260/back_pic/03/72/03/1657b876ce38f6a.jpg"
+								class="card-img" alt="..." />
+							<div class="card-header text-primary">Datos de Registro</div>
+							<div class="card-body">
+								<h5 class="card-title"></h5>
+								<p class="card-text">
+									<p:panelGrid columns="1" layout="grid" id="panelRol">
+
+										<p:outputLabel value="Nombre:" />
+										<p:inputText id="nombreCl" value="#{rolMB.rol.nombreRol}" />
+
+										<p:outputLabel for="cmbArea" value="Área" />
+										<p:selectOneMenu id="cmbArea" requiredMessage="Área Requerido"
+											value="#{rolMB.idArea}" required="true">
+											<f:selectItem itemLabel="Seleccionar Área" itemValue="" />
+											<f:selectItems value="#{rolMB.listaArea}" var="item"
+												itemLabel="#{item.nombreArea}" itemValue="#{item.idArea}" />
+											<p:ajax event="change" process="cmbArea" />
+										</p:selectOneMenu>
+
+										<p:outputLabel value="Activo:" />
+										<p:inputSwitch value="#{rolMB.rol.activoRol}">
+										</p:inputSwitch>
+
+									</p:panelGrid>
+								</p>
+								<div style="display: flex; justify-content: flex-end;">
+									<p:commandButton
+										value="#{rolMB.rol.idRol == null ? 'Guardar':'Actualizar'}"
+										icon="fa fa-floppy-o"
+										styleClass="#{rolMB.rol.idRol == null ? 'btn-success':'btn-warning'}"
+										process="@this, panelRol"
+										update="@([id$=dtRol], [id$=panelRol],[id$=btnGuardar])"
+										actionListener="#{rolMB.guardar()}" style="width: max-content"
+										id="btnGuardar">
+									</p:commandButton>
+
+									<p:commandButton value="Cancelar" icon="fa fa-close"
+										styleClass="btn-danger" process="@this" update="@form"
+										action="#{rolMB.init()}" style="width: max-content" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+
+					<p:dataTable id="dtRol" var="item" widgetVar="dtRol" reflow="true"
+						value="#{rolMB.listaRol}" rows="10" paginator="true"
+						styleClass="box box-primary">
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtRol" fileName="Roles" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtRol').filter();hideBar()" style="width:150px"
+										placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="dtRol" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista" action="#{rolMB.actualizarLista()}"
+									update="dtRol" />
+							</p:panelGrid>
+						</f:facet>
+
+
+						<p:column filterBy="#{item.idRol}" filterMatchMode="contains"
+							headerText="ID" style="width:100px;">
+							<h:outputText value="#{item.idRol}" />
+						</p:column>
+
+						<p:column filterBy="#{item.nombreRol}" filterMatchMode="contains"
+							headerText="Nombre">
+							<h:outputText value="#{item.nombreRol}" />
+						</p:column>
+
+						<p:column filterBy="#{item.areaIdArea.nombreArea}"
+							filterMatchMode="contains" headerText="Área">
+							<h:outputText value="#{item.areaIdArea.nombreArea}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.activoRol}" filterMatchMode="contains"
+							headerText="Activo">
+							<h:outputText
+								styleClass="#{item.activoRol ? 'label label-success':'label label-default'}"
+								value="#{item.activoRol ? 'ACTIVO':'INACTIVO'}" />
+							<p:inputSwitch value="#{item.activoRol}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" process="dtRol"
+									listener="#{rolMB.switchActiva(item)}" update="dtRol" />
+							</p:inputSwitch>
+						</p:column>
+
+						<p:column filterBy="#{item.creaRol}" sortBy="#{item.creaRol}"
+							filterMatchMode="contains" headerText="Creación">
+							<h:outputText value="#{item.creaRol}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+
+						<p:column headerText="Opciones" width="150" exportable="false">
+							<p:commandButton process="dtRol" icon="fa fa-edit"
+								style="width: min-content" title="editar"
+								action="#{rolMB.pasarDatoseditar(item)}"
+								styleClass="btn-primary" immediate="true"
+								update="@([id$=panelRol],[id$=foto],[id$=btnGuardar])">
+							</p:commandButton>
+
+							<p:commandButton icon="fa fa-eye" process="dtRol"
+								oncomplete="PF('sidebar2').show()" style="width: min-content"
+								action="#{rolMB.pasarDatoseditar(item)}" title="ver"
+								styleClass="btn-success" update="@([id$=panelRolDetalle])">
+							</p:commandButton>
+
+							<p:commandButton update="@([id$=dtRol])" icon="fa fa-trash"
+								style="width: min-content" title="eliminar" process="dtRol"
+								action="#{rolMB.eliminar()}" styleClass="btn-danger">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{rolMB.rol}" />
+								<p:confirm header="Confirmar Eliminación el ROL"
+									message="¿Está usted seguro?" icon="fa fa-anchor" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panelGrid>
+
+			</h:form>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

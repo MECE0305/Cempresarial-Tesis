@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+        Gestión Permisos Agencias
+    </ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Admin App"
+			link="/pages/admin/adminPermisoAgencia.jsf" />
+
+
+		<div class="ui-fluid" id="divPrincipal">
+
+
+			<h:form id="formPrincipal">
+
+				<p:growl id="mensaje" showDetail="true" widgetVar="mensaje" />
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					responsive="true">
+					<p:commandButton value="SI" type="button"
+						styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+				</p:confirmDialog>
+
+
+
+
+
+				<p:panel>
+
+					<p:panelGrid columns="2" layout="grid">
+
+
+						<p:panelGrid columns="1" layout="grid"
+							columnClasses="ui-grid-col-12">
+							<p:panelGrid id="pngTab0" columns="2" layout="grid"
+								columnClasses="ui-grid-col-2,ui-grid-col-10">
+								<p:outputLabel value="Cliente: " style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbCliente" tabindex="1" style="width:100%"
+									value="#{permisoAgenciaController.idCliente}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{permisoAgenciaController.listCliente}"
+										itemLabel="#{item.nombreCliente}"
+										itemValue="#{item.idCliente}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbCliente" update="cmbEmpresa"
+										listener="#{permisoAgenciaController.findByClienteIdCliente}" />
+								</p:selectOneMenu>
+
+
+
+								<p:outputLabel for="cmbEmpresa" value="Empresa: "
+									style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbEmpresa"
+									requiredMessage="La Empresa es requerido"
+									value="#{permisoAgenciaController.idEmpresa}"
+									style="width:100%">
+									<f:selectItem itemLabel="Todos" itemValue="" />
+									<f:selectItems value="#{permisoAgenciaController.listEmpresa}"
+										var="item" itemLabel="#{item.nombreEmpresa}"
+										itemValue="#{item.idEmpresa}" />
+									<p:ajax event="change" process="cmbEmpresa"
+										listener="#{permisoAgenciaController.findByEmpresaIdEmpresa}"
+										update="dtAgencia" />
+								</p:selectOneMenu>
+
+
+							</p:panelGrid>
+
+							<p:dataTable id="dtAgencia" var="item" widgetVar="dtAgencia"
+								reflow="true" value="#{permisoAgenciaController.listAgencia}"
+								selection="#{permisoAgenciaController.listAgenciaSelect}"
+								rowKey="#{item.idAgencia}" rows="10" paginator="true"
+								styleClass="box box-primary">
+								<f:facet name="header">
+
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank">
+
+										<p:panelGrid layout="grid" columns="4" style="float:left"
+											columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+											<h:commandLink title="Exportar Excel" immediate="true"
+												style="width: min-content;">
+												<p:graphicImage value="/resources/images/excel.ico"
+													width="30px" />
+												<p:dataExporter type="xls" target="dtAgencia"
+													fileName="Agencias" />
+											</h:commandLink>
+											<h:outputText value="Buscar en Todos los Campos:   " />
+											<p:inputText id="globalFilter"
+												onkeyup="PF('dtAgencia').filter();hideBar()"
+												style="width:150px" placeholder="Ingrese Parámetro....">
+												<p:ajax event="keyup" />
+											</p:inputText>
+
+											<p:commandButton style="width: min-content;float:rigth"
+												id="toggler" type="button" icon="fa fa-list" />
+											<p:columnToggler datasource="dtAgencia" trigger="toggler" />
+
+										</p:panelGrid>
+										<p:commandButton icon="fa fa-refresh"
+											style="width: min-content;" styleClass="btn-default"
+											title="Actualizar Lista"
+											action="#{permisoAgenciaController.findByEmpresaIdEmpresa()}"
+											update="dtAgencia" />
+									</p:panelGrid>
+								</f:facet>
+
+								<p:column selectionMode="multiple"
+									style="width:5%;text-align:center">
+								</p:column>
+
+								<p:column filterBy="#{item.nombreAgencia}"
+									sortBy="#{item.nombreAgencia}" filterMatchMode="contains"
+									headerText="Nombre Agencia">
+									<h:outputText value="#{item.nombreAgencia}"
+										title="#{item.activoAgencia ? 'ACTIVO':'INACTIVO'}"
+										styleClass="#{item.activoAgencia ? 'label label-success':'label danger'}"
+										style="font-size:12px;width:100%" />
+								</p:column>
+
+								<p:column filterBy="#{item.ceoAgencia}"
+									filterMatchMode="contains" headerText="CEO Agencia">
+									<h:outputText value="#{item.ceoAgencia}"
+										styleClass="label label-info" style="font-size:12px" />
+								</p:column>
+
+								<p:column filterBy="#{item.direccionAgencia}"
+									filterMatchMode="contains" headerText="Dirección">
+									<h:outputText value="#{item.direccionAgencia}" />
+								</p:column>
+
+								<p:column filterBy="#{item.telefonoAgencia}"
+									filterMatchMode="contains" headerText="Teléfono">
+									<h:outputText value="#{item.telefonoAgencia}" />
+								</p:column>
+
+
+
+								<p:column filterBy="#{item.ciudadIdCiudad.nombreCiudad}"
+									filterMatchMode="contains" headerText="Ciudad">
+									<h:outputText value="#{item.ciudadIdCiudad.nombreCiudad}" />
+								</p:column>
+
+
+
+
+							</p:dataTable>
+
+						</p:panelGrid>
+
+
+						<p:panelGrid columns="1" layout="grid"
+							columnClasses="ui-grid-col-12">
+
+
+
+							<p:panelGrid layout="grid" columns="2"
+								columnClasses="ui-grid-col-10, ui-grid-col-2">
+								<p:outputLabel value="" />
+								<p:commandButton icon="fa fa-send" style="width: auto;"
+									styleClass="btn-success" title="Guardar Permiso"
+									update="dtPermisoAgencia" process="@this, dtAgencia,dtPerfil"
+									actionListener="#{permisoAgenciaController.guardarPermisos()}" />
+								<p:outputLabel value="" />
+								<p:commandButton icon="fa fa-ban" style="width: auto;"
+									styleClass="btn-danger" title="Cancelar Todo"
+									action="#{permisoAgenciaController.clear()}"
+									update="formPrincipal" />
+
+
+							</p:panelGrid>
+
+
+
+							<p:dataTable id="dtPerfil" var="item" widgetVar="dtPerfil"
+								reflow="true" value="#{permisoAgenciaController.listPerfil}"
+								selection="#{permisoAgenciaController.listPerfilSelect}"
+								rowKey="#{item.idPerfil}" rows="10" paginator="true"
+								styleClass="box box-primary">
+								<f:facet name="header">
+
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank">
+
+										<p:panelGrid layout="grid" columns="4" style="float:left"
+											columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+											<h:commandLink title="Exportar Excel" immediate="true"
+												style="width: min-content;">
+												<p:graphicImage value="/resources/images/excel.ico"
+													width="30px" />
+												<p:dataExporter type="xls" target="dtPerfil"
+													fileName="Perfiles" />
+											</h:commandLink>
+											<h:outputText value="Buscar en Todos los Campos:   " />
+											<p:inputText onkeyup="PF('dtPerfil').filter();hideBar()"
+												style="width:150px" placeholder="Ingrese Parámetro....">
+												<p:ajax event="keyup" />
+											</p:inputText>
+
+											<p:commandButton style="width: min-content;float:rigth"
+												id="toggler" type="button" icon="fa fa-list" />
+											<p:columnToggler datasource="dtPerfil" trigger="toggler" />
+
+										</p:panelGrid>
+										<p:commandButton icon="fa fa-refresh"
+											style="width: min-content;" styleClass="btn-default"
+											title="Actualizar Lista"
+											action="#{permisoAgenciaController.actualizarListaPerfil()}"
+											update="dtPerfil" />
+									</p:panelGrid>
+								</f:facet>
+								<p:column selectionMode="multiple"
+									style="width:5%;text-align:center">
+								</p:column>
+
+								<p:column filterBy="#{item.nombre}" sortBy="#{item.nombre}"
+									filterMatchMode="contains" headerText="Nombre Perfil">
+									<p:outputLabel value="#{item.nombre}" />
+								</p:column>
+
+								<p:column filterBy="#{item.descripcion}"
+									filterMatchMode="contains" headerText="Descripción">
+									<p:outputLabel value="#{item.descripcion}"
+										style="font-size:12px" />
+								</p:column>
+
+								<p:column filterBy="#{item.activo ? 'ACTIVO':'INACTIVO'}"
+									filterMatchMode="contains" headerText="Activo">
+									<p:outputLabel value="#{item.activo ? 'ACTIVO':'INACTIVO'}"
+										title="#{item.activo ? 'ACTIVO':'INACTIVO'}"
+										styleClass="#{item.activo ? 'label label-success':'label danger'}" />
+								</p:column>
+							</p:dataTable>
+
+						</p:panelGrid>
+					</p:panelGrid>
+
+
+					<p:dataTable id="dtPermisoAgencia" var="item"
+						widgetVar="dtPermisoAgencia" reflow="true"
+						value="#{permisoAgenciaController.listPermisoAgencia}" rows="10"
+						paginator="true" styleClass="box box-primary">
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtPermisoAgencia"
+											fileName="Permisos Agencias" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtPermisoAgencia').filter();hideBar()"
+										style="width:150px" placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="dtPermisoAgencia"
+										trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista"
+									action="#{permisoAgenciaController.actualizarListaPermisoAgencia()}"
+									update="dtPermisoAgencia" />
+							</p:panelGrid>
+						</f:facet>
+
+
+
+						<p:column filterBy="#{item.activoPermisoAgencia}"
+							style="width:20%;text-align:center"
+							sortBy="#{item.activoPermisoAgencia}" filterMatchMode="contains"
+							headerText="Estado">
+							<h:outputText
+								value="#{item.activoPermisoAgencia ? 'ACTIVO':'INACTIVO'}"
+								title="#{item.activoPermisoAgencia ? 'ACTIVO':'INACTIVO'}"
+								styleClass="#{item.activoPermisoAgencia ? 'label label-success':'label label-danger'}"
+								style="font-size:12px;width:100%" />
+							<p:inputSwitch value="#{item.activoPermisoAgencia}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" process="dtPermisoAgencia"
+									listener="#{permisoAgenciaController.switchActiva(item)}"
+									update="dtPermisoAgencia" />
+							</p:inputSwitch>
+						</p:column>
+
+
+						<p:column
+							filterBy="#{permisoAgenciaController.nombreEmpresa(item.idAgencia)}"
+							filterMatchMode="contains" headerText="Empresa">
+							<h:outputText
+								value="#{permisoAgenciaController.nombreEmpresa(item.idAgencia)}"
+								style="font-size:12px" />
+						</p:column>
+
+
+
+						<p:column
+							filterBy="#{permisoAgenciaController.nombreAgencia(item.idAgencia)}"
+							filterMatchMode="contains" headerText="Agencia">
+							<h:outputText
+								value="#{permisoAgenciaController.nombreAgencia(item.idAgencia)}"
+								style="font-size:12px" />
+						</p:column>
+
+						<p:column filterBy="#{item.perfil.nombre}"
+							filterMatchMode="contains" headerText="perfil">
+							<h:outputText value="#{item.perfil.nombre}" />
+						</p:column>
+
+
+						<p:column headerText="Opciones" style="width:5%;text-align:center">
+							<p:commandButton
+								action="#{permisoAgenciaController.eliminarPermiso(item)}"
+								update="@([id$=mensaje],[id$=dtPermisoAgencia])"
+								icon="fa fa-trash" process="dtPermisoAgencia" title="Eliminar"
+								styleClass="btn-danger">
+								<p:confirm header="Confirmación"
+									message="Está seguro de eliminar el PERMISO?"
+									icon="fa fa-exclamation-triangle" />
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+
+
+				</p:panel>
+
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Sucursales" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<div class="ui-fluid">
+
+			<h:form id="form" enctype="multipart/form-data">
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panel styleClass="box box-primary">
+					<p:panelGrid columns="4" layout="grid" id="panelAgencia"
+						columnClasses="ui-grid-col-3, ui-grid-col-3, ui-grid-col-3, ui-grid-col-3"
+						styleClass="customPanelGrid ui-noborder">
+
+
+						<p:outputLabel for="cmbEmpresa" value="Empresa: " />
+						<p:selectOneMenu id="cmbEmpresa"
+							requiredMessage="La Empresa es requerido"
+							value="#{sucursalMB.idEmpresa}" required="true">
+							<f:selectItem itemLabel="Seleccionar Empresa" itemValue="" />
+							<f:selectItems value="#{sucursalMB.listaEmpresas}" var="item"
+								itemLabel="#{item.nombreEmpresa}" itemValue="#{item.idEmpresa}" />
+							<p:ajax event="change" process="cmbEmpresa" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Nombre:" />
+						<p:inputText id="nombre"
+							value="#{sucursalMB.agencia.nombreAgencia}" />
+
+						<p:outputLabel for="cmbCiudad" value="Ciudad: " />
+						<p:selectOneMenu id="cmbCiudad"
+							requiredMessage="Ciudad es requerido"
+							value="#{sucursalMB.idCiudad}" required="true">
+							<f:selectItem itemLabel="Seleccionar Ciudad" itemValue="" />
+							<f:selectItems value="#{sucursalMB.listaCiudad}" var="item"
+								itemLabel="#{item.nombreCiudad}" itemValue="#{item.idCiudad}" />
+							<p:ajax event="change" process="cmbCiudad"/>
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Dirección:" />
+						<p:inputText id="direccion"
+							value="#{sucursalMB.agencia.direccionAgencia}" />
+
+						<p:outputLabel for="cmbZona" value="Zona Estructural: " />
+						<p:selectOneMenu id="cmbZona"
+							requiredMessage="Zona es requerido"
+							value="#{sucursalMB.idZonaEstructural}" required="true">
+							<f:selectItem itemLabel="Seleccionar Zona" itemValue="" />
+							<f:selectItems value="#{sucursalMB.listaZonaEstructural}"
+								var="item" itemLabel="#{item.nombreZonaEstructural}"
+								itemValue="#{item.idZonaEstructural}" />
+							<p:ajax event="change" process="cmbZona" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Teléfono:" />
+						<p:inputText id="telefono"
+							value="#{sucursalMB.agencia.telefonoAgencia}" />
+
+						<p:outputLabel value="CEO:" />
+						<p:inputText id="ceo" value="#{sucursalMB.agencia.ceoAgencia}" />
+
+						<p:outputLabel value="Activo:" />
+						<p:inputSwitch value="#{sucursalMB.agencia.activoAgencia}">
+						</p:inputSwitch>
+
+					</p:panelGrid>
+
+					<f:facet name="footer">
+						<div style="display: flex; justify-content: flex-end;">
+							<p:commandButton
+								value="#{sucursalMB.agencia.idAgencia == null ? 'Guardar':'Actualizar'}"
+								icon="fa fa-floppy-o"
+								styleClass="#{sucursalMB.agencia.idAgencia == null ? 'btn-success':'btn-warning'}"
+								process="@this, panelAgencia"
+								update="@([id$=dtAgencia], [id$=panelAgencia],[id$=btnGuardar])"
+								actionListener="#{sucursalMB.guardar()}"
+								style="width: max-content" id="btnGuardar">
+							</p:commandButton>
+
+							<p:commandButton value="Cancelar" icon="fa fa-close"
+								styleClass="btn-danger" process="@this" update="@form"
+								action="#{sucursalMB.init()}" style="width: max-content" />
+						</div>
+					</f:facet>
+				</p:panel>
+
+
+				<p:dataTable id="dtAgencia" var="item" widgetVar="dtAgencia"
+					reflow="true" value="#{sucursalMB.listaAgencias}" rows="10"
+					paginator="true" styleClass="box box-primary">
+
+					<f:facet name="header">
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank">
+
+							<p:panelGrid layout="grid" columns="4" style="float:left"
+								columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+								<h:commandLink title="Exportar Excel" immediate="true"
+									style="width: min-content;">
+									<p:graphicImage value="/resources/images/excel.ico"
+										width="30px" />
+									<p:dataExporter type="xls" target="dtAgencia"
+										fileName="Agencias" />
+								</h:commandLink>
+								<h:outputText value="Buscar en Todos los Campos:   " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('dtAgencia').filter();hideBar()"
+									style="width:150px" placeholder="Ingrese Parámetro....">
+									<p:ajax event="keyup" />
+								</p:inputText>
+
+								<p:commandButton style="width: min-content;float:rigth"
+									id="toggler" type="button" icon="fa fa-list" />
+								<p:columnToggler datasource="dtAgencia" trigger="toggler" />
+
+							</p:panelGrid>
+							<p:commandButton icon="fa fa-refresh" style="width: min-content;"
+								styleClass="btn-default" title="Actualizar Lista"
+								action="#{sucursalMB.listarAgencias()}" update="dtAgencia" />
+						</p:panelGrid>
+					</f:facet>
+
+					<p:column filterBy="#{item.nombreAgencia}"
+						sortBy="#{item.nombreAgencia}" filterMatchMode="contains"
+						headerText="Nombre Agencia">
+						<h:outputText value="#{item.nombreAgencia}"
+							styleClass="label label-info" style="font-size:12px" />
+					</p:column>
+
+					<p:column filterBy="#{item.ceoAgencia}" filterMatchMode="contains"
+						headerText="CEO Agencia">
+						<h:outputText value="#{item.ceoAgencia}"
+							styleClass="label label-info" style="font-size:12px" />
+					</p:column>
+
+					<p:column filterBy="#{item.direccionAgencia}"
+						filterMatchMode="contains" headerText="Dirección">
+						<h:outputText value="#{item.direccionAgencia}" />
+					</p:column>
+
+					<p:column filterBy="#{item.telefonoAgencia}"
+						filterMatchMode="contains" headerText="Teléfono">
+						<h:outputText value="#{item.telefonoAgencia}" />
+					</p:column>
+
+					<p:column filterBy="#{item.empresaIdEmpresa.nombreEmpresa}"
+						filterMatchMode="contains" headerText="Empresa">
+						<h:outputText value="#{item.empresaIdEmpresa.nombreEmpresa}" />
+					</p:column>
+
+					<p:column filterBy="#{item.ciudadIdCiudad.nombreCiudad}"
+						filterMatchMode="contains" headerText="Ciudad">
+						<h:outputText value="#{item.ciudadIdCiudad.nombreCiudad}" />
+					</p:column>
+
+
+					<p:column
+						filterBy="#{sucursalMB.obtenerNombreZonaEstructural(item.idZonaEstructural)}"
+						filterMatchMode="contains" headerText="Zona">
+						<h:outputText
+							value="#{sucursalMB.obtenerNombreZonaEstructural(item.idZonaEstructural)}" />
+					</p:column>
+
+					<p:column filterBy="#{item.activoAgencia}"
+						filterMatchMode="contains" headerText="Activo">
+						<h:outputText
+							styleClass="#{item.activoAgencia ? 'label label-success':'label label-default'}"
+							value="#{item.activoAgencia ? 'ACTIVO':'INACTIVO'}" />
+						<p:inputSwitch value="#{item.activoAgencia}" onLabel="ON"
+							label="LABEL" offLabel="OFF" showLabels="true">
+							<p:ajax event="change" process="dtAgencia"
+								listener="#{sucursalMB.switchActiva(item)}" update="dtAgencia" />
+						</p:inputSwitch>
+					</p:column>
+					<p:column filterBy="#{item.creaAgencia}"
+						sortBy="#{item.creaAgencia}" filterMatchMode="contains"
+						headerText="Creación">
+						<h:outputText value="#{Agencia.creaAgencia}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opciones" width="100" exportable="false">
+						<p:commandButton process="dtAgencia" icon="fa fa-edit"
+							style="width: min-content" title="editar"
+							action="#{sucursalMB.pasarDatoseditar(item)}"
+							styleClass="btn-primary"
+							update="@([id$=panelAgencia],[id$=foto],[id$=btnGuardar])">
+						</p:commandButton>
+
+
+
+						<p:commandButton update="@([id$=dtAgencia])" icon="fa fa-trash"
+							style="width: min-content" title="eliminar" process="dtAgencia"
+							action="#{sucursalMB.eliminar()}" styleClass="btn-danger">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{sucursalMB.agencia}" />
+							<p:confirm header="Confirmar Eliminación Agencia"
+								message="¿Está usted seguro?" icon="fa fa-anchor" />
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+
+
+			</h:form>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

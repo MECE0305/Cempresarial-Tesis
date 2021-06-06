@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Área/Departamente para Roles" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+div.ui-panel .ui-panel-content {
+	height: 100%;
+	padding: 10px 10px;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 30px;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.transparente>div {
+	background: transparent;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+	#{areaMB.init()}
+	</h:form>
+
+
+		<div class="ui-fluid">
+
+			<h:form id="form" enctype="multipart/form-data">
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-4,ui-grid-col-8 transparente">
+					<p:panel styleClass="box box-solid box-primary"
+						header="Datos de Área">
+
+						<div class="card text-white">
+							<img style="width: auto; height: auto"
+								src="https://png.pngtree.com/thumb_back/fh260/background/20190223/ourmid/pngtree-fresh-office-background-illustration-design-paintedcartoonfresh-backgroundoffice-backgroundillustration-image_64563.jpg"
+								class="card-img" alt="..." />
+							<div class="card-header text-primary">Datos de Registro</div>
+							<div class="card-body">
+								<h5 class="card-title"></h5>
+								<p class="card-text">
+									<p:panelGrid columns="1" layout="grid" id="panelArea">
+
+										<p:outputLabel value="Nombre:" />
+										<p:inputText value="#{areaMB.area.nombreArea}" />
+										<p:outputLabel value="Descripción:" />
+										<p:inputText value="#{areaMB.area.descripcionArea}" />
+										<p:outputLabel value="Activo:" />
+										<p:inputSwitch value="#{areaMB.area.activoArea}" />
+
+
+									</p:panelGrid>
+								</p>
+								<div style="display: flex; justify-content: flex-end;">
+									<p:commandButton
+										value="#{areaMB.area.idArea == null ? 'Guardar':'Actualizar'}"
+										icon="fa fa-floppy-o"
+										styleClass="#{areaMB.area.idArea == null ? 'btn-success':'btn-warning'}"
+										process="@this, panelArea"
+										update="@([id$=dtArea], [id$=panelArea],[id$=btnGuardar])"
+										actionListener="#{areaMB.guardar()}"
+										style="width: max-content" id="btnGuardar">
+									</p:commandButton>
+
+									<p:commandButton value="Cancelar" icon="fa fa-close"
+										styleClass="btn-danger" process="@this" update="@form"
+										action="#{areaMB.init()}" style="width: max-content" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+
+					<p:dataTable id="dtArea" var="item" widgetVar="dtArea"
+						reflow="true" value="#{areaMB.listaArea}" rows="10"
+						paginator="true" styleClass="box box-primary">
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtArea" fileName="Areas Rol" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtArea').filter();hideBar()" style="width:150px"
+										placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="dtArea" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista" action="#{areaMB.actualizarLista()}"
+									update="dtArea" />
+							</p:panelGrid>
+						</f:facet>
+
+
+						<p:column filterBy="#{item.idArea}"
+							filterMatchMode="contains" headerText="ID" style="width:100px;">
+							<h:outputText value="#{item.idArea}" />
+						</p:column>
+
+						<p:column filterBy="#{item.nombreArea}" sortBy="#{item.nombreArea}"
+							filterMatchMode="contains" headerText="Nombre">
+							<h:outputText value="#{item.nombreArea}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.activoArea}"
+							filterMatchMode="contains" headerText="Activo">
+							<h:outputText
+								styleClass="#{item.activoArea ? 'label label-success':'label label-default'}"
+								value="#{item.activoArea ? 'ACTIVO':'INACTIVO'}" />
+							<p:inputSwitch value="#{item.activoArea}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" process="dtArea"
+									listener="#{areaMB.switchActiva(item)}" update="dtArea" />
+							</p:inputSwitch>
+						</p:column>
+
+						<p:column filterBy="#{item.creaArea}"
+							sortBy="#{item.creaArea}"
+							filterMatchMode="contains" headerText="Creación">
+							<h:outputText value="#{item.creaArea}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+						<p:column filterBy="#{item.actualizaArea}"
+							sortBy="#{item.actualizaArea}"
+							filterMatchMode="contains" headerText="Actualización">
+							<h:outputText value="#{item.actualizaArea}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+
+
+						<p:column headerText="Opciones" width="150" exportable="false">
+							<p:commandButton process="dtArea" icon="fa fa-edit"
+								style="width: min-content" title="editar"
+								action="#{areaMB.pasarDatoseditar(item)}"
+								styleClass="btn-primary"
+								update="@([id$=panelArea],[id$=btnGuardar])">
+							</p:commandButton>
+
+							<p:commandButton update="@([id$=dtArea])" icon="fa fa-trash"
+								style="width: min-content" title="eliminar" process="dtArea"
+								action="#{areaMB.eliminar()}" styleClass="btn-danger">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{areaMB.area}" />
+								<p:confirm header="Confirmar Eliminación"
+									message="¿Está usted seguro al Eliminar el Área?" icon="fa fa-anchor" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+				</p:panelGrid>
+
+
+			</h:form>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

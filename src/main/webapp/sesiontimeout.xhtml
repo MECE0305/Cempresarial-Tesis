@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<p:idleMonitor onidle="PF('sessionTimeOutDialog').show()"
+		timeout="#{sesionController.session.maxInactiveInterval*60000}">
+	</p:idleMonitor>
+	<p:dialog widgetVar="sessionTimeOutDialog" resizable="false"
+		responsive="true" modal="true" styleClass="box-danger box-solid"
+		fixedCenter="true" closable="false" width="400" visible="false">
+		<f:facet name="header">
+			<div style="display: flex; justify-content: space-between;">
+				<a style="color: white" class="fa fa-history"></a>
+				<p:spacer width="20" />
+				<p:outputLabel style="font-size:1.5rem" value="Sesión Caducada ?" />
+
+			</div>
+		</f:facet>
+		<h:outputText
+			value="La sesión ha caducado, por favor, pulse sobre el siguiente botón para volver a acceder a la aplicación" />
+
+		<p:separator />
+
+
+		<p:commandLink action="#{logoutMB.doLogout}" type="button" 
+			style="font-family: Source Sans Pro,Trebuchet MS,Helvetica Neue,Helvetica,Arial,sans-serif;display: block; width: max-content; justify-content: flex-end; 
+		margin-left: auto; border: solid 1px #dd4b39; border-radius: 10px; 
+		background-color: unset !important; color: #dd4b39 !important; position: relative; 
+		padding: 10px 20px; font-weight: 500; text-transform: uppercase; letter-spacing: 0; 
+		will-change: box-shadow, transform; transition: box-shadow .2s cubic-bezier(.4, 0, 1, 1), background-color .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1); 
+		outline: 0; cursor: pointer; text-decoration: none; background: 0 0 !important;" 
+			styleClass="btn-material btn-danger ui-confirmdialog-no " value="Cerrar Sesión...">
+			<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+		</p:commandLink>
+
+
+
+	</p:dialog>
+
+</ui:composition>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="#{layoutMB.template}" xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<ui:param name="renderBreadCrumb" value="false" />
+
+	<ui:define name="header">
+
+
+	</ui:define>
+
+	<ui:define name="title">
+		<h2 class="align-rigth">
+			Indicadores <span class="text-aqua"> <i> <a
+					href="https://github.com/adminfaces/admin-starter" target="_blank"
+					style="text-transform: none; text-decoration: none"> GRAFICOS </a>
+			</i>
+			</span>
+
+
+		</h2>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+
+		<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-3,ui-g-9">
+			<h:form>
+
+				<div class="ui-fluid">
+
+					<p:menu toggleable="true">
+						<p:submenu label="Indicadores">
+							<p:menuitem value="Generales" icon="pi pi-save" ajax="false"
+								actionListener="#{controlGraficos.cambiarTemplates(1)}"
+								update="@([id$=formTemplateGrafico])" />
+							<p:menuitem value="Por Aspecto o Área" icon="pi pi-refresh"
+								ajax="false"
+								actionListener="#{controlGraficos.cambiarTemplates(2)}"
+								update="@([id$=formTemplateGrafico])" />
+						</p:submenu>
+						<p:submenu label="Resultados">
+							<p:menuitem value="Generales por Agencia" ajax="false"
+								icon="pi pi-times"
+								actionListener="#{controlGraficos.cambiarTemplates(3)}"
+								update="@([id$=formTemplateGrafico])" />
+							<p:menuitem value="Generales por Rol" ajax="false"
+								icon="pi pi-refresh"
+								actionListener="#{controlGraficos.cambiarTemplates(4)}"
+								update="@([id$=formTemplateGrafico])" />
+							<p:menuitem value="Generales por Segmentación" ajax="false"
+								actionListener="#{controlGraficos.cambiarTemplates(5)}"
+								update="@([id$=formTemplateGrafico])" icon="pi pi-times" />
+							<p:menuitem value="Generales por Area Rol" ajax="false"
+								actionListener="#{controlGraficos.cambiarTemplates(6)}"
+								update="@([id$=formTemplateGrafico])" icon="pi pi-times" />
+						</p:submenu>
+
+						<p:submenu label="CheckList - Protocolos">
+							<p:menuitem value="Generales" ajax="false"
+								actionListener="#{controlGraficos.cambiarTemplates(7)}"
+								update="@([id$=formTemplateGrafico])" icon="pi pi-times" />
+						</p:submenu>
+
+						<p:submenu label="Comparativos">
+							<p:menuitem value="Empresa Vs Oficina" icon="pi pi-mobile" />
+							<p:menuitem value="Por Áreas o Aspectos" icon="pi pi-mobile" />
+						</p:submenu>
+						<p:submenu label="Tiempo">
+							<p:menuitem value="Servicio" icon="pi pi-mobile" />
+							<p:menuitem value="Ejecución" icon="pi pi-mobile" />
+						</p:submenu>
+						<p:submenu label="Detalle" expanded="true">
+							<p:menuitem value="Agencias" icon="pi pi-mobile" />
+							<p:menuitem value="Roles" icon="pi pi-mobile" />
+							<p:menuitem value="Empleados" icon="pi pi-mobile" />
+							<p:menuitem value="Segmentación" icon="pi pi-mobile" />
+							<p:menuitem value="Evaluaciones" icon="pi pi-mobile" />
+							<p:menuitem value="Usuarios" icon="pi pi-mobile" />
+							<p:menuitem value="Agencias" icon="pi pi-mobile" />
+						</p:submenu>
+					</p:menu>
+
+
+
+				</div>
+			</h:form>
+
+
+			<p:panel style="background:transparent; border:none"
+				id="formTemplateGrafico">
+				<ui:include src="#{controlGraficos.grafico}" />
+			</p:panel>
+
+
+
+
+		</p:panelGrid>
+	</ui:define>
+
+
+</ui:composition>

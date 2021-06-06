@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+	<style>
+.transparente>div {
+	background: transparent !important
+}
+</style>
+
+	<ui:define name="title"> 
+        Tipo de Cuenta
+	</ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Tipo Cuenta"
+			link="/pages/configuracion/tipoCuenta.jsf" />
+		<h:form>#{tipoCuentaController.clear()}</h:form>
+
+		<h:form id="formPrincipal">
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+				styleClass="box-danger box-solid" responsive="true">
+				<div style="display: flex; justify-content: flex-end;">
+					<p:commandButton value="SI" type="button"
+						styleClass="btn-material btn-primary ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="NO" type="button"
+						styleClass="btn-material btn-danger ui-confirmdialog-no"
+						icon="fa fa-close" />
+				</div>
+			</p:confirmDialog>
+
+
+			<div style="display: flex; justify-content: flex-end;">
+				<div>
+					<p:commandButton icon="fa fa-trash"
+						process="@this, pnlgDatos, pnlgDatosPaquete"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Eliminar"
+						styleClass="btn-danger" 
+						actionListener="#{tipoCuentaController.eliminar()}">
+						<p:confirm header="TIPO CUENTA"
+							message="Está SEGURO de ELIMINAR el TIPO DE CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-edit"
+						process="@this, pnlgDatos, pnlgDatosPaquete"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Editar"
+						styleClass="btn-warning" 
+						actionListener="#{tipoCuentaController.actualizar()}">
+						<p:confirm header="TIPO CUENTA"
+							message="Desea Actualizar el TIPO DE CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-send" 
+						process="@this, pnlgDatos, pnlgDatosPaquete"
+						update="@([id$=pnlgDatos],[id$=tblDatos],[id$=pnlgDatosPaquete])"
+						value="Guardar" styleClass="btn-success"
+						actionListener="#{tipoCuentaController.guardar()}">
+						<p:confirm header="TIPO CUENTA"
+							message="Desea Guardar el TIPO DE CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-plus" 
+						update="@([id$=pnlgDatos],[id$=tblDatos],[id$=pnlgDatosPaquete])"
+						value="Nuevo" styleClass="btn-info"
+						actionListener="#{tipoCuentaController.clear()}">
+					</p:commandButton>
+				</div>
+			</div>
+
+			<p:separator style="background-color: #33AFDE;" />
+
+
+
+			<div id="divPrincipal"
+				style="display: flex; justify-content: space-between;">
+
+
+				<div>
+					<span style="border-radius: 50%;" class="info-box-icon bg-aqua"><i
+						class="fa fa-user"></i></span>
+				</div>
+
+
+				<p:panel style="width:48%;background:transparent;border:none;">
+					<p:panelGrid columns="1" layout="grid" id="pnlgDatos"
+						styleClass="box box-info"
+						style="background:transparent;padding: 3px;">
+
+						<p:outputLabel value="Nombre Cuenta (*)" />
+						<p:inputText placeholder="Nombre de Cuenta"
+							style="width: inherit;"
+							value="#{tipoCuentaController.tipoCuenta.nombreTipo}" />
+					</p:panelGrid>
+				</p:panel>
+
+				<div>
+					<span style="border-radius: 50%;" class="info-box-icon bg-aqua"><i
+						class="fa fa-archive"></i></span>
+				</div>
+
+				<p:panel style="width:48%;background:transparent;border:none">
+					<p:panelGrid columns="2" layout="grid" id="pnlgDatosPaquete"
+						styleClass="box box-info transparente">
+						<p:outputLabel value="Paquete Seleccionado (*)" />
+						<ul>
+							<li>#Incidentes -
+								#{tipoCuentaController.paquete.numeroIncidentes}</li>
+							<li>#OTs -
+								#{tipoCuentaController.paquete.numeroOrdenesTrabajo}</li>
+							<li>#Técnicos -
+								#{tipoCuentaController.paquete.numeroTecnicos}</li>
+							<li>#Usuarios -
+								#{tipoCuentaController.paquete.numeroUsuarios}</li>
+						</ul>
+
+
+					</p:panelGrid>
+
+				</p:panel>
+			</div>
+
+			<p:outputLabel styleClass="callout callout-info"
+				value="Seleccione el paquete de su
+							preferencia para la CUENTA en la parte inferior" />
+
+			<p:dataGrid var="item" value="#{tipoCuentaController.listPaquete}"
+				styleClass="box box-solid box-success" columns="4" layout="grid"
+				id="dgPaquetes" rows="10">
+				<p:panel header="PAQUETE -> #{item.idPaquete} Activo(SI)"
+					style="text-align:left">
+
+
+					<ul>
+						<li>#Incidentes - #{item.numeroIncidentes}</li>
+						<li>#OTs - #{item.numeroOrdenesTrabajo}</li>
+						<li>#Técnicos - #{item.numeroTecnicos}</li>
+						<li>#Usuarios - #{item.numeroUsuarios}</li>
+					</ul>
+
+					<f:facet name="footer">
+						<div style="justify-content: flex-end; display: flex;">
+							<p:commandButton icon="fa fa-check" iconPos="rigth"
+								value="Seleccionar" styleClass="btn-warning"
+								update="@([id$=pnlgDatosPaquete])">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{tipoCuentaController.paquete}"></f:setPropertyActionListener>
+							</p:commandButton>
+						</div>
+					</f:facet>
+
+
+
+				</p:panel>
+
+			</p:dataGrid>
+
+
+			<p:dataTable var="item" reflow="true"
+				styleClass="box box-solid box-primary"
+				value="#{tipoCuentaController.listTipoCuenta}"
+				filteredValue="#{tipoCuentaController.listTipoCuentaFilter}"
+				widgetVar="tblDatos" id="tblDatos"
+				emptyMessage="No Account Type found with given criteria">
+
+				<f:facet name="header">
+					<p:outputPanel style="justify-content: flex-end; display: flex;">
+						<h:commandLink title="Exportar Excel">
+							<p:graphicImage value="/resources/images/excel.ico" width="24" />
+							<p:dataExporter type="xls" target="tblDatos"
+								fileName="Tipo Cuentas" />
+						</h:commandLink>
+						<p:spacer width="40" />
+						<h:outputText value="Buscar en Todos los Campos:   " />
+						<p:spacer width="20" />
+						<p:inputText id="globalFilter" onkeyup="PF('tblDatos').filter()"
+							style="width:150px" placeholder="Ingrese Parámetro...." />
+					</p:outputPanel>
+				</f:facet>
+
+				<p:column filterBy="#{item.idTipo}" headerText="Id"
+					exportable="false" filterMatchMode="contains">
+					<h:outputText value="#{item.idTipo}" />
+					<p:spacer width="50" />
+					<p:commandLink title="Seleccionar"
+						update="@([id$=pnlgDatos],[id$=pnlgDatosPaquete])"
+						styleClass="fa fa-search" process="tblDatos">
+						<f:setPropertyActionListener value="#{item}"
+							target="#{tipoCuentaController.tipoCuenta}" />
+						<f:setPropertyActionListener value="#{item.paquete}"
+							target="#{tipoCuentaController.paquete}"></f:setPropertyActionListener>
+
+					</p:commandLink>
+				</p:column>
+
+				<p:column filterBy="#{item.nombreTipo}" headerText="Tipo Cuenta"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.nombreTipo}" />
+				</p:column>
+
+				<p:column filterBy="#{item.paquete.numeroIncidentes}"
+					headerText="# Incidentes" filterMatchMode="contains">
+					<h:outputText value="#{item.paquete.numeroIncidentes}" />
+				</p:column>
+
+				<p:column filterBy="#{item.paquete.numeroOrdenesTrabajo}"
+					headerText="# OTs" filterMatchMode="contains">
+					<h:outputText value="#{item.paquete.numeroOrdenesTrabajo}" />
+				</p:column>
+
+				<p:column filterBy="#{item.paquete.numeroTecnicos}"
+					headerText="# Técnicos" filterMatchMode="contains">
+					<h:outputText value="#{item.paquete.numeroTecnicos}" />
+				</p:column>
+
+				<p:column filterBy="#{item.paquete.numeroUsuarios}"
+					headerText="# Usuarios" filterMatchMode="contains">
+					<h:outputText value="#{item.paquete.numeroUsuarios}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

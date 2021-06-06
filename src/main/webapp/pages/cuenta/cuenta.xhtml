@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+
+	</ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Cuenta" link="/pages/configuracion/cuenta.jsf" />
+		<h:form>#{cuentaController.init()}</h:form>
+
+		<h:form id="formPrincipal">
+			<div class="ui-fluid" id="divPrincipal">
+
+
+				<style>
+.transparente>div {
+	background: transparent !important
+}
+</style>
+
+
+				<div id="divPrincipal" class="ui-fluid" style="display: flex;">
+
+					<div class="info-box" style="background: transparent;">
+						<span class="info-box-icon  bg-green" style="border-radius: 50%"><i
+							class="fa fa-bookmark-o"></i></span>
+
+						<div class="info-box-content">
+
+
+
+							<div class="callout callout-info"
+								style="margin-bottom: 0 !important;">
+								<h4>
+									<i class="fa fa-info"></i> CUENTA ACTUAL:
+								</h4>
+								<h5>A continuación, detallamos las características
+									principales de la CUENTA a la que usted está ligado.</h5>
+							</div>
+							<br />
+							<h2 class="page-header">
+								<i class="fa fa-globe"></i> TIPO DE PLAN,
+								#{cuentaController.usuario.cuenta.tipoCuenta.nombreTipo}. <small
+									class="pull-right">Date:
+									#{cuentaController.fechaActual}</small>
+							</h2>
+
+
+							<p:separator />
+							<p:outputLabel value="Datos de Empresa" />
+							<p:separator />
+							<p:panelGrid columns="4" layout="grid"
+								columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+								styleClass="transparente">
+
+								<p:outputLabel value="Empresa" />
+								<p:inputText placeholder="Cuenta Empresa" readonly="true"
+									value="#{cuentaController.usuario.cuenta.nombreCuenta}" />
+								<p:outputLabel value="CI." />
+								<p:inputText placeholder="Cédula CLiente" readonly="true"
+									value="#{cuentaController.usuario.cuenta.rucCuenta}" />
+								<p:outputLabel value="Email" />
+								<p:inputText placeholder="Email" readonly="true"
+									value="#{cuentaController.usuario.cuenta.emailCuenta}" />
+								<p:outputLabel value="Teléfono" />
+								<p:inputText placeholder="Teléfono" readonly="true"
+									value="#{cuentaController.usuario.cuenta.telefonoCuenta}" />
+
+
+
+
+							</p:panelGrid>
+							<p:separator />
+							<p:outputLabel
+								value="Datos de Paquete (#{cuentaController.usuario.cuenta.tipoCuenta.paquete.idPaquete})" />
+							<p:separator />
+							<p:panelGrid columns="4" layout="grid"
+								columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+								styleClass="transparente">
+								<p:outputLabel value="Número de Órdenes de Trabajo/Mes" />
+								<p:inputText placeholder="Número de Órdenes de Trabajo/Mes"
+									readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroOrdenesTrabajo}" />
+
+								<p:outputLabel value="Número Incidentes/Mes" />
+								<p:inputText placeholder="Número Incidentes/Mes" readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroIncidentes}" />
+
+								<p:outputLabel value="Número cuentas de Usuario" />
+								<p:inputText placeholder="Número cuentas de Usuario"
+									readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroUsuarios}" />
+
+								<p:outputLabel value="Número de Técnicos" />
+								<p:inputText placeholder="Número de Técnicos" readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroTecnicos}" />
+
+								<p:outputLabel value="Número de Permisos" />
+								<p:inputText placeholder="Número de Usuario" readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroPermisos}" />
+
+								<p:outputLabel value="Número de Perfiles" />
+								<p:inputText placeholder="Número de Perfiles" readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroPerfiles}" />
+
+								<p:outputLabel value="Número de Perfil-Usuario" />
+								<p:inputText placeholder="Número de Perfil-Usuario"
+									readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroPerfilUsuario}" />
+
+								<p:outputLabel value="Número de Menús" />
+								<p:inputText placeholder="Número de Menús" readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroMenus}" />
+
+								<p:outputLabel value="Número de Módulos" />
+								<p:inputText placeholder="Número de Módulos" readonly="true"
+									value="#{cuentaController.usuario.cuenta.tipoCuenta.paquete.numeroAplicacion}" />
+
+							</p:panelGrid>
+
+
+						</div>
+						<!-- /.info-box-content -->
+					</div>
+
+
+
+				</div>
+
+			</div>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+        Gestión Módulos
+    </ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Admin App"
+			link="/pages/admin/adminAplicacion.jsf" />
+
+
+		<div class="ui-fluid" id="divPrincipal">
+
+
+			<h:form id="formPrincipal">
+
+				<p:growl id="mensaje" showDetail="true" widgetVar="mensaje" />
+				
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					responsive="true">
+					<p:commandButton value="SI" type="button"
+						styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+				</p:confirmDialog>
+				<p:dialog id="dlgGuardar" modal="true" widgetVar="pnldGuardar"
+					position="center" header="Registrar Aplicación" draggable="false"
+					closable="false" resizable="false" showEffect="fade"
+					hideEffect="fade" responsive="true">
+					<p:messages id="messages" showDetail="true" closable="false" />
+					<p:panelGrid columns="2" layout="grid" id="opcionesGuardar"
+						style="border:none">
+						<p:commandButton value="Cancelar"
+							oncomplete="PF('pnldGuardar').hide()" icon="fa fa-ban"
+							style="width:80%;margin-left:20%">
+						</p:commandButton>
+						<p:commandButton process="@this,datosApp"
+							disabled="#{!aplicacionController.renderGuardar}" value="Guardar"
+							actionListener="#{aplicacionController.crearAplicacion()}"
+							oncomplete="PF('pnldGuardar').hide()" update="formPrincipal"
+							icon="fa fa-user-plus" style="width:80%;margin-left:20%">
+						</p:commandButton>
+					</p:panelGrid>
+				</p:dialog>
+
+
+
+
+				<p:panel>
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-grid-col-11,ui-grid-col-1" style="border:none">
+						<h2 class="titulosH1">Nuevo Módulo</h2>
+
+						<p:menuButton icon="fa fa-gears" title="Opciones de Acción"
+							styleClass="btn-primary">
+
+							<p:menuitem process="@this,datosApp" styleClass="btn-info"
+								update="@([id$=opcionesGuardar],[id$=messages])"
+								oncomplete="PF('pnldGuardar').show()" value="Guardar"
+								actionListener="#{aplicacionController.verificarAtesGuardar()}"
+								icon="fa fa-paper-plane-o" />
+							<p:menuitem process="@this,datosApp" styleClass="btn-warning"
+								update="@([id$=mensaje],[id$=tblDatos])" value="Actualizar"
+								actionListener="#{aplicacionController.actualizarAplicacion()}"
+								icon="fa fa-refresh" />
+							<p:menuitem id="btnCancel" process="@this, btnCancel"
+								styleClass="btn-danger"
+								actionListener="#{aplicacionController.clear()}"
+								value="Cancelar" update="formPrincipal" icon="fa fa-ban" />
+
+						</p:menuButton>
+
+					</p:panelGrid>
+					<p:separator />
+					<p:panelGrid columns="3"
+						columnClasses="ui-grid-col-4, ui-grid-col-4, ui-grid-col-4"
+						layout="grid" style="border:none" id="datosApp">
+
+						<p:inputText placeholder="Nombre"
+							value="#{aplicacionController.aplicacion.nombre}">
+						</p:inputText>
+						<p:inputText placeholder="Descripción"
+							value="#{aplicacionController.aplicacion.descripcion}">
+						</p:inputText>
+
+						<p:inputText placeholder="Url"
+							value="#{aplicacionController.aplicacion.url}">
+						</p:inputText>
+
+
+						<p:panelGrid columns="2" layout="grid" style="border: none">
+							<p:outputLabel value="Activo?:" />
+							<p:selectOneRadio
+								value="#{aplicacionController.aplicacion.activo}">
+								<f:selectItem itemLabel="SI" itemValue="SI" />
+								<f:selectItem itemLabel="NO" itemValue="NO" />
+							</p:selectOneRadio>
+						</p:panelGrid>
+					</p:panelGrid>
+					<p:spacer height="10" />
+
+					<h2 class="titulosH1">Módulos del Sistema</h2>
+					<p:separator />
+					<p:dataTable var="item"
+						value="#{aplicacionController.listAplicacion}"
+						widgetVar="tblDatos" id="tblDatos"
+						emptyMessage="No exiten Registros"
+						filteredValue="#{aplicacionController.listAplicacionSelect}"
+						reflow="true" rows="10" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15">
+
+						<p:column filterBy="#{item.nombre}" headerText="Nombre"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.nombre}" />
+						</p:column>
+
+						<p:column filterBy="#{item.descripcion}" headerText="Descripción"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.descripcion}" />
+						</p:column>
+
+						<p:column filterBy="#{item.url}" headerText="URL"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.url}" />
+						</p:column>
+
+						<p:column filterBy="#{item.activo}" headerText="Activo ?"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.activo}" />
+						</p:column>
+
+						<p:column headerText="Opciones">
+							<p:panelGrid columns="3" layout="grid" style="border:none">
+
+								<p:commandButton
+									action="#{aplicacionController.eliminarAplicacion(item)}"
+									update="@([id$=mensaje],[id$=tblDatos])" icon="fa fa-trash"
+									process="tblDatos" title="Eliminar" styleClass="btn-danger">
+									<p:confirm header="Confirmación"
+										message="Está seguro de eliminar la APLICACIÓN?"
+										icon="fa fa-exclamation-triangle" />
+								</p:commandButton>
+								<p:commandButton update="@([id$=datosApp])"
+									title="Actualizar Aplicación" icon="fa fa-edit"
+									process="tblDatos" styleClass="btn-warning">
+									<f:setPropertyActionListener value="#{item}"
+										target="#{aplicacionController.aplicacion}" />
+								</p:commandButton>
+
+								<p:commandButton update="@([id$=datosApp],[id$=tblDatos])"
+									action="#{aplicacionController.activaDesactivaAplicacion(item)}"
+									title="Activa/Desactiva"
+									icon="#{item.activo.equals('NO') ? 'fa fa-check-square-o' : 'fa fa-check-square'} "
+									process="tblDatos" styleClass="btn-success">
+								</p:commandButton>
+							</p:panelGrid>
+						</p:column>
+
+					</p:dataTable>
+
+
+				</p:panel>
+
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

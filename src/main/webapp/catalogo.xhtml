@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Catálogo Preguntas" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+div.ui-panel .ui-panel-content {
+	height: 100%;
+	padding: 10px 10px;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 30px;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.transparente>div {
+	background: transparent;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<div class="ui-fluid">
+			<h:form id="form" enctype="multipart/form-data">
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-info box">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panelGrid columns="4" layout="grid">
+
+					<p:dataTable id="dtCategoria" var="item"
+						value="#{plantillaMB.listCategorias}" rowKey="#{item.idCategoria}"
+						rows="10" paginator="true" reflow="true" paginatorPosition="top"
+						selectionMode="single" styleClass="box box-primary">
+
+						<f:facet name="header">Lista Categorías</f:facet>
+
+						<p:ajax event="rowSelect" update="@([id$=pnlDatos])"
+							listener="#{plantillaMB.onRowSelectCategoria}" />
+						<p:ajax event="rowUnselect" update="@([id$=pnlDatos])"
+							listener="#{plantillaMB.onRowUnselectCategoria}" />
+
+						<p:column headerText="Categoria" sortBy="#{item.nombreCategoria}"
+							filterBy="#{item.nombreCategoria}">
+							<h:outputText value="#{item.nombreCategoria}" />
+						</p:column>
+
+
+						<f:facet name="paginatorTopLeft">
+							<p:commandButton style="width:auto"
+								styleClass="label label-success btn-success"
+								action="#{plantillaMB.actualizarListaCategoria()}"
+								process="dtCategoria" update="dtCategoria" icon="pi pi-refresh" />
+						</f:facet>
+					</p:dataTable>
+
+				
+
+
+					<p:dataTable id="dtPregunta" var="item"
+						value="#{plantillaMB.listaPregunta}" rowKey="#{item.idPregunta}"
+						rows="10" paginator="true" reflow="true" paginatorPosition="top"
+						selectionMode="single" styleClass="box box-warning">
+						<f:facet name="header">Lista Preguntas</f:facet>
+
+						<p:ajax event="rowSelect" update="@([id$=pnlDatos])"
+							listener="#{plantillaMB.onRowSelectPregunta}" />
+						<p:ajax event="rowUnselect" update="@([id$=pnlDatos])"
+							listener="#{plantillaMB.onRowUnselectPregunta}" />
+						<p:column headerText="Pregunta" sortBy="#{item.nombrePregunta}"
+							filterBy="#{item.nombrePregunta}">
+							<h:outputText value="#{item.nombrePregunta}" />
+						</p:column>
+
+						<f:facet name="paginatorTopLeft">
+							<p:commandButton style="width:auto"
+								styleClass="label label-success btn-success"
+								action="#{plantillaMB.actualizarListaPregunta()}"
+								process="dtPregunta" update="dtPregunta" icon="pi pi-refresh" />
+						</f:facet>
+					</p:dataTable>
+
+					<p:dataTable id="dtPeso" var="item"
+						value="#{plantillaMB.listaPeso}" rowKey="#{item.idPeso}" rows="10"
+						paginator="true" reflow="true" paginatorPosition="top"
+						selectionMode="single" styleClass="box box-danger">
+						<f:facet name="header">Lista Pesos</f:facet>
+
+						<p:ajax event="rowSelect" update="@([id$=pnlDatos])"
+							listener="#{plantillaMB.onRowSelectPeso}" />
+						<p:ajax event="rowUnselect" update="@([id$=pnlDatos])"
+							listener="#{plantillaMB.onRowUnselectPeso}" />
+						<p:column headerText="Peso" sortBy="#{item.peso}"
+							filterBy="#{item.peso}">
+							<h:outputText value="#{item.peso}" />
+						</p:column>
+						<p:column headerText="%" sortBy="#{item.porcentaje}"
+							filterBy="#{item.porcentaje}">
+							<h:outputText value="#{item.porcentaje}" />
+						</p:column>
+						<p:column headerText="Valor" sortBy="#{item.valor}"
+							filterBy="#{item.valor}">
+							<h:outputText value="#{item.valor}" />
+						</p:column>
+
+						<f:facet name="paginatorTopLeft">
+							<p:commandButton style="width:auto;color:white"
+								styleClass="label label-success btn-success"
+								action="#{plantillaMB.actualizarListaPeso()}" process="dtPeso"
+								update="dtPeso" icon="pi pi-refresh" />
+						</f:facet>
+					</p:dataTable>
+
+					<p:panel id="pnlDatos">
+
+						<div style="display: flex; justify-content: space-between;">
+							<p:outputLabel value="Datos a Guardar" />
+							<div>
+								<p:commandButton style="width: inherit;" title="Cancelar"
+									styleClass="btn btn-danger" action="#{plantillaMB.init()}"
+									process="@this,pnlDatos" update="form" icon="pi pi-ban" />
+								<p:commandButton style="width: inherit;"
+									styleClass="btn btn-success" title="Guardar"
+									action="#{plantillaMB.guardar()}" process="@this,pnlDatos"
+									update="form" icon="fa fa-send" />
+							</div>
+						</div>
+
+						<p:separator />
+
+						<p:outputLabel value="Orden para Pregunta: " />
+						<p:inputNumber
+							value="#{plantillaMB.catalogoPregunta.ordenPregunta}" />
+						<hr />
+
+						<p:panel header="CATEGORIA" styleClass="box box-solid box-primary">
+							<p:panelGrid columns="2" layout="grid">
+								<p:outputLabel value="Nombre:" />
+								<p:outputLabel value="Fecha Creación:" />
+
+								<h:outputText value="#{plantillaMB.categoria.nombreCategoria}" />
+								<h:outputText value="#{plantillaMB.categoria.creaCategoria}">
+									<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+								</h:outputText>
+
+								<p:outputLabel value="Status:" />
+								<h:outputText
+									styleClass="#{plantillaMB.categoria.activoCategoria ? 'label label-success':'label label-default'}"
+									value="#{plantillaMB.categoria.activoCategoria ? 'ACTIVO':'INACTIVO'}" />
+								<p:outputLabel value="" />
+								<p:inputSwitch value="#{plantillaMB.categoria.activoCategoria}"
+									onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+								</p:inputSwitch>
+							</p:panelGrid>
+						</p:panel>
+
+						<p:panel header="PREGUNTA" styleClass="box box-solid box-warning">
+							<p:panelGrid columns="2" layout="grid">
+								<p:outputLabel value="Nombre:" />
+								<p:outputLabel value="Fecha Creación:" />
+
+								<h:outputText value="#{plantillaMB.pregunta.nombrePregunta}" />
+								<h:outputText value="#{plantillaMB.pregunta.creaPregunta}">
+									<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+								</h:outputText>
+
+								<p:outputLabel value="Status:" />
+								<h:outputText
+									styleClass="#{plantillaMB.pregunta.activoPregunta ? 'label label-success':'label label-default'}"
+									value="#{plantillaMB.pregunta.activoPregunta ? 'ACTIVO':'INACTIVO'}" />
+								<p:outputLabel value="" />
+								<p:inputSwitch value="#{plantillaMB.pregunta.activoPregunta}"
+									onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+								</p:inputSwitch>
+							</p:panelGrid>
+						</p:panel>
+
+						<p:panel header="PESOS" styleClass="box box-solid box-danger">
+							<p:panelGrid columns="6" layout="grid">
+								<p:outputLabel value="Peso:" />
+								<h:outputText value="#{plantillaMB.peso.peso}" />
+								<p:outputLabel value="%:" />
+								<h:outputText value="#{plantillaMB.peso.porcentaje}" />
+								<p:outputLabel value="Valor:" />
+								<h:outputText value="#{plantillaMB.peso.valor}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid">
+								<p:outputLabel value="Fecha Creación:" />
+								<h:outputText value="#{plantillaMB.peso.creaPeso}">
+									<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+								</h:outputText>
+								<p:outputLabel value="Status:" />
+								<h:outputText
+									styleClass="#{plantillaMB.peso.activoPeso ? 'label label-success':'label label-default'}"
+									value="#{plantillaMB.peso.activoPeso ? 'ACTIVO':'INACTIVO'}" />
+								<p:outputLabel value="" />
+								<p:inputSwitch value="#{plantillaMB.peso.activoPeso}"
+									onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+								</p:inputSwitch>
+							</p:panelGrid>
+						</p:panel>
+					</p:panel>
+				</p:panelGrid>
+
+				<p:dataTable id="dtCatalogoPregunta" var="item"
+					style="font-size:1.2rem" widgetVar="dtCatalogoPregunta"
+					reflow="true" value="#{plantillaMB.listaCatalogoPregunta}"
+					rows="10" paginator="true" styleClass="box box-primary"
+					editable="true" editMode="cell">
+
+					<p:ajax event="cellEdit" listener="#{plantillaMB.onCellEdit}" />
+
+					<f:facet name="header">
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank">
+
+							<p:panelGrid layout="grid" columns="4" style="float:left"
+								columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+								<h:commandLink title="Exportar Excel" immediate="true"
+									style="width: min-content;">
+									<p:graphicImage value="/resources/images/excel.ico"
+										width="30px" />
+									<p:dataExporter type="xls" target="dtCatalogoPregunta"
+										fileName="Catálogo Pregunta" />
+								</h:commandLink>
+								<h:outputText value="Buscar en Todos los Campos:   " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('dtCatalogoPregunta').filter();hideBar()"
+									style="width:150px" placeholder="Ingrese Parámetro....">
+									<p:ajax event="keyup" />
+								</p:inputText>
+
+								<p:commandButton style="width: min-content;float:rigth"
+									id="toggler" type="button" icon="fa fa-list" />
+								<p:columnToggler datasource="dtCatalogoPregunta"
+									trigger="toggler" />
+
+							</p:panelGrid>
+							<p:commandButton icon="fa fa-refresh" style="width: min-content;"
+								styleClass="btn-default" title="Actualizar Lista"
+								action="#{plantillaMB.actualizarListaCatalogoPregunta()}"
+								update="dtCatalogoPregunta" />
+						</p:panelGrid>
+					</f:facet>
+
+
+					<p:column exportable="false" style="width:60px;">
+						<p:commandLink title="Eliminar" styleClass="btn btn-danger"
+							action="#{plantillaMB.eliminarCatalogoPregunta(item)}"
+							process="dtCatalogoPregunta" update="@([id$=dtCatalogoPregunta])">
+							<i class="fa fa-trash"></i>
+							<p:confirm header="Elimininación "
+								message="¿Está usted seguro de eliminar el Juego de Pregunta?"
+								icon="fa fa-anchor" />
+						</p:commandLink>
+					</p:column>
+
+					<p:column filterBy="#{item.categoria.nombreCategoria}"
+						sortBy="#{item.categoria.nombreCategoria}"
+						filterMatchMode="contains" headerText="Categoría">
+						<h:outputText value="#{item.categoria.nombreCategoria}" />
+					</p:column>
+
+					<p:column filterBy="#{item.pregunta.nombrePregunta}"
+						sortBy="#{item.pregunta.nombrePregunta}"
+						filterMatchMode="contains" headerText="Pregunta">
+						<h:outputText value="#{item.pregunta.nombrePregunta}" />
+					</p:column>
+
+
+
+					<p:column filterBy="#{item.ordenPregunta}"
+						sortBy="#{item.ordenPregunta}" style="width:60px;"
+						filterMatchMode="contains" headerText="Orden">
+
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText style="width:100%"
+									styleClass="label label-success" value="#{item.ordenPregunta}"
+									title="Click para editar" />
+							</f:facet>
+							<f:facet name="input">
+								<p:spinner value="#{item.ordenPregunta}" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column filterBy="#{item.peso.peso}" sortBy="#{item.peso.peso}"
+						style="width:60px;" filterMatchMode="contains" headerText="Peso">
+						<h:outputText value="#{item.peso.peso}" />
+					</p:column>
+
+					<p:column filterBy="#{item.peso.porcentaje}"
+						sortBy="#{item.peso.porcentaje}" style="width:60px;"
+						filterMatchMode="contains" headerText="%">
+						<h:outputText value="#{item.peso.porcentaje}" />
+					</p:column>
+					<p:column filterBy="#{item.peso.valor}" sortBy="#{item.peso.valor}"
+						style="width:60px;" filterMatchMode="contains" headerText="Valor">
+						<h:outputText value="#{item.peso.valor}" />
+					</p:column>
+
+				</p:dataTable>
+
+			</h:form>
+		</div>
+	</ui:define>
+
+</ui:composition>

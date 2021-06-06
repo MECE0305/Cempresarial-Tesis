@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Plantilla Medición" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+		<style type="text/css">
+.value {
+	font-weight: bold;
+}
+
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: left;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: left;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<div class="ui-fluid">
+			<h:form id="form">
+
+				<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:50%;overflow: auto;">
+
+
+
+
+					<p:panelGrid layout="grid" columns="1" id="panelDetalle"
+						styleClass="box-solid box-primary box "
+						style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+
+						<p:accordionPanel activeIndex="0,1" id="datosChecklist">
+							<p:tab>
+								<f:facet name="title">
+									<strong><i class="fa fa-list-alt"></i> Datos CheckList</strong>
+								</f:facet>
+								<p:panelGrid columns="2" layout="grid">
+									<p:outputLabel value="Nombre CheckList: " />
+									<p:inputText value="#{plantillaMB.checklist.nombreChecklist}" />
+									<p:outputLabel value="Fecha:" />
+									<p:calendar value="#{plantillaMB.checklist.creaChecklist}"
+										showOn="button" />
+									<p:outputLabel value="Activo:" />
+									<p:inputSwitch value="#{plantillaMB.checklist.activoChecklist}">
+									</p:inputSwitch>
+								</p:panelGrid>
+							</p:tab>
+						</p:accordionPanel>
+
+
+						<strong><i class="fa fa-list-ol"></i> Existencia en
+							Checklist</strong>
+						<p:dataTable id="dtChecklist" var="item" widgetVar="dtChecklist"
+							reflow="true" value="#{plantillaMB.listChecklist}" rows="10"
+							paginator="true" styleClass="box box-primary">
+
+							<f:facet name="header">
+
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank">
+
+									<p:panelGrid layout="grid" columns="4" style="float:left"
+										columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+										<h:commandLink title="Exportar Excel" immediate="true"
+											style="width: min-content;">
+											<p:graphicImage value="/resources/images/excel.ico"
+												width="30px" />
+											<p:dataExporter type="xls" target="dtPregunta"
+												fileName="Catálogo de Preguntas" />
+										</h:commandLink>
+										<h:outputText value="Buscar en Todos los Campos:   " />
+										<p:inputText id="globalFilter"
+											onkeyup="PF('dtChecklist').filter();hideBar()"
+											style="width:150px" placeholder="Ingrese Parámetro....">
+											<p:ajax event="keyup" />
+										</p:inputText>
+
+										<p:commandButton style="width: min-content;float:rigth"
+											id="toggler" type="button" icon="fa fa-list" />
+										<p:columnToggler datasource="dtChecklist" trigger="toggler" />
+
+									</p:panelGrid>
+									<p:commandButton icon="fa fa-refresh"
+										style="width: min-content;" styleClass="btn-default"
+										title="Actualizar Lista"
+										action="#{plantillaMB.actualizarCheckLists()}"
+										update="dtChecklist" />
+								</p:panelGrid>
+							</f:facet>
+
+
+							<p:column filterBy="#{item.catalogoPregunta.idCatalogoPregunta}"
+								filterMatchMode="contains" headerText="ID" style="width:60px;">
+								<h:outputText
+									value="#{item.catalogoPregunta.idCatalogoPregunta}" />
+							</p:column>
+							<p:column
+								filterBy="#{item.checklistHasCatalogoPreguntaPK.checklistIdChecklist}"
+								filterMatchMode="contains" headerText="IDCL" style="width:60px;">
+								<h:outputText
+									value="#{item.checklistHasCatalogoPreguntaPK.checklistIdChecklist}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{item.catalogoPregunta.activoCatalogoPregunta}"
+								filterMatchMode="contains" headerText="Activo">
+								<h:outputText
+									styleClass="#{item.catalogoPregunta.activoCatalogoPregunta ? 'label label-success':'label label-default'}"
+									value="#{item.catalogoPregunta.activoCatalogoPregunta ? 'ACTIVO':'INACTIVO'}" />
+								<p:inputSwitch
+									value="#{item.catalogoPregunta.activoCatalogoPregunta}"
+									onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+								</p:inputSwitch>
+							</p:column>
+
+
+							<p:column
+								filterBy="#{item.catalogoPregunta.categoria.nombreCategoria}"
+								filterMatchMode="contains" headerText="Categoria">
+								<h:outputText
+									value="#{item.catalogoPregunta.categoria.nombreCategoria}" />
+							</p:column>
+
+
+							<p:column
+								filterBy="#{item.catalogoPregunta.pregunta.nombrePregunta}"
+								filterMatchMode="contains" headerText="Pregunta">
+								<h:outputText
+									value="#{item.catalogoPregunta.pregunta.nombrePregunta}" />
+							</p:column>
+
+							<p:column filterBy="#{item.catalogoPregunta.peso.peso}"
+								style="width:60px;" filterMatchMode="contains" headerText="Peso">
+								<h:outputText value="#{item.catalogoPregunta.peso.peso}" />
+							</p:column>
+
+							<p:column filterBy="#{item.catalogoPregunta.peso.porcentaje}"
+								style="width:60px;" filterMatchMode="contains" headerText="%">
+								<h:outputText value="#{item.catalogoPregunta.peso.porcentaje}" />
+							</p:column>
+
+							<p:column filterBy="#{item.catalogoPregunta.peso.valor}"
+								style="width:60px;" filterMatchMode="contains"
+								headerText="Valor">
+								<h:outputText value="#{item.catalogoPregunta.peso.valor}" />
+							</p:column>
+
+							<p:column style="width:60px;">
+								<p:commandButton icon="fa fa-edit" style="width: min-content"
+									update="@([id$=datosChecklist])" title="Seleccionar"
+									process="dtChecklist" styleClass="btn-success"
+									action="#{plantillaMB.pasarCheckList(item.checklistHasCatalogoPreguntaPK.checklistIdChecklist)}">
+								</p:commandButton>
+							</p:column>
+
+						</p:dataTable>
+
+
+						<f:facet name="footer">
+							<p:commandButton value="Cancel"
+								oncomplete="PF('sidebar2').hide()"
+								styleClass="btn btn-solid btn-danger"
+								style="width: max-content;" />
+							<p:commandButton value="Confirmar Selección" update="pnlDatos"
+								process="@this, @([id$=datosChecklist])"
+								actionListener="#{plantillaMB.verificarCheckList()}"
+								styleClass="btn btn-solid btn-primary"
+								style="width: max-content;" />
+						</f:facet>
+
+					</p:panelGrid>
+				</p:sidebar>
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-danger box">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-12">
+					<p:panel id="pnlDatos">
+
+
+						<div style="display: flex; justify-content: space-between;">
+							<p:outputLabel value="CheckList a Guardar" />
+							<div>
+								<p:commandButton style="width: inherit;" title="Buscar"
+									rendered="false" styleClass="btn bg-navy" icon="pi pi-search"
+									oncomplete="PF('sidebar2').show()" />
+								<p:commandButton style="width: inherit;" title="Cancelar"
+									styleClass="btn btn-danger" action="#{plantillaMB.init()}"
+									process="@this,pnlDatos" update="form" icon="pi pi-ban" />
+								<p:commandButton style="width: inherit;"
+									styleClass="btn btn-success" title="Guardar"
+									action="#{plantillaMB.guardarChecklist()}"
+									process="@this,pnlDatos" update="form" icon="fa fa-send" />
+							</div>
+						</div>
+
+						<p:separator />
+
+						<p:panelGrid columns="6" layout="grid">
+							<p:outputLabel value="Nombre CheckList: " />
+							<p:inputText value="#{plantillaMB.checklist.nombreChecklist}" />
+							<p:outputLabel value="Fecha:" />
+							<p:calendar value="#{plantillaMB.checklist.creaChecklist}"
+								showOn="button" />
+							<p:outputLabel value="Activo:" />
+
+							<p:inputSwitch value="#{plantillaMB.checklist.activoChecklist}">
+							</p:inputSwitch>
+
+							<p:outputLabel value="Rol: " style="  FONT-WEIGHT: bold;" />
+							<p:selectOneMenu id="cmbRol" tabindex="4"
+								value="#{plantillaMB.idRol}" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="Todos" />
+								<f:selectItems var="item" value="#{plantillaMB.listRol}"
+									itemLabel="#{item.nombreRol}" itemValue="#{item.idRol}">
+								</f:selectItems>
+								<p:ajax event="change" process="cmbRol"
+									listener="#{plantillaMB.findByRolIdRol}" />
+							</p:selectOneMenu>
+
+
+
+						</p:panelGrid>
+						<p:outputLabel value="Categorías para Checklist"
+							styleClass="label label-warning" />
+						<p:dataGrid var="item" columns="1" layout="grid"
+							id="categoriasSelect"
+							value="#{plantillaMB.listaCatalogoPreguntaSelect}">
+
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="callout-card callout-info"
+								columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-2,ui-grid-col-2">
+								<h:outputText styleClass="label label-primary"
+									value="#{item.idCategoria} - #{item.nombreCategoria}" />
+								<h:outputText value="Orden: " />
+								<p:inputNumber value="#{item.orden}" placeholder="Orden" />
+								<p:commandLink title="Cancelar" styleClass="btn btn-danger"
+									action="#{plantillaMB.quitarChecklist(item)}"
+									process="@this,@([id$=categoriasSelect])"
+									update="@([id$=categoriasSelect])">
+									<i class="pi pi-ban"></i>
+									<p:confirm header="Eliminación"
+										message="¿Está usted seguro de eliminar la Categoría del Checklist?"
+										icon="fa fa-anchor" />
+								</p:commandLink>
+							</p:panelGrid>
+							<p:separator />
+						</p:dataGrid>
+
+
+					</p:panel>
+
+					<p:tabView>
+						<p:tab title="Categorias">
+
+							<p:dataGrid var="categoria" value="#{plantillaMB.listCategorias}"
+								columns="3" layout="grid" id="categoria" rows="5"
+								paginator="true" paginatorPosition="top">
+
+								<p:panel style="text-align:left"
+									header="#{categoria.idCategoria} - #{categoria.nombreCategoria}"
+									styleClass="box box-primary box-solid">
+
+									<f:facet name="actions">
+										<p:commandButton icon="fa fa-plus" style="width: auto;"
+											update="@([id$=categoriasSelect])" process="@this,categoria"
+											styleClass="btn btn-warning"
+											actionListener="#{plantillaMB.agregarChecklist(categoria)}">
+											<p:confirm header="Agrega Categoria a Checklist"
+												message="¿Está usted seguro de Agregar la Categorí y Todo su CONTENIDO?"
+												icon="fa fa-anchor" />
+										</p:commandButton>
+									</f:facet>
+
+									<p:panelGrid columns="1" layout="grid">
+										<p:panelGrid columns="5" layout="grid"
+											styleClass="box box-solid box-info"
+											columnClasses="ui-grid-col-1,ui-grid-col-8,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1">
+											<h:outputText value="ID" />
+											<h:outputText value="Pregunta" />
+											<h:outputText value="Peso" />
+											<h:outputText value="%" />
+											<h:outputText value="Valor" />
+										</p:panelGrid>
+										<p:repeat var="pregunta"
+											value="#{plantillaMB.preguntasByCategoria(categoria.idCategoria)}">
+											<p:panelGrid columns="5" layout="grid"
+												columnClasses="ui-grid-col-1,ui-grid-col-8,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1">
+												<h:outputText value="#{pregunta.pregunta.idPregunta}" />
+												<h:outputText value="#{pregunta.pregunta.nombrePregunta}" />
+												<h:outputText value="#{pregunta.peso.peso}" />
+												<h:outputText value="#{pregunta.peso.porcentaje}" />
+												<h:outputText value="#{pregunta.peso.valor}" />
+											</p:panelGrid>
+											<p:separator />
+										</p:repeat>
+
+
+									</p:panelGrid>
+								</p:panel>
+							</p:dataGrid>
+						</p:tab>
+
+						<p:tab title="Lista de Check List">
+							<p:dataTable id="dtPlantilla" var="item" widgetVar="dtPlantilla"
+								reflow="true" value="#{plantillaMB.listPlantillas}" rows="10"
+								paginator="true" styleClass="box box-primary box-solid">
+
+								<f:facet name="header">
+
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank">
+
+										<p:panelGrid layout="grid" columns="4" style="float:left"
+											columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+											<h:commandLink title="Exportar Excel" immediate="true"
+												style="width: min-content;">
+												<p:graphicImage value="/resources/images/excel.ico"
+													width="30px" />
+												<p:dataExporter type="xls" target="dtPlantilla"
+													fileName="Plantillas" />
+											</h:commandLink>
+											<h:outputText value="Buscar en Todos los Campos:   " />
+											<p:inputText id="globalFilter"
+												onkeyup="PF('dtPlantilla').filter();hideBar()"
+												style="width:150px" placeholder="Ingrese Parámetro....">
+												<p:ajax event="keyup" />
+											</p:inputText>
+
+											<p:commandButton style="width: min-content;float:rigth"
+												id="toggler" type="button" icon="fa fa-list" />
+											<p:columnToggler datasource="dtPlantilla" trigger="toggler" />
+
+										</p:panelGrid>
+										<p:commandButton icon="fa fa-refresh"
+											style="width: min-content;" styleClass="btn-default"
+											title="Actualizar Lista"
+											action="#{plantillaMB.actualizarPlantillas()}"
+											update="dtPlantilla" />
+									</p:panelGrid>
+								</f:facet>
+
+
+								<p:column style="width:50px">
+									<p:rowToggler />
+								</p:column>
+
+								<p:column filterBy="#{item.idChecklist}"
+									filterMatchMode="contains" headerText="ID" style="width:60px;">
+									<h:outputText value="#{item.idChecklist}" />
+								</p:column>
+								<p:column filterBy="#{item.nombreChecklist}"
+									filterMatchMode="contains" headerText="Nombre Plantilla">
+									<h:outputText value="#{item.nombreChecklist}" />
+								</p:column>
+
+								<p:column filterBy="#{item.activoChecklist}"
+									filterMatchMode="contains" headerText="Activo">
+									<h:outputText
+										styleClass="#{item.activoChecklist ? 'label label-success':'label label-default'}"
+										value="#{item.activoChecklist ? 'ACTIVO':'INACTIVO'}" />
+									<p:inputSwitch value="#{item.activoChecklist}" onLabel="ON"
+										label="LABEL" offLabel="OFF" showLabels="true">
+									</p:inputSwitch>
+								</p:column>
+
+
+								<p:column filterBy="#{item.creaChecklist}"
+									filterMatchMode="contains" headerText="Creación">
+									<h:outputText value="#{item.creaChecklist}">
+										<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+									</h:outputText>
+								</p:column>
+
+
+
+								<p:column style="width:120px;">
+									<p:commandButton icon="fa fa-edit" style="width: min-content"
+										update="@([id$=pnlDatos])" title="Seleccionar"
+										process="dtPlantilla" styleClass="btn-info"
+										action="#{plantillaMB.pasarDatosChecklist(item)}">
+									</p:commandButton>
+									<p:commandButton icon="fa fa-trash" style="width: min-content"
+										update="@([id$=dtPlantilla])" title="Eliminar"
+										process="dtPlantilla" styleClass="btn-danger"
+										action="#{plantillaMB.eliminarChecklist(item.idChecklist)}">
+										<p:confirm header="Eliminación"
+											message="¿Está usted seguro de Eliminar la Plantilla?"
+											icon="fa fa-anchor" />
+									</p:commandButton>
+								</p:column>
+
+
+								<p:rowExpansion>
+
+									<p:panelGrid layout="grid" columns="4"
+										styleClass="box box-info box-solid"
+										columnClasses="ui-grid-col-1,ui-grid-col-4,ui-grid-col-5,ui-grid-col-2">
+										<p:outputLabel value="Orden" />
+										<p:outputLabel value="Categoria" />
+										<p:outputLabel value="Pregunta" />
+										<p:outputLabel value="Peso" />
+
+									</p:panelGrid>
+									<p:repeat value="#{plantillaMB.detalleCheckList(item)}"
+										var="subItem">
+
+										<p:panelGrid layout="grid" columns="4"
+											columnClasses="ui-grid-col-1,ui-grid-col-4,ui-grid-col-5,ui-grid-col-2">
+											<p:outputLabel value="#{subItem.ordenBloque}" />
+											<p:outputLabel
+												value="#{subItem.catalogoPregunta.categoria.nombreCategoria}" />
+											<p:outputLabel
+												value="#{subItem.catalogoPregunta.pregunta.nombrePregunta}" />
+											<p:outputLabel
+												value="Peso: #{subItem.catalogoPregunta.peso.peso} - #{subItem.catalogoPregunta.peso.porcentaje}% - Valor: #{subItem.catalogoPregunta.peso.valor}" />
+										</p:panelGrid>
+									</p:repeat>
+								</p:rowExpansion>
+
+							</p:dataTable>
+
+						</p:tab>
+					</p:tabView>
+				</p:panelGrid>
+
+
+
+
+			</h:form>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

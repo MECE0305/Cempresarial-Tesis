@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Medición" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+.ui-sticky {
+	top: 70px !important;
+}
+
+@media ( max-width : 960px) {
+	.ui-sticky {
+		top: 110px !important;
+	}
+}
+
+.pnlGridFondoFilas {
+	color: white !important;
+	text-align: center;
+	border: 1px solid #53adc3 !important;
+	background-color: #348edc !important;
+	font-size: 1.5em !important;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="body">
+
+
+
+
+		<div class="ui-fluid">
+			<button onclick="topFunction()" id="myBtn" title="Go Top">Top</button>
+			<h:form id="form">
+
+
+				<p:dialog id="pnldFiltros" widgetVar="pnldFiltros" width="70%"
+					height="80vh" fitViewport="true" header="Filtros Avanzados"
+					responsive="true" modal="true" styleClass="box box-solid box-info">
+
+					<f:facet name="footer">
+						<div style="display: flex; justify-content: space-between;">
+							<p:commandButton value="Quitar Filtros" icon="fa fa-ban"
+								process="@this, @([id$=tvFiltros])"
+								actionListener="#{listaMedicionesMB.quitarFiltrosAvanzados()}"
+								update="@([id$=tvFiltros])" styleClass="btn bg-red"
+								style="width:auto;border-radius: 10px" />
+							<p:commandButton value="Aplicar Filtros" icon="fa fa-filter"
+								process="@this, @([id$=tvFiltros])"
+								actionListener="#{listaMedicionesMB.aplicarFiltrosAvanzados()}"
+								update="@([id$=dtMediciones])" styleClass="btn btn-success"
+								style="width:auto;border-radius: 10px" />
+
+						</div>
+					</f:facet>
+
+					<p:tabView styleClass="box box-solid box-info" id="tvFiltros">
+						<p:ajax event="tabChange" update="tvFiltros"
+							listener="#{listaMedicionesMB.onTabChange}" />
+
+
+
+
+						<p:tab id="tab1">
+							<f:facet name="title">
+								<span><i class="fa fa-building"></i>Filtros por Rol</span>
+							</f:facet>
+							<p:panelGrid id="pngTab1">
+								<p:outputLabel value="Agencia: " style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbAge" tabindex="3"
+									value="#{listaMedicionesMB.idAgencia}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{listaMedicionesMB.listAgencia}"
+										itemLabel="#{item.nombreAgencia}"
+										itemValue="#{item.idAgencia}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbAge"
+										listener="#{listaMedicionesMB.findByAgenciaIdAgencia}"
+										update="cmbArea" />
+								</p:selectOneMenu>
+
+								<p:outputLabel value="Área: " style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbArea" tabindex="3"
+									value="#{listaMedicionesMB.idArea}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item" value="#{listaMedicionesMB.listArea}"
+										itemLabel="#{item.nombreArea}" itemValue="#{item.idArea}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbArea"
+										listener="#{listaMedicionesMB.findRolByArea}" update="cmbRol" />
+								</p:selectOneMenu>
+
+								<p:outputLabel value="Rol: " style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbRol" tabindex="3"
+									value="#{listaMedicionesMB.idRol}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item" value="#{listaMedicionesMB.listRol}"
+										itemLabel="#{item.nombreRol}" itemValue="#{item.idRol}">
+									</f:selectItems>
+								</p:selectOneMenu>
+							</p:panelGrid>
+						</p:tab>
+
+						<p:tab id="tab2">
+							<f:facet name="title">
+								<span><i class="fa fa-globe"></i>Filtros por Ubicación</span>
+							</f:facet>
+
+							<p:panelGrid columns="1" layout="grid" id="pngTab2">
+
+								<p:fieldset toggleable="true"
+									styleClass="box box-solid box-success">
+									<f:facet name="legend">
+										<i class="fa fa-map"></i>
+										<span>Región</span>
+									</f:facet>
+									<p:selectOneRadio value="#{listaMedicionesMB.idRegion}"
+										columns="5" layout="grid">
+										<f:selectItems value="#{listaMedicionesMB.listaRegion}"
+											var="item" itemLabel="#{item.nombreRegion}"
+											itemValue="#{item.idRegion}" />
+
+									</p:selectOneRadio>
+								</p:fieldset>
+
+
+								<p:fieldset toggleable="true"
+									styleClass="box box-solid box-success">
+									<f:facet name="legend">
+										<i class="fa fa-navicon"></i>
+										<span>Zona</span>
+									</f:facet>
+									<p:selectOneRadio value="#{listaMedicionesMB.idZona}"
+										columns="5" layout="grid">
+										<f:selectItems value="#{listaMedicionesMB.listaZona}"
+											var="item" itemLabel="#{item.nombreZona}"
+											itemValue="#{item.idZona}" />
+
+									</p:selectOneRadio>
+								</p:fieldset>
+
+								<p:fieldset toggleable="true"
+									styleClass="box box-solid box-success">
+									<f:facet name="legend">
+										<i class="fa fa-map-marker"></i>
+										<span>Provincia</span>
+									</f:facet>
+									<p:selectOneRadio value="#{listaMedicionesMB.idProvincia}"
+										columns="5" layout="grid">
+										<f:selectItems value="#{listaMedicionesMB.listaProvincia}"
+											var="item" itemLabel="#{item.nombreProvincia}"
+											itemValue="#{item.idProvincia}" />
+
+									</p:selectOneRadio>
+								</p:fieldset>
+
+								<p:fieldset toggleable="true"
+									styleClass="box box-solid box-success">
+									<f:facet name="legend">
+										<i class="fa fa-building"></i>
+										<span>Ciudad</span>
+									</f:facet>
+									<p:selectOneRadio value="#{listaMedicionesMB.idCiudad}"
+										columns="5" layout="grid">
+										<f:selectItems value="#{listaMedicionesMB.listaCiudad}"
+											var="item" itemLabel="#{item.nombreCiudad}"
+											itemValue="#{item.idCiudad}" />
+
+									</p:selectOneRadio>
+								</p:fieldset>
+
+								<p:fieldset toggleable="true"
+									styleClass="box box-solid box-success">
+									<f:facet name="legend">
+										<i class="fa fa-navicon"></i>
+										<span>Zona Estructural</span>
+									</f:facet>
+									<p:selectOneRadio value="#{listaMedicionesMB.idZonaE}"
+										columns="5" layout="grid">
+										<f:selectItems value="#{listaMedicionesMB.listaZonaE}"
+											var="item" itemLabel="#{item.nombreZonaEstructural}"
+											itemValue="#{item.idZonaEstructural}" />
+
+									</p:selectOneRadio>
+								</p:fieldset>
+							</p:panelGrid>
+
+
+
+
+						</p:tab>
+
+
+
+
+					</p:tabView>
+
+
+				</p:dialog>
+
+
+
+				<div class="callout-card callout-info">
+					<p:panelGrid columns="3" layout="grid" id="pnlgFiltros">
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-2 pnlGridFondoFilas, ui-grid-col-10">
+
+
+							<p:outputLabel value="FECHA DE: " />
+							<p:selectOneRadio style="margin-left:20px"
+								value="#{listaMedicionesMB.buscadorDTO.tipoFecha}"
+								unselectable="true">
+								<f:selectItem itemLabel="Creación" itemValue="1" />
+								<f:selectItem itemLabel="Ejecución" itemValue="2" />
+							</p:selectOneRadio>
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2 pnlGridFondoFilas, ui-grid-col-4,ui-grid-col-2 pnlGridFondoFilas, ui-grid-col-4">
+							<p:outputLabel value="DESDE: " />
+							<p:calendar value="#{listaMedicionesMB.buscadorDTO.fechaInicio}"
+								showOn="button" />
+							<p:outputLabel value="HASTA: " />
+							<p:calendar value="#{listaMedicionesMB.buscadorDTO.fechaFin}"
+								showOn="button" />
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-2 pnlGridFondoFilas, ui-grid-col-10">
+							<p:outputLabel value="ESTADO: " />
+							<p:selectOneButton
+								value="#{listaMedicionesMB.buscadorDTO.estado}">
+								<f:selectItem itemLabel="Todo" itemValue="0" />
+								<f:selectItem itemLabel="Creación" itemValue="1" />
+								<f:selectItem itemLabel="Habilitacion" itemValue="6" />
+
+							</p:selectOneButton>
+						</p:panelGrid>
+
+
+
+
+
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-2 pnlGridFondoFilas, ui-grid-col-10">
+							<p:outputLabel value="CATEGORÍA" />
+							<p:selectOneMenu effect="fold"
+								value="#{listaMedicionesMB.buscadorDTO.idCategoria}"
+								style="width:100%">
+								<f:selectItem itemLabel="Todos" itemValue="0" />
+								<f:selectItems value="#{listaMedicionesMB.listCategoriaFiltro}"
+									var="item" itemLabel="#{item.nombreCategoria}"
+									itemValue="#{item.idCategoria}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-2 pnlGridFondoFilas, ui-grid-col-10">
+							<p:outputLabel value="ACTIVO ? " />
+							<p:selectOneButton
+								value="#{listaMedicionesMB.buscadorDTO.activo}">
+								<f:selectItem itemLabel="Todo" itemValue="2" />
+								<f:selectItem itemLabel="Activo" itemValue="1" />
+								<f:selectItem itemLabel="Inactivo" itemValue="0" />
+
+
+							</p:selectOneButton>
+						</p:panelGrid>
+
+					</p:panelGrid>
+
+					<hr />
+					<div style="justify-content: flex-end; display: flex">
+						<p:commandButton value="Filtros Avanzados" icon="fa fa-filter"
+							oncomplete="PF('pnldFiltros').show()" styleClass="btn bg-purple"
+							style="width:auto;border-radius: 10px" />
+						<p:commandButton value="Aplicar Filtros" icon="fa fa-filter"
+							process="@this, pnlgFiltros"
+							actionListener="#{listaMedicionesMB.aplicarFiltro()}"
+							update="dtMediciones" styleClass="btn btn-info"
+							style="width:auto;border-radius: 10px" />
+						<p:commandButton value="Quitar Filtros" icon="fa fa-ban"
+							actionListener="#{listaMedicionesMB.quitarFiltros()}"
+							update="pnlgFiltros" styleClass="btn bg-red"
+							style="width:auto;border-radius: 10px" />
+					</div>
+				</div>
+
+
+
+
+
+
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-info box">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:dataTable id="dtMediciones" var="item" style="font-size:1.2rem"
+					widgetVar="dtMediciones" reflow="true"
+					value="#{listaMedicionesMB.listaEvaluacionDTO}" rows="10"
+					paginator="true">
+
+					<f:facet name="header">
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank">
+
+							<p:panelGrid layout="grid" columns="4" style="float:left"
+								columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+								<h:commandLink title="Exportar Excel" immediate="true"
+									style="width: min-content;">
+									<p:graphicImage value="/resources/images/excel.ico"
+										width="30px" />
+									<p:dataExporter type="xls" target="dtMediciones"
+										fileName="Lista de Mediciones" />
+								</h:commandLink>
+								<h:outputText value="Buscar en Todos los Campos:   " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('dtMediciones').filter();hideBar()"
+									style="width:150px" placeholder="Ingrese Parámetro....">
+									<p:ajax event="keyup" />
+								</p:inputText>
+
+								<p:commandButton style="width: min-content;float:rigth"
+									id="toggler" type="button" icon="fa fa-list" />
+								<p:columnToggler datasource="dtMediciones" trigger="toggler" />
+
+							</p:panelGrid>
+							<p:commandButton icon="fa fa-refresh"
+								style="width: min-content;color:white"
+								styleClass="btn btn-success" title="Actualizar Lista"
+								action="#{listaMedicionesMB.actualizarLista()}"
+								update="dtMediciones" />
+						</p:panelGrid>
+					</f:facet>
+
+
+					<p:column filterBy="#{item.evaluacion.idEvaluacion}"
+						sortBy="#{item.evaluacion.idEvaluacion}"
+						filterMatchMode="contains" headerText="ID" style="width:60px;">
+
+
+
+						<h:outputText value="#{item.evaluacion.idEvaluacion}" />
+						<p:commandLink styleClass="fa fa-eye" process="dtMediciones"
+							action="#{listaMedicionesMB.verDetalleMedicion(item)}"
+							title="Detalle">
+						</p:commandLink>
+						<hr />
+
+						<p:commandLink styleClass="fa fa-edit text-warning"
+							process="dtMediciones" title="Editar"
+							action="#{listaMedicionesMB.verActualizarMedicion(item)}">
+						</p:commandLink>
+						<p:commandLink styleClass="fa fa-trash text-danger"
+							process="dtMediciones"
+							action="#{listaMedicionesMB.eliminarMedicion(item)}"
+							title="Eliminar">
+							<p:confirm header="Elimininación "
+								message="¿Está usted seguro de eliminar la Evaluación?"
+								icon="fa fa-anchor" />
+						</p:commandLink>
+						<hr />
+
+
+						<p:commandLink update="@([id$=pnlgVideo])" title="Ver Video"
+							styleClass="fa fa-play text-danger" process="dtMediciones"
+							oncomplete="PF('pndVideo').show()">
+
+							<f:setPropertyActionListener value="#{item.evaluacion}"
+								target="#{listaMedicionesMB.evaluacion}"></f:setPropertyActionListener>
+						</p:commandLink>
+
+					</p:column>
+
+
+
+					<p:column
+						filterBy="#{item.empleado.agenciaIdAgencia.empresaIdEmpresa.clienteIdCliente.nombreCliente}"
+						sortBy="#{item.empleado.agenciaIdAgencia.empresaIdEmpresa.clienteIdCliente.nombreCliente}"
+						filterMatchMode="contains" headerText="Cliente">
+						<h:outputText
+							value="#{item.empleado.agenciaIdAgencia.empresaIdEmpresa.clienteIdCliente.nombreCliente}" />
+
+					</p:column>
+
+					<p:column
+						filterBy="#{item.empleado.agenciaIdAgencia.empresaIdEmpresa.nombreEmpresa}"
+						sortBy="#{item.empleado.agenciaIdAgencia.empresaIdEmpresa.nombreEmpresa}"
+						filterMatchMode="contains" headerText="Empresa">
+						<h:outputText
+							value="#{item.empleado.agenciaIdAgencia.empresaIdEmpresa.nombreEmpresa}" />
+					</p:column>
+
+					<p:column
+						filterBy="#{item.empleado.agenciaIdAgencia.nombreAgencia}"
+						sortBy="#{item.empleado.agenciaIdAgencia.nombreAgencia}"
+						filterMatchMode="contains" headerText="Agencia">
+						<h:outputText
+							value="#{item.empleado.agenciaIdAgencia.nombreAgencia}" />
+					</p:column>
+
+					<p:column filterBy="#{item.empleado.nombreEmpleado}"
+						sortBy="#{item.empleado.nombreEmpleado}"
+						filterMatchMode="contains" headerText="Empleado">
+						<h:outputText value="#{item.empleado.nombreEmpleado}" />
+					</p:column>
+
+					<p:column
+						filterBy="#{item.evaluacion.estadoEvaluacionIdEstado.nombreEstado}"
+						sortBy="#{item.evaluacion.estadoEvaluacionIdEstado.nombreEstado}"
+						filterMatchMode="contains" headerText="Estado">
+						<h:outputText
+							value="#{item.evaluacion.estadoEvaluacionIdEstado.nombreEstado}" />
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.activoEvaluacion}"
+						filterMatchMode="contains" headerText="Activo">
+						<h:outputText
+							styleClass="#{item.evaluacion.activoEvaluacion ? 'label label-success':'label label-default'}"
+							value="#{item.evaluacion.activoEvaluacion ? 'ACTIVO':'INACTIVO'}" />
+						<p:inputSwitch value="#{item.evaluacion.activoEvaluacion}"
+							onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+						</p:inputSwitch>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.creaEvaluacion}"
+						sortBy="#{item.evaluacion.creaEvaluacion}"
+						filterMatchMode="contains" headerText="Creación">
+						<h:outputText value="#{item.evaluacion.creaEvaluacion}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.fechaEvaluacion}"
+						sortBy="#{item.evaluacion.fechaEvaluacion}"
+						filterMatchMode="contains" headerText="Ejecución">
+						<h:outputText value="#{item.evaluacion.fechaEvaluacion}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.horaInicioEvaluacion}"
+						sortBy="#{item.evaluacion.horaInicioEvaluacion}"
+						filterMatchMode="contains" headerText="H.I.">
+						<h:outputText value="#{item.evaluacion.horaInicioEvaluacion}">
+							<f:convertDateTime pattern="hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.horaFinEvaluacion}"
+						sortBy="#{item.evaluacion.horaFinEvaluacion}"
+						filterMatchMode="contains" headerText="H.F.">
+						<h:outputText value="#{item.evaluacion.horaFinEvaluacion}">
+							<f:convertDateTime pattern="hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.atencionEvaluacion}"
+						sortBy="#{item.evaluacion.atencionEvaluacion}"
+						filterMatchMode="contains" headerText="H.AT.">
+						<h:outputText value="#{item.evaluacion.atencionEvaluacion}">
+							<f:convertDateTime pattern="hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.contactoEvaluacion}"
+						sortBy="#{item.evaluacion.contactoEvaluacion}"
+						filterMatchMode="contains" headerText="H.Ctc.">
+						<h:outputText value="#{item.evaluacion.contactoEvaluacion}">
+							<f:convertDateTime pattern="hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.esperaEvaluacion}"
+						sortBy="#{item.evaluacion.esperaEvaluacion}"
+						filterMatchMode="contains" headerText="H.Esp.">
+						<h:outputText value="#{item.evaluacion.esperaEvaluacion}">
+							<f:convertDateTime pattern="hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column filterBy="#{item.evaluacion.observacionEvaluacion}"
+						sortBy="#{item.evaluacion.observacionEvaluacion}"
+						filterMatchMode="contains" headerText="Observación">
+						<h:outputText value="#{item.evaluacion.observacionEvaluacion}">
+						</h:outputText>
+					</p:column>
+
+
+
+
+				</p:dataTable>
+
+
+
+				<p:dialog widgetVar="pndVideo" responsive="true" position="center"
+					modal="true" showEffect="explode" hideEffect="fade" width="85%"
+					height="80%" header="Video Evidencia"
+					styleClass="box box-solid box-danger" closeOnEscape="true"
+					resizable="false" positionType="absolute">
+					<p:panelGrid rendered="true" layout="grid" columns="1"
+						id="pnlgVideo">
+						<video style="width: 100%"
+							src="${request.contextPath}/resources/videos/#{listaMedicionesMB.evaluacion.idEvaluacion}/video-#{listaMedicionesMB.evaluacion.idEvaluacion}.webm"
+							autoplay="autoplay" controls="controls" loop="loop"
+							poster="${request.contextPath}/resources/images/excel.ico"
+							preload="auto"></video>
+
+					</p:panelGrid>
+				</p:dialog>
+
+			</h:form>
+
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

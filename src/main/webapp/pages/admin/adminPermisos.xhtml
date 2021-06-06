@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+        Gestión Permisos
+    </ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Admin Permisos"
+			link="/pages/admin/adminPermisos.jsf" />
+
+		<div class="ui-fluid" id="divPrincipal">
+
+
+			<h:form id="formPrincipal">
+
+				<p:growl id="mensaje" showDetail="true" widgetVar="mensaje" />
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-danger box-solid" responsive="true">
+					<div style="display: flex; justify-content: flex-end;">
+						<p:commandButton value="SI" type="button"
+							styleClass="btn-material btn-primary ui-confirmdialog-yes"
+							icon="fa fa-check" />
+						<p:commandButton value="NO" type="button"
+							styleClass="btn-material btn-danger ui-confirmdialog-no"
+							icon="fa fa-close" />
+					</div>
+				</p:confirmDialog>
+				<p:dialog id="dlgGuardar" modal="true" widgetVar="pnldGuardar"
+					styleClass="box box-solid box-info" position="center"
+					header="Registrar Menú" draggable="false" closable="false"
+					resizable="false" showEffect="fade" hideEffect="fade"
+					responsive="true">
+					<p:messages id="messages" showDetail="true" closable="false" />
+					<p:panelGrid columns="2" layout="grid" id="opcionesGuardar"
+						style="border:none">
+						<p:commandButton process="@this, btnCancelGuardar"
+							id="btnCancelGuardar" value="Cancelar" styleClass="btn-danger"
+							oncomplete="PF('pnldGuardar').hide()" icon="fa fa-ban"
+							style="width:80%;margin-left:20%">
+						</p:commandButton>
+						<p:commandButton styleClass="btn-success"
+							process="@this,perfiles,autorizaciones,activoPermiso"
+							disabled="#{!autorizacionesController.renderGuardar}"
+							value="Guardar"
+							actionListener="#{autorizacionesController.crearAutorizacion()}"
+							oncomplete="PF('pnldGuardar').hide()" update="formPrincipal"
+							icon="fa fa-user-plus" style="width:80%;margin-left:20%">
+						</p:commandButton>
+					</p:panelGrid>
+				</p:dialog>
+
+				<p:dialog id="dlgActualiza" modal="true" widgetVar="pnldActualiza"
+					styleClass="box box-solid box-info" position="center"
+					header="Actualizar Permisos" draggable="false" closable="false"
+					resizable="false" showEffect="fade" hideEffect="fade"
+					responsive="true">
+					<p:messages id="msgActualiza" showDetail="true" closable="false" />
+					<p:panelGrid columns="2" layout="grid" id="opcionesActualiza"
+						style="border:none">
+						<p:commandButton process="@this,btnCancelActualiza"
+							id="btnCancelActualiza" value="Cancelar" styleClass="btn-danger"
+							oncomplete="PF('pnldActualiza').hide()" icon="fa fa-ban"
+							style="width:80%;margin-left:20%">
+						</p:commandButton>
+						<p:commandButton styleClass="btn-success"
+							process="@this,perfiles,autorizaciones,activoPermiso"
+							id="btnActualiza"
+							disabled="#{!autorizacionesController.renderGuardar}"
+							value="Guardar"
+							actionListener="#{autorizacionesController.actualizarAutorizacion()}"
+							oncomplete="PF('pnldActualiza').hide()" update="formPrincipal"
+							icon="fa fa-user-plus" style="width:80%;margin-left:20%">
+						</p:commandButton>
+					</p:panelGrid>
+				</p:dialog>
+
+				<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:75%;overflow: auto;">
+
+					<p:panelGrid columns="1" layout="grid"
+						columnClasses="ui-grid-col-12">
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="callout-card callout-info "
+							columnClasses="ui-grid-col-11,ui-grid-col-1">
+							<h2 class="titulosH1">Perfiles</h2>
+							<p:commandButton icon="fa fa-refresh" id="btnActualizaPerf"
+								title="Actualizar Perfiles" styleClass="btn-success"
+								update="@([id$=perfiles],[id$=mensaje])"
+								process="@this, btnActualizaPerf"
+								actionListener="#{autorizacionesController.actualizarListPerfiles()}" />
+						</p:panelGrid>
+						<p:dataGrid var="item" lazy="true"
+							value="#{autorizacionesController.listPerfilDTO}" columns="3"
+							layout="grid" id="perfiles" rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15">
+
+							<p:panelGrid columns="1" layout="grid" style="text-align:center"
+								styleClass="box box-info">
+
+								<p:panelGrid columns="2" layout="grid" style="border:none">
+
+									<p:panelGrid columns="1" layout="grid">
+										<p:graphicImage value="/resources/images/perfil.png"
+											width="30%" />
+										<p:inputSwitch value="#{item.check}" onLabel="ON"
+											label="LABEL" offLabel="OFF" showLabels="true">
+
+											<p:ajax event="change" update="otxt" />
+										</p:inputSwitch>
+
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" layout="grid">
+										<h:outputText
+											styleClass="#{item.perfil.activo ? 'label label-success' : 'label label-danger'}"
+											value="#{item.perfil.nombre} #{item.perfil.activo ? 'ACTIVO' : 'INACTIVO'}" />
+										<p:outputLabel id="otxt"
+											styleClass="#{item.check ? ' text-purple':'text-default'}"
+											value="#{item.check ? 'SELECCIONADO':'NO SELECCIONADO'}" />
+
+										<p:outputLabel value="#{item.perfil.descripcion}" />
+									</p:panelGrid>
+								</p:panelGrid>
+							</p:panelGrid>
+						</p:dataGrid>
+					</p:panelGrid>
+				</p:sidebar>
+
+
+				<p:panel>
+
+					<p:panelGrid columns="1" layout="grid"
+						columnClasses="ui-grid-col-12" style="border:none"
+						id="datosAutorizacion">
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="callout-card callout-info "
+							columnClasses="ui-grid-col-11,ui-grid-col-1">
+							<h2 class="titulosH1">Autorización / Aplicación y Menús</h2>
+							<p:menuButton icon="fa fa-gears" title="Opciones de Acción"
+								styleClass="btn-primary">
+
+								<p:menuitem styleClass="btn-info"
+									process="@this,perfiles,autorizaciones,activoPermiso"
+									update="@([id$=opcionesGuardar],[id$=messages],[id$=perfiles])"
+									oncomplete="PF('pnldGuardar').show()" value="Guardar"
+									actionListener="#{autorizacionesController.verificarAtesGuardar()}"
+									icon="fa fa-paper-plane-o" />
+								<p:menuitem styleClass="btn-warning"
+									process="@this,perfiles,autorizaciones,activoPermiso"
+									update="@([id$=opcionesActualiza],[id$=msgActualiza],[id$=perfiles])"
+									oncomplete="PF('pnldActualiza').show()" value="Actualizar"
+									actionListener="#{autorizacionesController.verificarAtesActualizar()}"
+									icon="fa fa-refresh" />
+								<p:menuitem id="btnCancel" process="@this, btnCancel"
+									styleClass="btn-danger"
+									actionListener="#{autorizacionesController.clear()}"
+									value="Cancelar" update="formPrincipal" icon="fa fa-ban" />
+								<p:separator />
+								<p:menuitem icon="fa fa-refresh" id="btnActualizaApp"
+									value="Lista App" styleClass="btn-success"
+									update="@([id$=cmbAplicacionOpcion],[id$=mensaje])"
+									process="@this, btnActualizaApp"
+									actionListener="#{autorizacionesController.actualizarListAplicaciones()}" />
+							</p:menuButton>
+						</p:panelGrid>
+						<p:separator />
+						<p:panelGrid columnClasses="ui-grid-col-6, ui-grid-col-6"
+							style="border: none;" columns="2" layout="grid">
+							<p:outputLabel value="Autorización Activa?: "
+								style="font-weight: bold" />
+							<p:selectOneRadio id="activoPermiso"
+								value="#{autorizacionesController.autorizacion.activo}">
+								<f:selectItem itemLabel="SI" itemValue="SI" />
+								<f:selectItem itemLabel="NO" itemValue="NO" />
+							</p:selectOneRadio>
+						</p:panelGrid>
+						<p:panelGrid id="autorizaciones" columns="2" layout="grid"
+							columnClasses="ui-grid-col-4,ui-grid-col-8" style="border:none">
+							<p:commandButton icon="fa fa-key" value="PERMISOS"
+								disabled="true" styleClass="btn-danger" />
+
+							<p:selectManyCheckbox id="basic"
+								value="#{autorizacionesController.permisosSelect}" layout="grid"
+								columns="4" style="font-weight: bold">
+								<f:selectItem itemLabel="LECTURA" itemValue="l" />
+								<f:selectItem itemLabel="CREACION" itemValue="c" />
+								<f:selectItem itemLabel="MODIFICACION" itemValue="m" />
+								<f:selectItem itemLabel="ELIMINACION" itemValue="e" />
+							</p:selectManyCheckbox>
+
+							<p:commandButton icon="fa fa-eye" value="VER PERFILES"
+								oncomplete="PF('sidebar2').show()" title="ver" immediate="true"
+								styleClass="btn-success">
+							</p:commandButton>
+						</p:panelGrid>
+						<p:separator />
+						<p:panelGrid columns="3" id="datosPermisos"
+							columnClasses="ui-grid-col-4, ui-grid-col-4, ui-grid-col-4"
+							layout="grid" style="border:none">
+
+
+							<p:selectOneMenu id="cmbAplicacionOpcion"
+								value="#{autorizacionesController.aplicacion}"
+								style="FONT-FAMILY: arial;" required="false"
+								requiredMessage="Seleccione una Aplicación" effect="fade"
+								filter="true" filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione una Aplicación"
+									itemValue="0" />
+								<f:selectItems
+									value="#{autorizacionesController.listAplicacion}" var="item"
+									itemLabel="#{item.nombre}" itemValue="#{item}"
+									itemDescription="#{item.descripcion}" />
+
+								<p:ajax event="change" process="cmbAplicacionOpcion"
+									listener="#{autorizacionesController.llenarMenus()}"
+									update="@([id$=cmbMenuPadre],[id$=pnlApp])" />
+
+							</p:selectOneMenu>
+
+							<p:selectOneMenu id="cmbMenuPadre"
+								value="#{autorizacionesController.menuPadre}"
+								style="FONT-FAMILY: arial;" required="false"
+								requiredMessage="Seleccione un Padre" effect="fade"
+								filter="true" filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione un Padre" itemValue="0" />
+								<f:selectItems value="#{autorizacionesController.listMenuPadre}"
+									var="item" itemLabel="#{item.nombre}" itemValue="#{item}"
+									itemDescription="#{item.descripcion}" />
+
+								<p:ajax event="change" process="cmbMenuPadre"
+									listener="#{autorizacionesController.llenarOpciones()}"
+									update="@([id$=cmbMenuHijo],[id$=pnlMenu])" />
+
+							</p:selectOneMenu>
+
+							<p:selectOneMenu id="cmbMenuHijo"
+								value="#{autorizacionesController.menuHijo}"
+								style="FONT-FAMILY: arial;" required="false"
+								requiredMessage="Seleccione un Hijo" effect="fade" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="Seleccione un Hijo" itemValue="0" />
+								<f:selectItems value="#{autorizacionesController.listMenuHijo}"
+									var="item" itemLabel="#{item.nombre}" itemValue="#{item}"
+									itemDescription="#{item.descripcion}" />
+
+								<p:ajax event="change" process="cmbMenuHijo"
+									update="@([id$=pnlOpcion])" />
+
+							</p:selectOneMenu>
+
+							<p:panel header="Aplicación" id="pnlApp">
+								<p:panelGrid columns="2" layout="grid" style="border:none"
+									columnClasses="ui-grid-col-4, ui-grid-col-8">
+									<p:outputLabel value="Nombre: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.aplicacion.nombre}" />
+									<p:outputLabel value="Descripción: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.aplicacion.descripcion}" />
+									<p:outputLabel value="URL: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.aplicacion.url}" />
+
+								</p:panelGrid>
+								<p:panelGrid columnClasses="ui-grid-col-6, ui-grid-col-6"
+									style="border: none;" columns="2" layout="grid">
+									<p:outputLabel value="Activo: " style="font-weight: bold" />
+									<p:selectOneRadio
+										value="#{autorizacionesController.aplicacion.activo}">
+										<f:selectItem itemLabel="SI" itemValue="SI" />
+										<f:selectItem itemLabel="NO" itemValue="NO" />
+									</p:selectOneRadio>
+								</p:panelGrid>
+							</p:panel>
+
+							<p:panel header="Menú Padre" id="pnlMenu">
+								<p:panelGrid columns="2" layout="grid" style="border:none"
+									columnClasses="ui-grid-col-4, ui-grid-col-8">
+									<p:outputLabel value="Nombre: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.menuPadre.nombre}" />
+									<p:outputLabel value="Descripción: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.menuPadre.descripcion}" />
+									<p:outputLabel value="URL: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.menuPadre.url}" />
+									<p:outputLabel value="Orden: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.menuPadre.orden}" />
+
+
+								</p:panelGrid>
+								<p:panelGrid columnClasses="ui-grid-col-6, ui-grid-col-6"
+									style="border: none;" columns="2" layout="grid">
+									<p:outputLabel value="Activo: " style="font-weight: bold" />
+									<p:selectOneRadio
+										value="#{autorizacionesController.menuPadre.activo}">
+										<f:selectItem itemLabel="SI" itemValue="SI" />
+										<f:selectItem itemLabel="NO" itemValue="NO" />
+									</p:selectOneRadio>
+								</p:panelGrid>
+
+
+							</p:panel>
+
+							<p:panel header="Menú Hijo" id="pnlOpcion">
+								<p:panelGrid columns="2" layout="grid" style="border:none"
+									columnClasses="ui-grid-col-4, ui-grid-col-8">
+									<p:outputLabel value="Nombre: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.menuHijo.nombre}" />
+									<p:outputLabel value="Descripción: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.menuHijo.descripcion}" />
+									<p:outputLabel value="URL: " style="font-weight: bold" />
+									<p:outputLabel value="#{autorizacionesController.menuHijo.url}" />
+									<p:outputLabel value="Orden: " style="font-weight: bold" />
+									<p:outputLabel
+										value="#{autorizacionesController.menuHijo.orden}" />
+
+								</p:panelGrid>
+								<p:panelGrid columnClasses="ui-grid-col-6, ui-grid-col-6"
+									style="border: none;" columns="2" layout="grid">
+									<p:outputLabel value="Activo: " style="font-weight: bold" />
+									<p:selectOneRadio
+										value="#{autorizacionesController.menuHijo.activo}">
+										<f:selectItem itemLabel="SI" itemValue="SI" />
+										<f:selectItem itemLabel="NO" itemValue="NO" />
+									</p:selectOneRadio>
+								</p:panelGrid>
+							</p:panel>
+
+						</p:panelGrid>
+
+					</p:panelGrid>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="callout-card callout-info "
+						columnClasses="ui-grid-col-11,ui-grid-col-1">
+						<h2 class="titulosH1">Autorizaciones del Sistema</h2>
+						<p:commandButton icon="fa fa-refresh" styleClass="btn-success"
+							actionListener="#{autorizacionesController.clear()}"
+							update="formPrincipal" id="btnUpdateAll"
+							process="@this, btnUpdateAll" />
+					</p:panelGrid>
+					<p:separator />
+					<p:dataTable var="item" styleClass="box box-solid box-primary"
+						value="#{autorizacionesController.listAutorizacion}"
+						widgetVar="tblDatos" id="tblDatos" reflow="true"
+						emptyMessage="No exiten Registros"
+						filteredValue="#{autorizacionesController.listAutorizacionSelect}"
+						rows="10" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15">
+
+						<p:column filterBy="#{item.menu.aplicacion.nombre}"
+							headerText="Aplicación" filterMatchMode="contains">
+							<h:outputText value="#{item.menu.aplicacion.nombre}" />
+						</p:column>
+
+						<p:column filterBy="#{item.menu.nombre}" headerText="Menú"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.menu.nombre}" />
+						</p:column>
+
+						<p:column filterBy="#{item.menu.tipo}" headerText="Tipo"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.menu.tipo}" />
+						</p:column>
+
+						<p:column filterBy="#{item.menu.activo}" headerText="Activo?"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.menu.activo}" />
+						</p:column>
+
+						<p:column filterBy="#{item.menu.url}" headerText="URL"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.menu.url}" />
+						</p:column>
+
+						<p:column filterBy="#{item.perfil.nombre}" headerText="Perfil"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.perfil.nombre}" />
+						</p:column>
+
+						<p:column filterBy="#{item.perfil.activo}" headerText="Activo?"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.perfil.activo}" />
+						</p:column>
+
+						<p:column filterBy="#{item.permisos}" headerText="Permisos"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.permisos}" />
+						</p:column>
+
+						<p:column filterBy="#{item.activo}" headerText="Activo?"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.activo}" />
+						</p:column>
+
+
+
+						<p:column headerText="Opciones">
+							<p:panelGrid columns="3" layout="grid" style="border:none">
+
+								<p:commandButton
+									action="#{autorizacionesController.eliminarAutorizacion(item)}"
+									update="@([id$=mensaje],[id$=tblDatos])" icon="fa fa-trash"
+									process="tblDatos" styleClass="btn-danger">
+									<p:confirm header="Confirmación"
+										message="Está seguro de eliminar la AUTORIZACION?"
+										icon="fa fa-exclamation-triangle" />
+								</p:commandButton>
+								<p:commandButton
+									update="@([id$=datosAutorizacion],[id$=autorizaciones],[id$=perfiles])"
+									icon="fa fa-edit" process="tblDatos" styleClass="btn-warning"
+									action="#{autorizacionesController.llenarForaneosAntesActualizar(item)}">
+								</p:commandButton>
+
+								<p:commandButton
+									update="@([id$=datosAutorizacion],[id$=autorizaciones],[id$=tblDatos],[id$=mensaje])"
+									action="#{autorizacionesController.activaDesactivaAutorizacion(item)}"
+									icon="#{item.activo.equals('NO') ? 'fa fa-check-square-o' : 'fa fa-check-square'} "
+									process="tblDatos" styleClass="btn-success">
+								</p:commandButton>
+							</p:panelGrid>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

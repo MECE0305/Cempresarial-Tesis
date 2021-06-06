@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Clientes" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+div.ui-panel .ui-panel-content {
+	height: 100%;
+	padding: 10px 10px;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 30px;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-bottom: 10px;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+	#{clienteMB.init()}
+	</h:form>
+		<div class="ui-fluid">
+
+			<p:panelGrid rendered="false" layout="grid" columns="3">
+				<section class="videowrapper videoTag">
+					<a href="javascript:void(0);" class="close-button"></a>
+					<div class="gradient-overlay"></div>
+					<i class="fa fa-arrows-alt" aria-hidden="true"></i>
+					<video
+						src="https://cempresariales.com/uploads/videos/profiles_apply/2160_tBiAzpsafl.webm"
+						autoplay="autoplay" controls="controls" loop="loop"
+						poster="${request.contextPath}/resources/images/excel.ico"
+						preload="auto"></video>
+				</section>
+			</p:panelGrid>
+
+			<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+				visible="false" blockScroll="false"
+				styleClass="box box-info box-solid"
+				style="width:40%;overflow: auto;">
+
+
+				<p:panel header="Detalle" styleClass="box-solid box-primary box"
+					style="height: 90%;display: flex; flex-direction: column;  justify-content: space-between;border:none">
+
+
+					<div style="height: 100%">
+
+
+						<p:panelGrid columns="1" layout="grid" id="panelClienteDetalle">
+
+							<p:panelGrid columns="2" layout="grid">
+								<p:graphicImage
+									style="width: 100%;height: 100%;border-radius: 50%;"
+									id="fotoDetalle" value="#{clienteMB.foto}" cache="false"
+									alt="Logo Cliente" title="Logo de La Cliente"
+									rendered="#{clienteMB.foto != null}" />
+								<p:panelGrid columns="1" layout="grid">
+									<p:outputLabel value="Nombre:" />
+									<h:outputLabel
+										value="#{clienteMB.clienteSeleccionado.nombreCliente}" />
+
+									<p:outputLabel value="CI/RUC:" />
+									<h:outputLabel
+										value="#{clienteMB.clienteSeleccionado.ciCliente}" />
+
+									<p:outputLabel value="Dirección:" />
+									<h:outputLabel
+										value="#{clienteMB.clienteSeleccionado.direccionCliente}" />
+
+									<p:outputLabel value="Teléfono:" />
+									<h:outputLabel
+										value="#{clienteMB.clienteSeleccionado.telefonoCliente}" />
+
+									<p:outputLabel value="Empresa:" />
+									<p:outputLabel styleClass="label label-info"
+										value="#{clienteMB.verEmpresas()}" />
+
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:separator />
+
+
+							<p:panelGrid columns="2" layout="grid">
+								<p:outputLabel value="Url:" />
+								<p:outputLabel value="Email:" />
+								<p:inputText placeholder="Dirección de Sitio Web"
+									value="#{clienteMB.clienteSeleccionado.urlCliente}" />
+								<p:inputText placeholder="Correo electrónico"
+									value="#{clienteMB.clienteSeleccionado.mailCliente}" />
+
+
+								<p:outputLabel value="Creado A:" />
+								<p:outputLabel value="Actualizado A:" />
+								<p:inputText
+									value="#{clienteMB.clienteSeleccionado.creaCliente}" />
+								<p:inputText
+									value="#{clienteMB.clienteSeleccionado.actualizaCliente}" />
+
+							</p:panelGrid>
+
+							<p:outputLabel value="CEO:" />
+							<p:inputText value="#{clienteMB.clienteSeleccionado.ceoCliente}" />
+
+
+							<p:outputLabel value="Activo:" />
+							<p:inputSwitch
+								value="#{clienteMB.clienteSeleccionado.activoCliente}">
+							</p:inputSwitch>
+						</p:panelGrid>
+					</div>
+
+					<f:facet name="footer">
+						<p:commandButton value="Cancel" oncomplete="PF('sidebar2').hide()"
+							styleClass="btn btn-solid btn-danger" style="width: max-content;" />
+					</f:facet>
+
+				</p:panel>
+				<p:panelGrid>
+
+
+				</p:panelGrid>
+
+			</p:sidebar>
+
+
+
+			<h:form id="form" enctype="multipart/form-data">
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panel styleClass="box box-primary" id="pnlPrincipal">
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-grid-col-3, ui-grid-col-9"
+						styleClass="customPanelGrid ui-noborder">
+
+
+						<p:panelGrid columns="1" layout="grid">
+
+							<p:graphicImage style="width: inherit;height: inherit;"
+								id="fotoPre" rendered="#{clienteMB.foto != null}"
+								value="/resources/images/your-logo.jpg">
+							</p:graphicImage>
+							<p:graphicImage style="width: inherit;height: inherit;" id="foto"
+								value="#{clienteMB.foto}" cache="false" alt="Logo Cliente"
+								title="Logo de La Cliente" rendered="#{clienteMB.foto != null}" />
+
+							<p:fileUpload mode="advanced" dragDropSupport="true" id="pnlFoto"
+								listener="#{clienteMB.upload}" process="@this,pnlFoto"
+								sizeLimit="50000000" label="Escoger" cancelLabel="Cancelar"
+								uploadLabel="Agregar" showButtons="true" multiple="false"
+								allowTypes="/(\.|\/)(gif|jpg|jpeg|gif|png|PNG|GIF|JPG|JPEG)$/"
+								invalidFileMessage="Tipo de formato incorrecto"
+								invalidSizeMessage="Tamaño no permitido" performVirusScan="true"
+								previewWidth="150" fileLimitMessage="Solo se acepta un archivo"
+								update="@([id$=foto], [id$=fotoPre])" />
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="6" layout="grid"
+							columnClasses="ui-grid-col-2, ui-grid-col-3,ui-grid-col-1, ui-grid-col-2,ui-grid-col-3, ui-grid-col-1"
+							id="panelCliente">
+
+							<p:outputLabel value="Nombre:" for="nombreCl">
+								<span class="text-danger">*</span>
+							</p:outputLabel>
+							<p:inputText id="nombreCl"
+								value="#{clienteMB.clienteSeleccionado.nombreCliente}"
+								required="true" requiredMessage="Obligatorio" />
+							<p:message for="nombreCl" display="text" style="font-size:10px;"/>
+
+							<p:outputLabel value="CI/RUC:" for="cirucCl">
+								<span class="text-danger">*</span>
+							</p:outputLabel>
+							<p:inputText id="cirucCl"
+								value="#{clienteMB.clienteSeleccionado.ciCliente}"
+								required="true" requiredMessage="Obligatorio" />
+							<p:message for="cirucCl" display="text"  />
+
+							<p:outputLabel value="Dirección:" />
+							<p:inputText id="direccionCl"
+								value="#{clienteMB.clienteSeleccionado.direccionCliente}" />
+							<p:outputLabel />
+
+							<p:outputLabel value="Teléfono:" />
+							<p:inputText id="telefonoCl"
+								value="#{clienteMB.clienteSeleccionado.telefonoCliente}" />
+							<p:outputLabel />
+
+							<p:outputLabel value="Url:" />
+							<p:inputText id="urlCl" placeholder="Dirección de Sitio Web"
+								value="#{clienteMB.clienteSeleccionado.urlCliente}" />
+							<p:outputLabel />
+
+							<p:outputLabel value="Email:" />
+							<p:inputText id="mailCl" placeholder="Correo electrónico"
+								value="#{clienteMB.clienteSeleccionado.mailCliente}" />
+							<p:outputLabel />
+
+							<p:outputLabel value="CEO:" for="ceoCl">
+								<span class="text-danger">*</span>
+							</p:outputLabel>
+							<p:inputText id="ceoCl"
+								value="#{clienteMB.clienteSeleccionado.ceoCliente}"
+								required="true" requiredMessage="Obligatorio" />
+							<p:message for="ceoCl" display="text" />
+
+							<p:outputLabel value="Activo:" />
+							<p:inputSwitch
+								value="#{clienteMB.clienteSeleccionado.activoCliente}">
+							</p:inputSwitch>
+
+						</p:panelGrid>
+
+					</p:panelGrid>
+
+					<div style="display: flex; justify-content: flex-end;">
+						<p:commandButton
+							value="#{clienteMB.clienteSeleccionado.idCliente == null ? 'Guardar':'Actualizar'}"
+							icon="fa fa-floppy-o"
+							styleClass="#{clienteMB.clienteSeleccionado.idCliente == null ? 'btn-success':'btn-warning'}"
+							process="@this, panelCliente"
+							update="@([id$=dtCliente], [id$=panelCliente],[id$=btnGuardar])"
+							actionListener="#{clienteMB.guardar()}"
+							style="width: max-content" id="btnGuardar">
+						</p:commandButton>
+
+						<p:commandButton value="Cancelar" icon="fa fa-close"
+							styleClass="btn-danger" process="@this" update="@form"
+							action="#{clienteMB.init()}" style="width: max-content" />
+					</div>
+				</p:panel>
+
+				<p:dataTable id="dtCliente" var="item" widgetVar="dtCliente"
+					reflow="true" value="#{clienteMB.listaClientes}" rows="10"
+					paginator="true" styleClass="box box-primary">
+
+					<f:facet name="header">
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank">
+
+							<p:panelGrid layout="grid" columns="4" style="float:left"
+								columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+								<h:commandLink title="Exportar Excel" immediate="true"
+									style="width: min-content;">
+									<p:graphicImage value="/resources/images/excel.ico"
+										width="30px" />
+									<p:dataExporter type="xls" target="dtCliente"
+										fileName="Clientes" />
+								</h:commandLink>
+								<h:outputText value="Buscar en Todos los Campos:   " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('dtCliente').filter();hideBar()"
+									style="width:150px" placeholder="Ingrese Parámetro....">
+									<p:ajax event="keyup" />
+								</p:inputText>
+
+								<p:commandButton style="width: min-content;float:rigth"
+									id="toggler" type="button" icon="fa fa-list" />
+								<p:columnToggler datasource="dtCliente" trigger="toggler" />
+
+							</p:panelGrid>
+							<p:commandButton icon="fa fa-refresh" style="width: min-content;"
+								styleClass="btn-default" title="Actualizar Lista"
+								action="#{clienteMB.actualizarLista()}" update="dtCliente" />
+						</p:panelGrid>
+
+
+
+
+
+
+					</f:facet>
+
+
+
+					<p:column id="idCliente" filterBy="#{item.idCliente}"
+						rendered="false" filterMatchMode="contains" headerText="Id"
+						style="width:40px;">
+						<h:outputText value="#{item.idCliente}" />
+					</p:column>
+
+					<p:column headerText="Logo" width="150" exportable="false">
+						<p:graphicImage style="width: 100%;" value="#{clienteMB.image}"
+							cache="false" stream="true">
+							<f:param name="clienteId" value="#{item.idCliente}" />
+						</p:graphicImage>
+
+					</p:column>
+					<p:column filterBy="#{item.nombreCliente}"
+						sortBy="#{item.nombreCliente}" filterMatchMode="contains"
+						headerText="Nombre Cliente">
+						<h:outputText value="#{item.nombreCliente}"
+							styleClass="label label-info" style="font-size:12px" />
+					</p:column>
+
+					<p:column filterBy="#{item.direccionCliente}"
+						filterMatchMode="contains" headerText="Dirección">
+						<h:outputText value="#{item.direccionCliente}" />
+					</p:column>
+
+					<p:column filterBy="#{item.telefonoCliente}"
+						filterMatchMode="contains" headerText="Teléfono">
+						<h:outputText value="#{item.telefonoCliente}" />
+					</p:column>
+
+					<p:column filterBy="#{item.ciCliente}" filterMatchMode="contains"
+						headerText="CI/RUC">
+						<h:outputText value="#{item.ciCliente}" />
+					</p:column>
+
+					<p:column filterBy="#{item.mailCliente}" filterMatchMode="contains"
+						headerText="Email">
+						<h:outputText value="#{item.mailCliente}" />
+					</p:column>
+
+					<p:column filterBy="#{item.urlCliente}" filterMatchMode="contains"
+						headerText="Sitio Web">
+						<h:outputText value="#{item.urlCliente}" />
+					</p:column>
+
+					<p:column filterBy="#{item.ceoCliente}" filterMatchMode="contains"
+						headerText="CEO">
+						<h:outputText value="#{item.ceoCliente}" />
+					</p:column>
+
+
+
+					<p:column filterBy="#{item.activoCliente}"
+						filterMatchMode="contains" headerText="Activo">
+						<h:outputText
+							styleClass="#{item.activoCliente ? 'label label-success':'label label-default'}"
+							value="#{item.activoCliente ? 'ACTIVO':'INACTIVO'}" />
+						<p:inputSwitch value="#{item.activoCliente}" onLabel="ON"
+							label="LABEL" offLabel="OFF" showLabels="true">
+							<p:ajax event="change" process="dtCliente"
+								listener="#{clienteMB.switchActiva(item)}" update="dtCliente" />
+						</p:inputSwitch>
+					</p:column>
+
+					<p:column filterBy="#{item.creaCliente}"
+						sortBy="#{item.creaCliente}" filterMatchMode="contains"
+						headerText="Creación">
+						<h:outputText value="#{item.creaCliente}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+
+					<p:column filterBy="#{item.actualizaCliente}"
+						sortBy="#{item.actualizaCliente}" filterMatchMode="contains"
+						headerText="Actualización">
+						<h:outputText value="#{item.actualizaCliente}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opciones" width="150" exportable="false">
+						<p:commandButton process="dtCliente" icon="fa fa-edit"
+							style="width: min-content" title="editar"
+							action="#{clienteMB.pasarDatoseditar(item)}"
+							styleClass="btn-primary"
+							update="@([id$=panelCliente],[id$=foto],[id$=btnGuardar])">
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-arrow-right"
+							oncomplete="PF('sidebar2').show()" style="width: min-content"
+							action="#{clienteMB.pasarDatoseditar(item)}" title="ver"
+							styleClass="btn-success"
+							update="@([id$=panelClienteDetalle],[id$=fotoDetalle])">
+						</p:commandButton>
+
+						<p:commandButton update="@([id$=dtCliente])" icon="fa fa-trash"
+							style="width: min-content" title="eliminar" process="dtCliente"
+							action="#{clienteMB.eliminar()}" styleClass="btn-danger">
+							<f:setPropertyActionListener value="#{item}"
+								target="#{clienteMB.clienteSeleccionado}" />
+							<p:confirm header="Confirmar Eliminación Cliente"
+								message="¿Está usted seguro?" icon="fa fa-anchor" />
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+
+
+			</h:form>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

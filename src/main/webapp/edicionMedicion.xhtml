@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Medición" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+.ui-sticky {
+	top: 70px !important;
+}
+
+@media ( max-width : 960px) {
+	.ui-sticky {
+		top: 110px !important;
+	}
+}
+</style>
+	</ui:define>
+
+	<ui:define name="body">
+
+
+		<div class="ui-fluid">
+	<button onclick="topFunction()" id="myBtn" title="Go Top">Top</button>
+
+			<h:form id="form">
+
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-danger box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:dialog widgetVar="sbPlantillas" position="center"
+					resizable="false" styleClass="box box-info box-solid" modal="true"
+					hideEffect="fade" height="90vh" width="80%" responsive="true"
+					showEffect="fade">
+
+					<p:growl id="pgExistencia" widgetVar="pgExistencia" sticky="false" />
+
+
+					<p:panelGrid layout="grid" columns="1" id="panelPlantillas"
+						styleClass="box-solid box-primary box "
+						style="display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+
+						<div class="box-body callout callout-info">
+							<strong><i class="fa fa-book margin-r-5"></i>
+								Seleccionar un ROL para cargar la Plantilla - CheckList </strong>
+						</div>
+
+						<p:selectOneMenu id="cmbRol" tabindex="4"
+							value="#{listaMedicionesMB.idRol}" filter="true"
+							filterMatchMode="contains">
+							<f:selectItem itemLabel="Todos" />
+							<f:selectItems var="item" value="#{listaMedicionesMB.listRol}"
+								itemLabel="#{item.nombreRol}" itemValue="#{item.idRol}">
+							</f:selectItems>
+							<p:ajax event="change" process="cmbRol"
+								listener="#{listaMedicionesMB.findByRolIdRol}"
+								update="dgPlantillas" />
+						</p:selectOneMenu>
+
+
+
+						<p:dataGrid var="item" value="#{listaMedicionesMB.listPlantillas}"
+							columns="4" layout="grid" rows="6" paginator="true"
+							class="box box-primary" id="dgPlantillas"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="6,12,16">
+
+							<f:facet name="header">
+            			Plantillas
+        			</f:facet>
+
+							<p:panel header="#{item.nombreChecklist}"
+								style="text-align:center" class="box box-solid box-primary">
+								<div class="ui-inputgroup" style="justify-content: flex-end;">
+									<p:outputLabel id="cbactivo"
+										disabled="#{!item.activoChecklist}" value="Activo"
+										styleClass="text-success" />
+									<p:inputSwitch value="#{item.activoChecklist}">
+										<p:ajax event="change" update="cbactivo,cbinactivo"></p:ajax>
+									</p:inputSwitch>
+									<p:outputLabel id="cbinactivo"
+										disabled="#{item.activoChecklist}" value="Inactivo"
+										styleClass="text-danger" />
+								</div>
+								<p:panelGrid columns="3" layout="grid">
+									<h:outputText value="# Usos" />
+
+									<p:rating value="1" readonly="true" />
+
+								</p:panelGrid>
+								<hr></hr>
+								<p:panelGrid columns="2" layout="grid">
+									<h:outputText value="# Categorías" />
+									<h:outputText
+										value="#{listaMedicionesMB.countCategoriaPreguntasByChecklist(item.idChecklist)}" />
+								</p:panelGrid>
+								<hr></hr>
+								<p:panelGrid columns="2" layout="grid">
+									<h:outputText value="# Preguntas" />
+									<h:outputText
+										value="#{listaMedicionesMB.countPreguntasByChecklist(item.idChecklist)}" />
+								</p:panelGrid>
+								<hr></hr>
+								<div style="display: flex; justify-content: flex-end">
+									<p:commandButton title="Detalle" icon="fa fa-search-plus"
+										oncomplete="PF('sbCatalogos').show()"
+										update="@([id$=categoria])"
+										process="@this, @([id$=panelPlantillas])"
+										actionListener="#{listaMedicionesMB.categoriasByCheckList(item.idChecklist)}"
+										style="max-width:max-content" class="btn btn-info" />
+									<p:commandButton title="Seleccionar" icon="fa fa-check"
+										disabled="#{!item.activoChecklist}"
+										update="@([id$=pnlPlantillas],[id$=pgExistencia])"
+										process="@this, @([id$=panelPlantillas])"
+										actionListener="#{listaMedicionesMB.agregarCheckListRespuesta(item.idChecklist)}"
+										style="max-width:max-content" class="btn btn-success">
+										<p:confirm header="Agregar Checklist"
+											message="¿Está usted seguro de Agregar el CHECKLIST y Todo su CONTENIDO?"
+											icon="fa fa-anchor" />
+									</p:commandButton>
+								</div>
+
+							</p:panel>
+						</p:dataGrid>
+					</p:panelGrid>
+				</p:dialog>
+
+
+				<p:sidebar widgetVar="sbCatalogos" position="right"
+					baseZIndex="10000" visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:60%;overflow: auto;">
+
+					<div class="box-body callout callout-success">
+						<strong><i class="fa fa-book margin-r-5"></i> Seleccionar
+							un CHECKLIST para realizar la MEDICIÓN </strong>
+					</div>
+					<p:dataGrid var="categoria"
+						value="#{listaMedicionesMB.listCategorias}" columns="2"
+						layout="grid" id="categoria" rows="5" paginator="true"
+						paginatorPosition="top" styleClass="box box-success">
+
+						<p:panel style="text-align:left"
+							header="#{categoria.idCategoria} - #{categoria.nombreCategoria}">
+
+							<p:panelGrid columns="1" layout="grid">
+								<p:panelGrid columns="5" layout="grid"
+									styleClass="box box-solid box-info"
+									columnClasses="ui-grid-col-1,ui-grid-col-8,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1">
+									<h:outputText value="ID" />
+									<h:outputText value="Pregunta" />
+									<h:outputText value="Peso" />
+									<h:outputText value="%" />
+									<h:outputText value="Valor" />
+								</p:panelGrid>
+								<p:repeat var="pregunta"
+									value="#{listaMedicionesMB.preguntasByCategoria(categoria.idCategoria)}">
+									<p:panelGrid columns="5" layout="grid"
+										columnClasses="ui-grid-col-1,ui-grid-col-8,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1">
+										<h:outputText value="#{pregunta.pregunta.idPregunta}" />
+										<h:outputText value="#{pregunta.pregunta.nombrePregunta}" />
+										<h:outputText value="#{pregunta.peso.peso}" />
+										<h:outputText value="#{pregunta.peso.porcentaje}" />
+										<h:outputText value="#{pregunta.peso.valor}" />
+									</p:panelGrid>
+									<p:separator />
+								</p:repeat>
+
+
+							</p:panelGrid>
+						</p:panel>
+					</p:dataGrid>
+				</p:sidebar>
+
+				<p:sidebar widgetVar="sbEncabezado" position="right"
+					baseZIndex="10000" visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:50%;overflow: auto;">
+
+
+
+
+					<p:panelGrid layout="grid" columns="1" id="panelEncabezadoDetalle"
+						styleClass="box-solid box-primary box "
+						style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+						<div class="box box-primary">
+
+							<!-- /.box-header -->
+							<div class="box-body callout callout-info">
+
+								<div style="display: flex; justify-content: space-between;">
+									<h1>!Indicaciones!</h1>
+									<img src="resources/images/ancla.gif" width="7%"
+										style="border-radius: 50%" />
+								</div>
+
+								<hr></hr>
+								<strong><i class="fa fa-book margin-r-5"></i> Anclar un
+									encabezado para la plantilla</strong>
+
+								<p class="text-muted" style="color: white !important;">Se
+									puede usar mas de un encabezado específico para acoplar una
+									plantilla nueva</p>
+
+
+							</div>
+							<!-- /.box-body -->
+						</div>
+						<p:tabView style="width: 100%;height: 100%;">
+							<p:tab>
+								<f:facet name="title">
+									<strong><i class="fa fa-list-alt"></i>Lista de
+										encabezados</strong>
+								</f:facet>
+								<p:dataTable id="dtEncabezado" var="item"
+									widgetVar="dtEncabezado" reflow="true"
+									value="#{listaMedicionesMB.listaencabezado}"
+									selection="#{listaMedicionesMB.listaencabezadoSelect}"
+									rowKey="#{item.idEncabezado}" rows="10" paginator="true"
+									styleClass="box box-primary">
+
+									<f:facet name="header">
+
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank">
+
+											<p:panelGrid layout="grid" columns="4" style="float:left"
+												columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+												<h:commandLink title="Exportar Excel" immediate="true"
+													style="width: min-content;">
+													<p:graphicImage value="/resources/images/excel.ico"
+														width="30px" />
+													<p:dataExporter type="xls" target="dtEncabezado"
+														fileName="Encabezado para Evaluaciones" />
+												</h:commandLink>
+												<h:outputText value="Buscar en Todos los Campos:   " />
+												<p:inputText id="globalFilter"
+													onkeyup="PF('dtEncabezado').filter();hideBar()"
+													style="width:150px" placeholder="Ingrese Parámetro....">
+													<p:ajax event="keyup" />
+												</p:inputText>
+
+												<p:commandButton style="width: min-content;float:rigth"
+													id="toggler" type="button" icon="fa fa-list" />
+												<p:columnToggler datasource="dtEncabezado" trigger="toggler" />
+
+											</p:panelGrid>
+											<p:commandButton icon="fa fa-refresh"
+												style="width: min-content;" styleClass="btn-default"
+												title="Actualizar Lista"
+												action="#{listaMedicionesMB.actualizarListaEncabezados()}"
+												update="dtEncabezado" />
+										</p:panelGrid>
+
+
+
+
+
+
+									</f:facet>
+
+									<p:column selectionMode="multiple" width="60"
+										style="text-align:center" />
+
+									<p:column filterBy="#{item.idEncabezado}"
+										filterMatchMode="contains" headerText="ID" width="60">
+										<h:outputText value="#{item.idEncabezado}" />
+									</p:column>
+
+									<p:column filterBy="#{item.nombreEncabezado}"
+										filterMatchMode="contains" headerText="Nombre">
+										<h:outputText value="#{item.nombreEncabezado}" />
+									</p:column>
+
+
+									<p:column filterBy="#{item.estadoEncabezado}" width="200"
+										filterMatchMode="contains" headerText="Activo">
+										<h:outputText
+											styleClass="#{item.estadoEncabezado ? 'label label-success':'label label-default'}"
+											value="#{item.estadoEncabezado ? 'ACTIVO':'INACTIVO'}" />
+										<p:inputSwitch value="#{item.estadoEncabezado}" onLabel="ON"
+											label="LABEL" offLabel="OFF" showLabels="true">
+										</p:inputSwitch>
+									</p:column>
+
+								</p:dataTable>
+							</p:tab>
+
+						</p:tabView>
+
+						<f:facet name="footer">
+							<p:commandButton value="Cancel"
+								oncomplete="PF('sbEncabezado').hide()"
+								styleClass="btn btn-solid btn-danger"
+								style="width: max-content;" />
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{listaMedicionesMB.agregarEncabezadoEvaluacion()}"
+								update="pnlEncabezados"
+								process="@this, @([id$=panelEncabezadoDetalle])"
+								styleClass="btn btn-solid btn-primary"
+								style="width: max-content;" />
+						</f:facet>
+
+					</p:panelGrid>
+				</p:sidebar>
+
+
+
+
+				<p:commandButton title="Regresar a Listado de Mediciones"
+					style="color:white;
+					width:min-content;
+					background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab) !important;
+					background-size: 400% 400% !important;
+					animation: gradient 15s ease infinite !important;"
+					action="#{listaMedicionesMB.goBackListaMediciones()}" value="Atrás"
+					icon="fa fa-reply" />
+				<br />
+				<br />
+
+				<div id="divImpresion">
+					<p:panelGrid layout="grid" columns="2" id="plgDatosMedicion"
+						columnClasses="ui-grid-col-9, ui-grid-col-3">
+						<p:panel header="Encabezado General"
+							styleClass="box box-primary box-solid">
+							<p:panelGrid columns="6" layout="grid">
+								<p:outputLabel value="Cliente: " style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbCliente" tabindex="1"
+									value="#{listaMedicionesMB.idCliente}" filter="true"
+									filterMatchMode="contains" style="width:100%">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{listaMedicionesMB.listCliente}"
+										itemLabel="#{item.nombreCliente}"
+										itemValue="#{item.idCliente}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbCliente" update="cmbEmpresa"
+										listener="#{listaMedicionesMB.findByClienteIdCliente}" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Fecha Creación"
+									style="  FONT-WEIGHT: bold;" />
+								<p:calendar
+									value="#{listaMedicionesMB.evaluacion.creaEvaluacion}">
+									<p:ajax event="dateSelect"
+										listener="#{listaMedicionesMB.actualizarEvaluacion}" />
+
+								</p:calendar>
+
+								<p:outputLabel value="Hora Atención"
+									style="  FONT-WEIGHT: bold;" />
+								<p:calendar pattern="HH:mm" timeOnly="true"
+									value="#{listaMedicionesMB.evaluacion.atencionEvaluacion}">
+									<p:ajax event="dateSelect" process="@this, plgDatosMedicion"
+										listener="#{listaMedicionesMB.calcularTiempos()}"
+										update="calContacto, calEspera" />
+								</p:calendar>
+
+
+								<p:outputLabel for="cmbEmpresa" value="Empresa: "
+									style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbEmpresa"
+									requiredMessage="La Empresa es requerido"
+									value="#{listaMedicionesMB.idEmpresa}" style="width:100%">
+									<f:selectItem itemLabel="Todos" itemValue="" />
+									<f:selectItems value="#{listaMedicionesMB.listEmpresa}"
+										var="item" itemLabel="#{item.nombreEmpresa}"
+										itemValue="#{item.idEmpresa}" />
+									<p:ajax event="change" process="cmbEmpresa"
+										listener="#{listaMedicionesMB.findByEmpresaIdEmpresa}"
+										update="cmbAgencia" />
+								</p:selectOneMenu>
+
+								<p:outputLabel value="Fecha Evaluación"
+									style="  FONT-WEIGHT: bold;" />
+								<p:calendar
+									value="#{listaMedicionesMB.evaluacion.fechaEvaluacion}">
+									<p:ajax event="dateSelect"
+										listener="#{listaMedicionesMB.actualizarEvaluacion}" />
+
+								</p:calendar>
+
+								<p:outputLabel value="Tiempo de Contacto"
+									style="  FONT-WEIGHT: bold;" />
+								<p:calendar pattern="HH:mm" timeOnly="true" id="calContacto"
+									value="#{listaMedicionesMB.evaluacion.contactoEvaluacion}">
+									<p:ajax event="dateSelect"
+										listener="#{listaMedicionesMB.actualizarEvaluacion}" />
+
+								</p:calendar>
+
+
+
+								<p:outputLabel value="Agencia: " style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbAgencia" tabindex="3"
+									value="#{listaMedicionesMB.idAgencia}" filter="true"
+									filterMatchMode="contains" style="width:100%">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{listaMedicionesMB.listAgencia}"
+										itemLabel="#{item.nombreAgencia}"
+										itemValue="#{item.idAgencia}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbAgencia"
+										listener="#{listaMedicionesMB.findByAgenciaIdAgencia}"
+										update="cmbEmpleado" />
+								</p:selectOneMenu>
+
+								<p:outputLabel value="Hora Inicio" style="  FONT-WEIGHT: bold;" />
+								<p:calendar pattern="HH:mm" timeOnly="true"
+									value="#{listaMedicionesMB.evaluacion.horaInicioEvaluacion}">
+									<p:ajax event="dateSelect"
+										listener="#{listaMedicionesMB.actualizarEvaluacion}" />
+
+								</p:calendar>
+
+								<p:outputLabel value="Tiempo Espera"
+									style="  FONT-WEIGHT: bold;" />
+								<p:calendar pattern="HH:mm" timeOnly="true" id="calEspera"
+									value="#{listaMedicionesMB.evaluacion.esperaEvaluacion}">
+									<p:ajax event="dateSelect"
+										listener="#{listaMedicionesMB.actualizarEvaluacion}" />
+
+								</p:calendar>
+
+
+
+
+								<p:outputLabel value="Empleado: " style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbEmpleado" tabindex="5"
+									value="#{listaMedicionesMB.idEmpleado}" filter="true"
+									filterMatchMode="contains" style="width:100%">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{listaMedicionesMB.listEmpleado}"
+										itemLabel="#{item.nombreEmpleado}"
+										itemValue="#{item.idEmpleado}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbEmpleado"
+										listener="#{listaMedicionesMB.actualizarEvaluacionXEmpleado}" />
+								</p:selectOneMenu>
+
+
+								<p:outputLabel value="Hora Fin" style="  FONT-WEIGHT: bold;" />
+								<p:calendar pattern="HH:mm" timeOnly="true"
+									value="#{listaMedicionesMB.evaluacion.horaFinEvaluacion}">
+									<p:ajax event="dateSelect"
+										listener="#{listaMedicionesMB.actualizarEvaluacion}" />
+
+								</p:calendar>
+
+								<p:outputLabel value="Activo:" style="  FONT-WEIGHT: bold;" />
+								<p:inputSwitch
+									value="#{listaMedicionesMB.evaluacion.activoEvaluacion}">
+									<p:ajax event="change"
+										listener="#{listaMedicionesMB.actualizarEvaluacion}" />
+								</p:inputSwitch>
+								<p:outputLabel value="Estado Evaluación: "
+									style="  FONT-WEIGHT: bold;" />
+								<p:selectOneMenu id="cmbEstado" tabindex="4"
+									value="#{listaMedicionesMB.idEstadoEvaluacion}" filter="true"
+									filterMatchMode="contains" style="width:100%">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{listaMedicionesMB.listEstadoevaluacion}"
+										itemLabel="#{item.nombreEstado}" itemValue="#{item.idEstado}">
+									</f:selectItems>
+									<p:ajax event="change"
+										listener="#{listaMedicionesMB.actualizarEvaluacionXEstado}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+
+							<p:panelGrid columns="2" layout="grid"
+								columnClasses="ui-grid-col-6, ui-grid-col-6">
+
+								<p:panelGrid columns="2" layout="grid"
+									columnClasses="ui-grid-col-4, ui-grid-col-8">
+									<p:outputLabel value="Observación" style="  FONT-WEIGHT: bold;" />
+									<p:inputTextarea
+										value="#{listaMedicionesMB.evaluacion.observacionEvaluacion}">
+										<p:ajax event="blur"
+											listener="#{listaMedicionesMB.actualizarEvaluacion()}" />
+									</p:inputTextarea>
+
+
+
+									<p:outputLabel value="Video Evidencia (.mp4): "
+										style="  FONT-WEIGHT: bold;" />
+
+									<p:fileUpload mode="advanced" dragDropSupport="true"
+										style="width:max-content" id="pnlVideoStream"
+										listener="#{listaMedicionesMB.upload}"
+										process="@this,pnlVideoStream" sizeLimit="50000000"
+										label="Escoger" cancelLabel="Cancelar" uploadLabel="Agregar"
+										showButtons="true" multiple="false"
+										allowTypes="/(\.|\/)(mp4)$/"
+										invalidFileMessage="Tipo de formato incorrecto"
+										invalidSizeMessage="Tamaño no permitido"
+										performVirusScan="true" previewWidth="150"
+										fileLimitMessage="Solo se acepta un archivo"
+										update="@([id$=videoDetalle])" />
+								</p:panelGrid>
+
+
+								<p:panelGrid rendered="true" layout="grid" columns="1"
+									id="videoDetalle">
+									<section class="videowrapper videoTag">
+										<a href="javascript:void(0);" class="close-button"></a>
+										<div class="gradient-overlay"></div>
+										<i class="fa fa-arrows-alt" aria-hidden="true"></i>
+										<video style="width: 100%;"
+											src="${request.contextPath}/resources/videos/#{listaMedicionesMB.evaluacion.idEvaluacion}/video-#{listaMedicionesMB.evaluacion.idEvaluacion}.mp4"
+											autoplay="autoplay" controls="controls" loop="loop"
+											poster="${request.contextPath}/resources/images/portada.gif"
+											preload="auto"></video>
+									</section>
+
+								</p:panelGrid>
+
+
+
+							</p:panelGrid>
+
+
+						</p:panel>
+						<p:panel styleClass="box box-primary">
+							<div style="display: flex; justify-content: space-between;">
+								<p:outputLabel value="Encabezado Específico" />
+								<div>
+									<p:commandButton style="width: inherit;"
+										styleClass="btn btn-primary" title="Ver"
+										oncomplete="PF('sbEncabezado').show()" icon="fa fa-search" />
+								</div>
+							</div>
+
+							<p:separator />
+							<p:panelGrid columns="1" layout="grid" id="pnlEncabezados">
+								<ui:repeat var="item"
+									value="#{listaMedicionesMB.listaEvaluacionencabezado}">
+									<p:panelGrid columns="1" layout="grid">
+
+										<div>
+											<p:commandLink styleClass="pi pi-trash text-danger"
+												title="Quitar encabezado" update="@([id$=pnlEncabezados])"
+												action="#{listaMedicionesMB.elimminarEncabezadoEvaluacion(item)}" />
+											<p:outputLabel value="#{item.encabezado.nombreEncabezado}" />
+
+										</div>
+										<p:inputText value="#{item.valorEncabezado}">
+											<p:ajax event="blur"
+												listener="#{listaMedicionesMB.actualizarEncabezadoevaluacion(item)}" />
+										</p:inputText>
+									</p:panelGrid>
+								</ui:repeat>
+
+
+							</p:panelGrid>
+						</p:panel>
+					</p:panelGrid>
+
+					<p:panel styleClass="box box-primary" id="pnlFormulario"
+						header="Formulario - CHECKLIST">
+						<f:facet name="actions">
+
+							<p:commandButton style="width: inherit;"
+								styleClass="btn btn-success" title="Agregar Formularios"
+								value="Agregar Formularios"
+								oncomplete="PF('sbPlantillas').show()" icon="fa fa-plus" />
+						</f:facet>
+						<p:panelGrid columns="1" layout="grid" id="pnlPlantillas"
+							columnClasses="ui-grid-col-12">
+
+
+
+
+							<ui:repeat var="item" value="#{listaMedicionesMB.listaResp}">
+
+
+								<p:panel style="text-align:left" toggleable="true"
+									styleClass="box box-solid box-teal"
+									header="#{item.categoria.idCategoria} - #{item.categoria.nombreCategoria}">
+									<f:facet name="actions">
+										<p:commandButton id="btnReiniciar" process="@this"
+											style="width: inherit;"
+											actionListener="#{listaMedicionesMB.resetearCalculos(item)}"
+											title="Reset" update="@([id$=pnlPlantillas])"
+											styleClass="btn bg-danger" icon="fa fa-undo">
+
+											<p:confirm header="Recal"
+												message="¿Está usted seguro de RESETAER el BLOQUE #{item.categoria.nombreCategoria} y sus valores CALCULADOS?"
+												icon="fa fa-undo" />
+										</p:commandButton>
+
+
+										<p:commandButton id="btnRefreshCalculos" process="@this"
+											style="width: inherit;"
+											actionListener="#{listaMedicionesMB.reCalcular(item)}"
+											title="Recal" update="@([id$=pnlPlantillas])"
+											styleClass="btn bg-dark" icon="fa fa-refresh">
+											<p:confirm header="Recal"
+												message="¿Está usted seguro de RECALCULAR el BLOQUE #{item.categoria.nombreCategoria} y sus valores CALCULADOS?"
+												icon="fa fa-anchor" />
+										</p:commandButton>
+
+									</f:facet>
+
+									<p:panelGrid columns="1" layout="grid">
+										<p:panelGrid columns="11" layout="grid"
+											styleClass="box box-solid box-info"
+											columnClasses="ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-2,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,ui-grid-col-1">
+											<h:outputText value="ID-CAT" />
+											<h:outputText value="ID-PRE" />
+											<h:outputText value="ID-PES" />
+											<h:outputText value="Pregunta" />
+											<h:outputText value="Valor" />
+											<h:outputText value="%" />
+											<h:outputText value="Peso" />
+											<h:outputText value="Calculado" />
+											<h:outputText value="Cumple ?" />
+											<h:outputText value="Aplica ?" />
+											<h:outputText value="Observación ?" />
+										</p:panelGrid>
+										<ui:repeat var="respuesta"
+											value="#{item.listaContenidoRespuesta}">
+											<p:panelGrid columns="11" layout="grid"
+												columnClasses="ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-2,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,ui-grid-col-1,">
+												<h:outputText
+													value="#{respuesta.catalogoPregunta.categoria.idCategoria}" />
+												<h:outputText
+													value="#{respuesta.catalogoPregunta.pregunta.idPregunta}" />
+												<h:outputText
+													value="#{respuesta.catalogoPregunta.peso.idPeso}" />
+												<h:outputText
+													value="#{respuesta.catalogoPregunta.pregunta.nombrePregunta}" />
+												<h:outputText
+													value="#{respuesta.respuesta.valorRealRespuesta}" />
+												<h:outputText
+													value="#{respuesta.catalogoPregunta.peso.porcentaje}" />
+												<h:outputText
+													value="#{respuesta.catalogoPregunta.peso.peso}" />
+												<h:outputText
+													value="#{respuesta.respuesta.valorCalculadoRespuesta}" />
+												<p:panelGrid columns="1" layout="grid">
+													<h:outputText id="txtCumple" style="font-size:medium"
+														styleClass="#{respuesta.respuesta.cumpleRespuesta ? 'label label-success':'label label-danger'}"
+														value="#{respuesta.respuesta.cumpleRespuesta  ? 'SI':'NO'}" />
+													<p:inputSwitch
+														value="#{respuesta.respuesta.cumpleRespuesta}">
+
+														<p:ajax event="change" update="txtCumple"
+															listener="#{listaMedicionesMB.actualizarRespuestas(respuesta)}" />
+													</p:inputSwitch>
+												</p:panelGrid>
+
+												<p:panelGrid columns="1" layout="grid">
+													<h:outputText id="txtProcede" style="font-size:medium"
+														styleClass="#{respuesta.respuesta.noProcede ? 'label label-success':'label label-danger'}"
+														value="#{respuesta.respuesta.noProcede  ? 'SI':'NO'}" />
+													<p:inputSwitch value="#{respuesta.respuesta.noProcede}">
+														<p:ajax event="change" update="@([id$=pnlPlantillas])"
+															listener="#{listaMedicionesMB.actualizarBloqueRespuestas(item, respuesta)}" />
+													</p:inputSwitch>
+												</p:panelGrid>
+
+
+												<p:inputTextarea
+													value="#{respuesta.respuesta.observacionRespuesta}">
+													<p:ajax event="blur"
+														listener="#{listaMedicionesMB.actualizarRespuestas(respuesta)}" />
+												</p:inputTextarea>
+											</p:panelGrid>
+											<p:separator />
+										</ui:repeat>
+
+										<p:panelGrid columns="11" layout="grid" id="footerTotales"
+											styleClass="box box-solid box-info"
+											columnClasses="ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-2,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,
+										ui-grid-col-1,ui-grid-col-1">
+											<h:outputText value="" />
+											<h:outputText value="" />
+											<h:outputText value="" />
+											<h:outputText value="" />
+											<h:outputText styleClass="label label-danger"
+												style="font-size:small"
+												value="TOTAL: #{listaMedicionesMB.calulcularTotalRespuestaBase(item)}" />
+											<h:outputText value="" />
+											<h:outputText value="" />
+											<h:outputText styleClass="label label-danger"
+												style="font-size:small"
+												value="TOTAL: #{listaMedicionesMB.calulcularTotalRespuestaCalculado(item)}" />
+											<h:outputText value="" />
+											<h:outputText value="" />
+											<h:outputText value="" />
+										</p:panelGrid>
+
+
+									</p:panelGrid>
+								</p:panel>
+							</ui:repeat>
+
+						</p:panelGrid>
+					</p:panel>
+				</div>
+
+
+			</h:form>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

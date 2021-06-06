@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Estado Evaluaciones" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+div.ui-panel .ui-panel-content {
+	height: 100%;
+	padding: 10px 10px;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 30px;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.transparente>div {
+	background: transparent;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+	#{estadoEvaluacionMB.init()}
+	</h:form>
+
+
+		<div class="ui-fluid">
+
+
+
+			<h:form id="form" enctype="multipart/form-data">
+				<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:60%;overflow: auto;">
+
+
+
+
+					<p:panelGrid layout="grid" columns="1" id="panelEstadoDetalle"
+						styleClass="box-solid box-primary box customPanelGrid ui-noborder"
+						style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+						<div class="box box-primary">
+							<!-- /.box-header -->
+							<div class="box-body callout callout-info">
+
+								<div style="display: flex; justify-content: space-between;">
+									<h1>!Indicaciones!</h1>
+									<img src="resources/images/ancla.gif" width="7%"
+										style="border-radius: 50%" />
+								</div>
+
+								<hr></hr>
+								<strong><i class="fa fa-book margin-r-5"></i>
+									Información de Estados de Evaluación </strong>
+
+								<p class="text-muted" style="color: white !important;">Se
+									pone a su disposición un resumen de las evaluaciones
+									dependiendo del Estado de evaluación</p>
+
+
+							</div>
+							<!-- /.box-body -->
+						</div>
+
+						<p:panelGrid columns="1" layout="grid">
+
+							<p:outputLabel value="Nombre:" />
+							<p:inputText value="#{estadoEvaluacionMB.estado.nombreEstado}" />
+
+							<p:outputLabel value="Activo:" />
+							<p:inputSwitch value="#{estadoEvaluacionMB.estado.activoEstado}">
+							</p:inputSwitch>
+
+						</p:panelGrid>
+
+
+						<p:dataTable id="dtEvaluacion" var="item" widgetVar="dtEvaluacion"
+							reflow="true" value="#{estadoEvaluacionMB.listaEvaluaciones}"
+							rows="10" paginator="true" styleClass="box box-primary">
+
+							<f:facet name="header">
+
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank">
+
+									<p:panelGrid layout="grid" columns="4" style="float:left"
+										columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+										<h:commandLink title="Exportar Excel" immediate="true"
+											style="width: min-content;">
+											<p:graphicImage value="/resources/images/excel.ico"
+												width="30px" />
+											<p:dataExporter type="xls" target="dtEvaluacion"
+												fileName="Evaluaciones" />
+										</h:commandLink>
+										<h:outputText value="Buscar en Todos los Campos:   " />
+										<p:inputText id="globalFilter"
+											onkeyup="PF('dtEvaluacion').filter();hideBar()"
+											style="width:150px" placeholder="Ingrese Parámetro....">
+											<p:ajax event="keyup" />
+										</p:inputText>
+
+										<p:commandButton style="width: min-content;float:rigth"
+											id="toggler" type="button" icon="fa fa-list" />
+										<p:columnToggler datasource="dtEvaluacion" trigger="toggler" />
+
+									</p:panelGrid>
+
+
+
+
+									<p:commandButton icon="fa fa-refresh"
+										style="width: min-content;" styleClass="btn-default"
+										title="Actualizar Lista"
+										action="#{estadoEvaluacionMB.actualizarListaEvaluaciones()}"
+										update="dtEvaluacion" />
+								</p:panelGrid>
+							</f:facet>
+
+
+							<p:column filterBy="#{item.idEvaluacion}"
+								filterMatchMode="contains" headerText="ID">
+								<h:outputText value="#{item.idEvaluacion}" />
+							</p:column>
+
+
+							<p:column filterBy="#{item.activoEvaluacion}"
+								filterMatchMode="contains" headerText="Activo">
+								<h:outputText
+									styleClass="#{item.activoEvaluacion ? 'label label-success':'label label-default'}"
+									value="#{item.activoEvaluacion ? 'ACTIVO':'INACTIVO'}" />
+								<p:inputSwitch value="#{item.activoEvaluacion}" onLabel="ON"
+									label="LABEL" offLabel="OFF" showLabels="true">
+								</p:inputSwitch>
+							</p:column>
+
+							<p:column filterBy="#{item.horaInicioEvaluacion}"
+								filterMatchMode="contains" headerText="Inicio">
+								<h:outputText value="#{item.horaInicioEvaluacion}" />
+							</p:column>
+
+							<p:column filterBy="#{item.horaFinEvaluacion}"
+								filterMatchMode="contains" headerText="Fin">
+								<h:outputText styleClass="pi pi-clock"
+									value="#{item.horaFinEvaluacion}" />
+							</p:column>
+
+
+							<p:column filterBy="#{item.contactoEvaluacion}"
+								filterMatchMode="contains" headerText="Contacto">
+								<h:outputText value="#{item.contactoEvaluacion}" />
+							</p:column>
+
+							<p:column filterBy="#{item.atencionEvaluacion}"
+								filterMatchMode="contains" headerText="Atención">
+								<h:outputText value="#{item.atencionEvaluacion}" />
+							</p:column>
+
+							<p:column filterBy="#{item.esperaEvaluacion}"
+								filterMatchMode="contains" headerText="Espera">
+								<h:outputText value="#{item.esperaEvaluacion}" />
+							</p:column>
+
+
+							<p:column filterBy="#{item.observacionEvaluacion}"
+								filterMatchMode="contains" headerText="Observación">
+								<h:outputText value="#{item.observacionEvaluacion}" />
+							</p:column>
+
+							<p:column filterBy="#{item.fechaEvaluacion}"
+								filterMatchMode="contains" headerText="Programada">
+								<h:outputText value="#{item.fechaEvaluacion}" />
+							</p:column>
+
+							<p:column filterBy="#{item.creaEvaluacion}"
+								filterMatchMode="contains" headerText="Ejecutada">
+								<h:outputText value="#{item.creaEvaluacion}" />
+							</p:column>
+						</p:dataTable>
+
+
+
+						<f:facet name="footer">
+							<p:commandButton value="Cancel"
+								oncomplete="PF('sidebar2').hide()"
+								styleClass="btn btn-solid btn-danger"
+								style="width: max-content;" />
+						</f:facet>
+					</p:panelGrid>
+
+				</p:sidebar>
+
+
+
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-4,ui-grid-col-8 transparente">
+					<p:panel styleClass="box box-solid box-primary"
+						header="Datos de Registro">
+
+						<div class="card text-white">
+							<img style="width: auto; height: auto"
+								src="https://png.pngtree.com/thumb_back/fh260/background/20190221/ourmid/pngtree-2-5d-office-order-simulation-character-image_17858.jpg"
+								class="card-img" alt="..." />
+							<div class="card-header text-primary">Datos de Estado
+								Evaluación</div>
+							<div class="card-body">
+								<h5 class="card-title"></h5>
+								<p class="card-text">
+									<p:panelGrid columns="1" layout="grid" id="panelEstado">
+
+										<p:outputLabel value="Nombre:" />
+										<p:inputText value="#{estadoEvaluacionMB.estado.nombreEstado}" />
+
+										<p:outputLabel value="Activo:" />
+										<p:inputSwitch
+											value="#{estadoEvaluacionMB.estado.activoEstado}">
+										</p:inputSwitch>
+
+									</p:panelGrid>
+								</p>
+								<div style="display: flex; justify-content: flex-end;">
+									<p:commandButton
+										value="#{estadoEvaluacionMB.estado.idEstado == null ? 'Guardar':'Actualizar'}"
+										icon="fa fa-floppy-o"
+										styleClass="#{estadoEvaluacionMB.estado.idEstado == null ? 'btn-success':'btn-warning'}"
+										process="@this, panelEstado"
+										update="@([id$=dtEstado], [id$=panelEstado],[id$=btnGuardar])"
+										actionListener="#{estadoEvaluacionMB.guardar()}"
+										style="width: max-content" id="btnGuardar">
+									</p:commandButton>
+
+									<p:commandButton value="Cancelar" icon="fa fa-close"
+										styleClass="btn-danger" process="@this" update="@form"
+										action="#{estadoEvaluacionMB.init()}"
+										style="width: max-content" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+
+					<p:dataTable id="dtEstado" var="item" widgetVar="dtEstado"
+						reflow="true" value="#{estadoEvaluacionMB.listaEstado}" rows="10"
+						paginator="true" styleClass="box box-primary">
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtEstado"
+											fileName="Estao Evaluaciones" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtEstado').filter();hideBar()"
+										style="width:150px" placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="dtEstado" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista"
+									action="#{estadoEvaluacionMB.actualizarLista()}"
+									update="dtEstado" />
+							</p:panelGrid>
+
+
+
+
+
+
+						</f:facet>
+
+
+						<p:column filterBy="#{item.idEstado}" filterMatchMode="contains"
+							headerText="ID" style="width:100px;">
+							<h:outputText value="#{item.idEstado}" />
+						</p:column>
+
+						<p:column filterBy="#{item.nombreEstado}"
+							filterMatchMode="contains" headerText="Nombre">
+							<h:outputText value="#{item.nombreEstado}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.activoEstado}"
+							filterMatchMode="contains" headerText="Activo">
+							<h:outputText
+								styleClass="#{item.activoEstado ? 'label label-success':'label label-default'}"
+								value="#{item.activoEstado ? 'ACTIVO':'INACTIVO'}" />
+							<p:inputSwitch value="#{item.activoEstado}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" process="dtEstado"
+									listener="#{estadoEvaluacionMB.switchActiva(item)}"
+									update="dtEstado" />
+							</p:inputSwitch>
+						</p:column>
+
+						<p:column filterBy="#{item.creaEstado}"
+							sortBy="#{item.creaEstado}" filterMatchMode="contains"
+							headerText="Creación">
+							<h:outputText value="#{item.creaEstado}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+
+						<p:column headerText="Opciones" width="150" exportable="false">
+							<p:commandButton process="dtEstado" icon="fa fa-edit"
+								style="width: min-content" title="editar"
+								action="#{estadoEvaluacionMB.pasarDatoseditar(item)}"
+								styleClass="btn-primary"
+								update="@([id$=panelEstado],[id$=btnGuardar])">
+							</p:commandButton>
+
+							<p:commandButton icon="fa fa-eye"
+								oncomplete="PF('sidebar2').show()" style="width: min-content"
+								action="#{estadoEvaluacionMB.pasarDatoseditar(item)}"
+								title="ver" styleClass="btn-success"
+								update="@([id$=panelEstadoDetalle])">
+							</p:commandButton>
+
+							<p:commandButton update="@([id$=dtEstado])" icon="fa fa-trash"
+								style="width: min-content" title="eliminar" process="dtEstado"
+								action="#{estadoEvaluacionMB.eliminar()}"
+								styleClass="btn-danger">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{estadoEvaluacionMB.estado}" />
+								<p:confirm
+									header="Confirmar Eliminación el estado de evaluación"
+									message="¿Está usted seguro?" icon="fa fa-anchor" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+				</p:panelGrid>
+
+
+			</h:form>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

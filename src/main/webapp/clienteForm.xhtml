@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" xmlns:adm="http://github.com/adminfaces"
+                template="#{layoutMB.template}">
+
+    <ui:define name="metadata">
+        <ui:param name="title" value="Detalle Cliente"/>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Detalle Cliente
+    </ui:define>
+
+    <ui:define name="body">
+
+
+        <h:form id="form" >
+
+            <p:panel styleClass="box-primary card"  toggleable="true">
+                <div id="main-buttons">
+                    <p:commandButton value="Guardar" 
+                                     icon="fa fa-floppy-o" styleClass="btn-primary"/>
+                    <p:spacer width="5" />
+                    <p:commandButton value="Regresar" action="clientes?faces-redirect=true"
+                                     icon="fa fa-windows-close" styleClass="btn-primary">                        
+                    </p:commandButton>
+
+                </div>
+
+
+                <div class="ui-g ui-fluid">
+                    <div class="ui-sm-12 ui-g-6 ui-g-nopad"> 
+                        <div class="ui-sm-12 ui-g-11">
+                            <p:outputLabel for="nombre" value="NOMBRE"/>
+                        </div>
+                        <div class="ui-sm-12 ui-g-11" >
+                            <p:inputText id="nombre" value="#{clienteListMB.clienteSeleccionado.nombre}" styleClass="form-control" style="width: 100%"/>
+                            <span class="help-block"> 
+                                <p:message for="nombre" /> 
+                            </span> 
+                        </div>
+                    </div>  
+
+                    <div class="ui-sm-12 ui-g-6 ui-g-nopad"> 
+                        <div class="ui-sm-12 ui-g-11">
+                            <p:outputLabel for="direccion" value="DIRECCIÓN"/>
+                        </div>
+                        <div class="ui-sm-12 ui-g-11" >
+                            <p:inputText id="direccion" value="#{clienteListMB.clienteSeleccionado.direccion}" styleClass="form-control" style="width: 100%"/>
+                            <span class="help-block"> 
+                                <p:message for="direccion" /> 
+                            </span> 
+                        </div>
+                    </div> 
+
+                    <div class="ui-sm-12 ui-g-6 ui-g-nopad"> 
+                        <div class="ui-sm-12 ui-g-11">
+                            <p:outputLabel for="ci" value="RUC/CI"/>
+                        </div>
+                        <div class="ui-sm-12 ui-g-11" >
+                            <p:inputText id="ci" value="#{clienteListMB.clienteSeleccionado.ci}" styleClass="form-control" style="width: 100%"/>
+                            <span class="help-block"> 
+                                <p:message for="ci" /> 
+                            </span> 
+                        </div>
+                    </div>                     
+                    <div class="ui-sm-12 ui-g-6 ui-g-nopad"> 
+                        <div class="ui-sm-12 ui-g-11">
+                            <p:outputLabel for="mail" value="EMAIL"/>
+                        </div>
+                        <div class="ui-sm-12 ui-g-11" >
+                            <p:inputText id="mail" value="#{clienteListMB.clienteSeleccionado.mail}" styleClass="form-control" style="width: 100%"/>
+                            <span class="help-block"> 
+                                <p:message for="mail" /> 
+                            </span> 
+                        </div>
+                    </div>                    
+
+                    <div class="ui-sm-12 ui-g-6 ui-g-nopad"> 
+                        <div class="ui-sm-12 ui-g-11">
+                            <p:outputLabel for="telefono" value="TELÉFONO"/>
+                        </div>
+                        <div class="ui-sm-12 ui-g-11" >
+                            <p:inputText id="telefono" value="#{clienteListMB.clienteSeleccionado.telefono}" styleClass="form-control" style="width: 100%"/>
+                            <span class="help-block"> 
+                                <p:message for="telefono" /> 
+                            </span> 
+                        </div>
+                    </div>  
+
+                    <div class="ui-sm-12 ui-g-6 ui-g-nopad"> 
+                        <div class="ui-sm-12 ui-g-11">
+                            <p:outputLabel for="url" value="URL"/>
+                        </div>
+                        <div class="ui-sm-12 ui-g-11" >
+                            <p:inputText id="url" value="#{clienteListMB.clienteSeleccionado.ur}" styleClass="form-control" style="width: 100%"/>
+                            <span class="help-block"> 
+                                <p:message for="url" /> 
+                            </span> 
+                        </div>
+                    </div>  
+                    <div class="ui-sm-12 ui-g-6 ui-g-nopad"> 
+                        <div class="ui-sm-12 ui-g-11">
+
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+
+            </p:panel>
+
+
+            <p:dataTable id="dtEmpresa" 
+                         var="empresa" 
+                         value="#{clienteListMB.clienteSeleccionado.listaEmpresas}"                          
+                         >   
+
+                <p:column filterBy="#{empresa.nombre}" headerText="Nombre">
+                    <h:outputText value="#{empresa.nombre}" />
+                </p:column>
+                
+                <p:column headerText="Region">
+                    <h:outputText value="#{empresa.listaRegiones.toArray}" />
+                </p:column>
+
+
+            </p:dataTable>
+
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-danger box-solid">
+                <p:commandButton value="Yes" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="fa fa-check"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fa fa-close"/>
+            </p:confirmDialog>
+        </h:form>
+
+
+
+    </ui:define>
+
+</ui:composition>

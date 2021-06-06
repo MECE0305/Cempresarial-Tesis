@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Sector Industrial" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+div.ui-panel .ui-panel-content {
+	height: 100%;
+	padding: 10px 10px;
+}
+
+.ui-steps.custom {
+	margin-bottom: 30px;
+}
+
+.ui-steps.custom .ui-steps-item .ui-menuitem-link {
+	height: 10px;
+	padding: 0 1em;
+}
+
+.ui-steps.custom .ui-steps-item .ui-steps-number {
+	background-color: #0081c2;
+	color: #FFFFFF;
+	display: inline-block;
+	width: 30px;
+	border-radius: 10px;
+	margin-top: -10px;
+	margin-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.transparente>div {
+	background: transparent;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+	#{sectorMB.init()}
+	</h:form>
+		<div class="ui-fluid">
+			<h:form id="form" enctype="multipart/form-data">
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+
+				<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:40%;overflow: auto;">
+
+
+
+
+					<p:panelGrid layout="grid" columns="1" id="panelSectorDetalle"
+						styleClass="box-solid box-primary box "
+						style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h1 class="box-title"></h1>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body callout callout-info">
+
+								<div style="display: flex; justify-content: space-between;">
+									<h1>!Indicaciones!</h1>
+									<img src="resources/images/ancla.gif" width="7%"
+										style="border-radius: 50%" />
+								</div>
+
+								<hr></hr>
+								<strong><i class="fa fa-book margin-r-5"></i> Datos de
+									Sector Industrial para Empresas</strong>
+
+								<p class="text-muted" style="color: white !important;">Se
+									debe actualizar los campos necesarios</p>
+							</div>
+							<!-- /.box-body -->
+						</div>
+
+						<p:accordionPanel activeIndex="0" multiple="true"
+							style="width: 100%;height: 100%;">
+							<p:tab>
+								<f:facet name="title">
+									<strong><i class="fa fa-file-archive-o"></i> Datos
+										Sector Industrial</strong>
+								</f:facet>
+								<p:panelGrid columns="1" layout="grid">
+
+									<p:outputLabel value="Nombre:" />
+									<p:inputText value="#{sectorMB.sector.nombreSector}" />
+
+									<p:outputLabel value="Descripción:" />
+									<p:inputText value="#{sectorMB.sector.descripcionSector}" />
+
+									<p:outputLabel value="Activo:" />
+									<p:inputSwitch value="#{sectorMB.sector.activoSector}">
+									</p:inputSwitch>
+
+									<p:outputLabel value="Fecha Creación:" style="display: none"/>
+									<p:inputText value="#{sectorMB.sector.creaSector}"
+										readonly="true"
+										style="display: none">
+										<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+									</p:inputText>
+
+									<p:outputLabel value="Fecha Actualización:" style="display: none"/>
+									<p:inputText value="#{sectorMB.sector.actualizaSector}"
+										readonly="true"
+										style="display: none">
+										<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+									</p:inputText>
+
+
+								</p:panelGrid>
+							</p:tab>
+						</p:accordionPanel>
+
+
+						<f:facet name="footer">
+							<p:commandButton value="Cancel"
+								oncomplete="PF('sidebar2').hide()"
+								styleClass="btn btn-solid btn-danger"
+								style="width: max-content;" />
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{sectorMB.sideActualiza()}" update="dtSector"
+								process="@this, @([id$=panelSectorDetalle])"
+								styleClass="btn btn-solid btn-primary"
+								style="width: max-content;" />
+						</f:facet>
+
+					</p:panelGrid>
+				</p:sidebar>
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-4,ui-grid-col-8">
+
+					<p:panel styleClass="box box-solid box-primary"
+						header="Datos de Sector">
+
+						<div class="card text-white">
+							<img style="width: auto; height: auto"
+								src="https://png.pngtree.com/thumb_back/fh260/back_pic/02/51/48/43578209fcc3e02.jpg"
+								class="card-img" alt="..." />
+							<div class="card-header text-primary">Datos de Registro</div>
+							<div class="card-body">
+								<h5 class="card-title"></h5>
+								<p class="card-text">
+									<p:panelGrid columns="1" layout="grid" id="panelSector">
+
+										<p:outputLabel value="Nombre:" />
+										<p:inputText value="#{sectorMB.sector.nombreSector}" />
+
+										<p:outputLabel value="Descripción:" />
+										<p:inputText value="#{sectorMB.sector.descripcionSector}" />
+
+										<p:outputLabel value="Activo:" />
+										<p:inputSwitch value="#{sectorMB.sector.activoSector}">
+										</p:inputSwitch>
+
+										<p:outputLabel value="Fecha Creación:" />
+										<p:inputText value="#{sectorMB.sector.creaSector}"
+											readonly="true">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+										</p:inputText>
+
+										<p:outputLabel value="Fecha Actualización:" />
+										<p:inputText value="#{sectorMB.sector.actualizaSector}"
+											readonly="true">
+											<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+										</p:inputText>
+
+									</p:panelGrid>
+								</p>
+								<div style="display: flex; justify-content: flex-end;">
+									<p:commandButton
+										value="#{sectorMB.sector.idSector == null ? 'Guardar':'Actualizar'}"
+										icon="fa fa-floppy-o"
+										styleClass="#{sectorMB.sector.idSector == null ? 'btn-success':'btn-warning'}"
+										process="@this, panelSector"
+										update="@([id$=dtSector], [id$=panelSector],[id$=btnGuardar])"
+										actionListener="#{sectorMB.guardar()}"
+										style="width: max-content" id="btnGuardar">
+									</p:commandButton>
+
+									<p:commandButton value="Cancelar" icon="fa fa-close"
+										styleClass="btn-danger" process="@this" update="@form"
+										action="#{sectorMB.init()}" style="width: max-content" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+
+					<p:dataTable id="dtSector" var="item" widgetVar="dtSector"
+						reflow="true" value="#{sectorMB.listaSector}" rows="10"
+						paginator="true" styleClass="box box-primary">
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtSector"
+											fileName="Sectores Industriales" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtSector').filter();hideBar()"
+										style="width:150px" placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="dtSector" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista" action="#{sectorMB.actualizarLista()}"
+									update="dtSector" />
+							</p:panelGrid>
+						</f:facet>
+
+
+						<p:column filterBy="#{item.idSector}" filterMatchMode="contains"
+							headerText="ID" style="width:100px;">
+							<h:outputText value="#{item.idSector}" />
+						</p:column>
+
+						<p:column filterBy="#{item.nombreSector}"
+							filterMatchMode="contains" headerText="Nombre">
+							<h:outputText value="#{item.nombreSector}" />
+						</p:column>
+
+						<p:column filterBy="#{item.descripcionSector}"
+							filterMatchMode="contains" headerText="Descripción">
+							<h:outputText value="#{item.descripcionSector}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.activoSector}"
+							filterMatchMode="contains" headerText="Activo">
+							<h:outputText
+								styleClass="#{item.activoSector ? 'label label-success':'label label-default'}"
+								value="#{item.activoSector ? 'ACTIVO':'INACTIVO'}" />
+							<p:inputSwitch value="#{item.activoSector}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" process="dtSector"
+									listener="#{sectorMB.switchActiva(item)}" update="dtSector" />
+							</p:inputSwitch>
+						</p:column>
+
+						<p:column filterBy="#{item.creaSector}"
+							sortBy="#{item.creaSector}" filterMatchMode="contains"
+							headerText="Creación">
+							<h:outputText value="#{item.creaSector}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+						<p:column filterBy="#{item.actualizaSector}"
+							sortBy="#{item.actualizaSector}" filterMatchMode="contains"
+							headerText="Actualización">
+							<h:outputText value="#{item.actualizaSector}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+
+						<p:column headerText="Opciones" width="150" exportable="false">
+							<p:commandButton process="dtSector" icon="fa fa-edit"
+								style="width: min-content" title="editar"
+								action="#{sectorMB.pasarDatoseditar(item)}"
+								styleClass="btn-primary"
+								update="@([id$=panelSector],[id$=btnGuardar])">
+							</p:commandButton>
+
+							<p:commandButton icon="fa fa-eye"
+								oncomplete="PF('sidebar2').show()" style="width: min-content"
+								action="#{sectorMB.pasarDatoseditar(item)}" title="ver"
+								styleClass="btn-success" update="@([id$=panelSectorDetalle])">
+							</p:commandButton>
+
+							<p:commandButton update="@([id$=dtSector])" icon="fa fa-trash"
+								style="width: min-content" title="eliminar" process="dtSector"
+								action="#{sectorMB.eliminar()}" styleClass="btn-danger">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{sectorMB.sector}" />
+								<p:confirm header="Confirmar Eliminación el SECTOR"
+									message="¿Está usted seguro?" icon="fa fa-anchor" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+
+				</p:panelGrid>
+
+			</h:form>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

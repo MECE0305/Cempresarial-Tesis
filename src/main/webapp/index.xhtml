@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="#{layoutMB.template}" xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<ui:param name="renderBreadCrumb" value="false" />
+
+	<ui:define name="header">
+		<style>
+body .ui-panel.ui-widget.box-success.box-solid .ui-panel-title {
+	color: #fff;
+	font-size: small;
+}
+
+body .ui-panel.ui-widget.box-default.box-solid .ui-panel-title {
+	color: #fff;
+	font-size: small;
+}
+
+.ui-panel .ui-panel-actions {
+	float: right;
+	width: 30%;
+}
+
+.ui-progressbar-label {
+	color: white;
+}
+
+.ui-tabs .ui-tabs-panel {
+	border-width: 0;
+	padding: 1em 0em !important;
+	background: 0;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="title">
+		<h2 class="align-center">
+			Reporte <span class="text-aqua"> <i> <a
+					href="https://github.com/adminfaces/admin-starter" target="_blank"
+					style="text-transform: none; text-decoration: none"> GRÁFICO </a>
+			</i>
+			</span> Gerencial!
+		</h2>
+
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+
+			<div class="ui-fluid">
+				<p:graphicImage library="images" name="#{adminConfig.loadingImage}" />
+			</div>
+			
+			<div>
+		<img src="${request.contextPath}/resources/images/fondo2-logo.jpg"/>
+		
+		</div>
+
+		</h:form>
+
+
+
+		<h:form>
+
+
+			<p:growl id="growl" showDetail="true" />
+
+			<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-3,ui-g-9">
+				<p:outputLabel value="" />
+				<p:selectOneButton value="#{chartJsView.mes}">
+					<f:selectItem itemLabel="ENE" itemValue="enero" />
+					<f:selectItem itemLabel="FEB" itemValue="febrero" />
+					<f:selectItem itemLabel="MAR" itemValue="marzo" />
+					<f:selectItem itemLabel="ABR" itemValue="abril" />
+					<f:selectItem itemLabel="MAY" itemValue="mayo" />
+					<f:selectItem itemLabel="JUN" itemValue="junio" />
+					<f:selectItem itemLabel="JUL" itemValue="julio" />
+					<f:selectItem itemLabel="AGO" itemValue="agosto" />
+					<f:selectItem itemLabel="SEP" itemValue="septiembre" />
+					<f:selectItem itemLabel="OCT" itemValue="octubre" />
+					<f:selectItem itemLabel="NOV" itemValue="noviembre" />
+					<f:selectItem itemLabel="DIC" itemValue="diciembre" />
+				</p:selectOneButton>
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid"
+				columnClasses="ui-g-3,ui-g-4,ui-g-5"
+				styleClass="ui-panelgrid-blank ui-fluid">
+				<p:panel header="INDICE GENERAL" class="box-success box box-solid">
+					<p:outputLabel value="META: 98%" />
+					<br />
+					<p:outputLabel value="FEBRERO" />
+
+					<p:chart type="metergauge" model="#{chartView.meterGaugeModel1}"
+						style="width:100%;height:200px" />
+				</p:panel>
+
+				<p:panel header="ENCUESTA DE BIENVENIDA [20%]"
+					class="box-default box box-solid">
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-4,ui-g-8">
+						<p:donutChart model="#{chartJsView.donutModel}"
+							style="width: 50%; height: 100%;" />
+
+						<p:barChart model="#{chartJsView.barModel2}"
+							style="width: 50%; height: 100%;">
+							<p:ajax event="itemSelect" listener="#{chartJsView.itemSelect}"
+								update="growl" />
+						</p:barChart>
+
+						<!-- <p:panelGrid columns="1" layout="tabular" style="width: 100%; height: 100%;" >
+                            <p:knob colorTheme="hot-sneaks" value="45" width="80%" height="100%"/>
+                        </p:panelGrid> -->
+					</p:panelGrid>
+
+				</p:panel>
+
+				<p:panel header="CLIENTE FANTASMA [30%]"
+					class="box-default box box-solid">
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-4,ui-g-8">
+						<p:donutChart model="#{chartJsView.donutModel}"
+							style="width: 50%; height: 100%;" />
+						<p:barChart model="#{chartJsView.barModel2}"
+							style="width: 50%; height: 100%;">
+							<p:ajax event="itemSelect" listener="#{chartJsView.itemSelect}"
+								update="growl" />
+						</p:barChart>
+					</p:panelGrid>
+				</p:panel>
+
+
+				<p:panel header="TOP 10 AGENCIAS" class="box-success box box-solid">
+
+					<p:barChart model="#{chartJsView.hbarModel}"
+						style="width: 100%; height: 300px;" />
+
+				</p:panel>
+
+				<p:panel header="TELEFONÍA [10%]" class="box-default box box-solid">
+
+					<p:donutChart model="#{chartJsView.donutModel}"
+						style="width: 50%; height: 100%;" />
+
+
+				</p:panel>
+
+				<p:panel header="ENCUESTA DE LEALTAD [40%]"
+					class="box-default box box-solid">
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-4,ui-g-8">
+						<p:donutChart model="#{chartJsView.donutModel}"
+							style="width: 50%; height: 100%;" />
+						<p:barChart model="#{chartJsView.barModel2}"
+							style="width: 50%; height: 100%;">
+							<p:ajax event="itemSelect" listener="#{chartJsView.itemSelect}"
+								update="growl" />
+						</p:barChart>
+					</p:panelGrid>
+				</p:panel>
+			</p:panelGrid>
+
+
+			<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-3,ui-g-9"
+				styleClass="ui-panelgrid-blank ui-fluid">
+				<p:panel header="MES" class="box-success box box-solid">
+					<p:selectManyButton value="#{chartJsView.selectedOptions}"
+						style="overflow-x: scroll">
+						<f:selectItem itemLabel="ENE" itemValue="enero" />
+						<f:selectItem itemLabel="FEB" itemValue="febrero" />
+						<f:selectItem itemLabel="MAR" itemValue="marzo" />
+						<f:selectItem itemLabel="ABR" itemValue="abril" />
+						<f:selectItem itemLabel="MAY" itemValue="mayo" />
+						<f:selectItem itemLabel="JUN" itemValue="junio" />
+						<f:selectItem itemLabel="JUL" itemValue="julio" />
+						<f:selectItem itemLabel="AGO" itemValue="agosto" />
+						<f:selectItem itemLabel="SEP" itemValue="septiembre" />
+						<f:selectItem itemLabel="OCT" itemValue="octubre" />
+						<f:selectItem itemLabel="NOV" itemValue="noviembre" />
+						<f:selectItem itemLabel="DIC" itemValue="diciembre" />
+					</p:selectManyButton>
+				</p:panel>
+
+				<p:panel header="ZONA" class="box-success box box-solid">
+					<p:panelGrid columns="4" layout="grid">
+						<p:commandButton styleClass="btn btn-outline-success "
+							value="ZONA COSTA CENTRO" />
+						<p:commandButton value="ZONA COSTA NORTE" />
+						<p:commandButton value="ZONA GUAYAQUIL 1" />
+						<p:commandButton value="ZONA GUAYAQUIL 2" />
+						<p:commandButton value="ZONA MACHALA" />
+						<p:commandButton value="ZONA QUITO 1" />
+						<p:commandButton value="ZONA QUITO 2" />
+						<p:commandButton value="ZONA QUITO 3" />
+						<p:commandButton value="ZONA SIERRA CENTRO" />
+						<p:commandButton value="ZONA SIERRA NORTE" />
+						<p:commandButton value="ZONA SIERRA SUR" />
+					</p:panelGrid>
+					<p:panel>
+						<p:barChart model="#{chartJsView.barModel1}"
+							style="width: 50%; height: 100%;">
+							<p:ajax event="itemSelect" listener="#{chartJsView.itemSelect}"
+								update="growl" />
+						</p:barChart>
+					</p:panel>
+				</p:panel>
+
+				<p:panel class="box-success box box-solid">
+
+					<p:barChart model="#{chartJsView.hbarModel}"
+						style="width: 100%; height: 400px;" />
+
+				</p:panel>
+
+				<p:panelGrid columns="4" layout="grid">
+					<p:panel style="height: 100%" header="CLIENTE FANTASMA"
+						class="box-success box box-solid">
+						<p:donutChart model="#{chartJsView.donutModel}"
+							style="width: 50%; height: 100%;" />
+					</p:panel>
+					<p:panel style="height: 100%" header="ENCUESTA LEALTAD"
+						class="box-success box box-solid">
+						<p:donutChart model="#{chartJsView.donutModel}"
+							style="width: 50%; height: 100%;" />
+					</p:panel>
+					<p:panel style="height: 100%;" header="TELEFONIA"
+						class="box-success box box-solid">
+						<p:donutChart model="#{chartJsView.donutModel}"
+							style="width: 50%; height: 100%;" />
+					</p:panel>
+					<p:panel style="height: 100%" header="ENCUESTA DE BIENVENIDA"
+						class="box-success box box-solid">
+						<p:donutChart model="#{chartJsView.donutModel}"
+							style="width: 50%; height: 100%;" />
+					</p:panel>
+				</p:panelGrid>
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid"
+				columnClasses="ui-g-6,ui-g-3,ui-g-3"
+				styleClass="ui-panelgrid-blank ui-fluid">
+				<p:panel header="CLIENTE FANTASMA" class="box-success box box-solid">
+					<p:barChart model="#{chartJsView.barModel1}"
+						style="width: 50%; height: 100%;">
+						<p:ajax event="itemSelect" listener="#{chartJsView.itemSelect}"
+							update="growl" />
+					</p:barChart>
+				</p:panel>
+
+				<p:panel header="ENCUESTA LEALTAD" class="box-success box box-solid">
+					<p:donutChart model="#{chartJsView.donutModel}"
+						style="width: 50%; height: 100%;" />
+
+				</p:panel>
+
+				<p:panel header="ENCUESTA BIENVENIDA"
+					class="box-success box box-solid">
+					<p:barChart model="#{chartJsView.barModel2}"
+						style="width: 50%; height: 100%;">
+						<p:ajax event="itemSelect" listener="#{chartJsView.itemSelect}"
+							update="growl" />
+					</p:barChart>
+				</p:panel>
+			</p:panelGrid>
+
+			<p:panelGrid columns="2" layout="grid" columnClasses="ui-g-4,ui-g-8"
+				styleClass="ui-panelgrid-blank ui-fluid">
+				<p:panelGrid columns="1" layout="grid">
+					<p:panel header="CIUDAD" class="box-success box box-solid">
+						<h:outputLabel for="cuidad"
+							value="Seleccione al  Menos una Ciudad:" />
+						<p:selectCheckboxMenu id="ciudad"
+							value="#{chartJsView.selectedCities2}" label="Agencias"
+							multiple="true" filter="true" filterMatchMode="startsWith"
+							panelStyle="width:250px">
+							<f:selectItem itemLabel="MANTA" itemValue="MANTA" />
+						</p:selectCheckboxMenu>
+					</p:panel>
+					<p:panel header="AGENCIA" class="box-success box box-solid">
+						<h:outputLabel for="agencia1"
+							value="Seleccione al  Menos una Agencia:" />
+						<p:selectCheckboxMenu id="agencia1"
+							value="#{chartJsView.selectedCities2}" label="Agencias"
+							multiple="true" filter="true" filterMatchMode="startsWith"
+							panelStyle="width:250px">
+							<f:selectItems value="#{chartJsView.cities}" />
+						</p:selectCheckboxMenu>
+					</p:panel>
+					<p:panel header="AGENCIA" class="box-success box box-solid">
+						<h:outputLabel for="agencia2"
+							value="Seleccione al  Menos una Agencia:" />
+						<p:selectCheckboxMenu id="agencia2"
+							value="#{chartJsView.selectedCities2}" label="Agencias"
+							multiple="true" filter="true" filterMatchMode="startsWith">
+							<f:selectItems itemLabel="#{item}" itemDescription="#{item}"
+								var="item" value="#{chartJsView.cities}" />
+
+						</p:selectCheckboxMenu>
+
+					</p:panel>
+
+					<p:panel header="COMPARATIVA ULTIMOS 2 AÑOS"
+						styleClass="box box-solid box-success">
+						<p:radarChart style="width: 150%; height: 700px"
+							model="#{chartJsView.radarModel}" />
+
+					</p:panel>
+				</p:panelGrid>
+				<p:panelGrid columns="1" layout="grid">
+
+					<p:panel styleClass="ui-panelgrid-blank ui-fluid"
+						header="DETALLE DE LOS INDICADORES"
+						class="box box-solid box-default">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6,ui-g-6"
+							styleClass="ui-panelgrid-blank ui-fluid">
+
+							<p:panel header="CLIENTE FANTASMA [META - 92%]">
+								<p:barChart model="#{chartJsView.barModel1}"
+									style="width: 50%; height: 100%;">
+									<p:ajax event="itemSelect" listener="#{chartJsView.itemSelect}"
+										update="growl" />
+								</p:barChart>
+							</p:panel>
+
+							<p:panel header="ENCUESTA DE LEALTAD [META - 85%]">
+								<p:donutChart model="#{chartJsView.donutModel}"
+									style="width: 50%; height: 100%;" />
+							</p:panel>
+							<p:panel header="ENCUESTA DE BIENVENIDA [META - 95%]">
+								<p:donutChart model="#{chartJsView.donutModel}"
+									style="width: 50%; height: 100%;" />
+							</p:panel>
+							<p:panel header="TELEFONIA [META - 96%]">
+								<p:donutChart model="#{chartJsView.donutModel}"
+									style="width: 50%; height: 100%;" />
+							</p:panel>
+
+
+							<p:panel
+								header="ENCUESTA DE BIENVENIDA [META - 95%]/[PROMEDIO - 95%]">
+								<p:lineChart model="#{chartJsView.lineModel}"
+									style="width: 100%; height: 500px;" />
+							</p:panel>
+							<p:panel header="CLIENTE FANTASMA [META - 92%]/[PROMEDIO - 79%]">
+								<p:lineChart model="#{chartJsView.lineModel}"
+									style="width: 100%; height: 500px;" />
+							</p:panel>
+
+						</p:panelGrid>
+					</p:panel>
+
+				</p:panelGrid>
+			</p:panelGrid>
+
+		</h:form>
+
+
+
+	</ui:define>
+
+
+</ui:composition>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Clientes" />
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: right !important;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="description">
+        Lista de Clientes para el Sistema.
+    </ui:define>
+
+	<ui:define name="body">
+
+
+		<h:form>
+			<div class="card bg-dark text-white" style="width: 18rem;">
+				<img
+					src="https://i.pinimg.com/236x/73/2c/41/732c417c57c7056a7939b37e4e96b8ad--jim-root-slipknot-slipknot-wallpapers.jpg"
+					class="card-img" alt="..." />
+				<div class="card-header">Header</div>
+				<div class="card-body">
+					<h5 class="card-title">Card title</h5>
+					<p class="card-text">Some quick example text to build on the
+						card title and make up the bulk of the card's content.</p>
+					<a href="#" class="btn btn-primary">Go somewhere</a>
+				</div>
+			</div>
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

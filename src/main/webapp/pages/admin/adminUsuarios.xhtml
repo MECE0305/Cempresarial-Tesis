@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+			Gestión Usuarios 
+	</ui:define>
+	<ui:define name="body">
+		<h:form>#{usuarioController.clear()}</h:form>
+
+
+		<adm:breadcrumb title="Admin Usuarios"
+			link="/pages/admin/adminUsuarios.jsf" />
+		<div style="display: flex; justify-content: flex-end;">
+			<p:outputLabel styleClass="label label-success"
+				style="font-size:120%"
+				value="#{usuarioController.autoriacion.permisos}" />
+		</div>
+
+		<div class="ui-fluid" id="divPrincipal">
+			<button onclick="topFunction()" id="myBtn" title="Go Top">Top</button>
+
+
+			<h:form id="formPrincipal" enctype="multipart/form-data">
+
+				<p:growl id="mensaje" showDetail="true" widgetVar="mensaje" />
+
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					responsive="true">
+					<p:commandButton value="SI" type="button"
+						styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+				</p:confirmDialog>
+
+				<p:dialog id="dlgGuardar" modal="true" widgetVar="pnldGuardar"
+					position="center" header="Registrar Usuario" draggable="false"
+					closable="false" resizable="false" showEffect="fade"
+					hideEffect="fade" responsive="true">
+
+
+
+					<p:messages id="messages" showDetail="true" closable="false" />
+
+
+
+
+					<p:panelGrid columns="2" layout="grid" id="opcionesGuardar"
+						style="border:none">
+						<p:commandButton value="Cancelar" styleClass="btn-danger"
+							oncomplete="PF('pnldGuardar').hide()" icon="fa fa-ban"
+							style="width:80%;margin-left:20%">
+						</p:commandButton>
+						<p:commandButton process="@this,perfiles,datosUsuario,fotoUsuario"
+							styleClass="btn-success"
+							disabled="#{!usuarioController.guardarRender}" value="Guardar"
+							actionListener="#{usuarioController.crearUsuario()}"
+							oncomplete="PF('pnldGuardar').hide()" update="formPrincipal"
+							icon="fa fa-user-plus" style="width:80%;margin-left:20%">
+						</p:commandButton>
+
+					</p:panelGrid>
+
+				</p:dialog>
+
+				<p:sidebar widgetVar="sidebar3" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:40%;overflow: auto;">
+
+					<p:panelGrid layout="grid" columns="1" id="panelRestUsr"
+						styleClass="box-solid box-primary box "
+						style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h1 class="box-title"></h1>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body callout callout-info">
+
+								<div style="display: flex; justify-content: space-between;">
+									<h1>Restablecer Contraseña</h1>
+									<img src="resources/images/ancla.gif" width="7%"
+										style="border-radius: 50%" />
+								</div>
+
+								<hr></hr>
+								<strong><i class="fa fa-book margin-r-5"></i> Ingrese
+									la nueva contraseña</strong>
+							</div>
+							<!-- /.box-body -->
+						</div>
+
+						<p:accordionPanel activeIndex="0" multiple="true"
+							style="width: 100%;height: 100%;">
+							<p:tab>
+								<f:facet name="title">
+									<strong><i class="fa fa-file-archive-o"></i> Datos del
+										usuario</strong>
+								</f:facet>
+								<p:panelGrid columns="1" layout="grid">
+
+									<p:outputLabel value="Nombres y Apellidos:" />
+									<h:outputLabel value="#{usuarioController.usuario.nombres}" />
+
+									<p:outputLabel value="Nombre de usuario:" />
+									<h:outputLabel value="#{usuarioController.usuario.nombreUsuario}" />
+
+									<p:outputLabel value="Cliente:" />
+									<h:outputLabel value="#{usuarioController.clienteN}"/>
+
+									<p:outputLabel value="Empresa:" style="display: none" />
+									<h:outputLabel value="#{usuarioController.empresaN}"/>
+
+									<p:outputLabel value="Agencia:" style="display: none" />
+									<h:outputLabel value="#{usuarioController.agenciaN}"/>
+
+									<p:outputLabel value="Password: " style="  FONT-WEIGHT: bold;">
+										<span class="text-danger">*</span>
+									</p:outputLabel>								
+									<p:password value="#{usuarioController.usuario.clave}"
+										placeholder="Clave Única de Usuario" id="txtPassword"
+										required="true" requiredMessage="Contraseña es requerida">
+									</p:password>
+
+
+								</p:panelGrid>
+							</p:tab>
+						</p:accordionPanel>
+
+
+						<f:facet name="footer">
+							<p:commandButton value="Cancel"
+								oncomplete="PF('sidebar3').hide()"
+								styleClass="btn btn-solid btn-danger"
+								style="width: max-content;" />
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{usuarioController.actualizarUsuario()}" 
+								process="@this, @([id$=panelRestUsr])"
+								styleClass="btn btn-solid btn-primary"
+								update="@([id$=pnlTotal])"
+								style="width: max-content;" />
+						</f:facet>
+
+					</p:panelGrid>
+				</p:sidebar>
+
+				<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:75%;overflow: auto;">
+
+					<p:panelGrid columns="1" layout="grid"
+						columnClasses="ui-grid-col-12">
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="callout-card callout-info "
+							columnClasses="ui-grid-col-11,ui-grid-col-1">
+							<h2 class="titulosH1">Perfiles</h2>
+							<p:commandButton icon="fa fa-refresh" id="btnActualizaPerf"
+								title="Actualizar Perfiles" styleClass="btn-success"
+								update="@([id$=perfiles],[id$=mensaje])"
+								process="@this, btnActualizaPerf"
+								actionListener="#{usuarioController.actualizarListPerfiles()}" />
+						</p:panelGrid>
+						<p:dataGrid var="item" lazy="true"
+							value="#{usuarioController.listPerfilDTO}" columns="3"
+							layout="grid" id="perfiles" rows="10" paginator="true"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15">
+
+							<p:panelGrid columns="1" layout="grid" style="text-align:center"
+								styleClass="box box-info">
+
+								<p:panelGrid columns="2" layout="grid" style="border:none">
+
+									<p:panelGrid columns="1" layout="grid">
+										<p:graphicImage value="/resources/images/perfil.png"
+											width="30%" />
+										<p:inputSwitch value="#{item.check}" onLabel="ON"
+											label="LABEL" offLabel="OFF" showLabels="true">
+
+											<p:ajax event="change" update="otxt" />
+										</p:inputSwitch>
+
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" layout="grid">
+										<h:outputText
+											styleClass="#{item.perfil.activo ? 'label label-success' : 'label label-danger'}"
+											value="#{item.perfil.nombre} #{item.perfil.activo ? 'ACTIVO' : 'INACTIVO'}" />
+										<p:outputLabel id="otxt"
+											styleClass="#{item.check ? ' text-purple':'text-default'}"
+											value="#{item.check ? 'SELECCIONADO':'NO SELECCIONADO'}" />
+
+										<p:outputLabel value="#{item.perfil.descripcion}" />
+									</p:panelGrid>
+								</p:panelGrid>
+							</p:panelGrid>
+						</p:dataGrid>
+					</p:panelGrid>
+				</p:sidebar>
+
+
+
+
+				<p:panel>
+
+
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="callout-card callout-info "
+						columnClasses="ui-grid-col-11,ui-grid-col-1">
+						<h2 class="titulosH1">Datos de Usuario</h2>
+
+						<p:menuButton icon="fa fa-gears" title="Opciones de Acción"
+							styleClass="btn-primary">
+
+							<p:menuitem process="@this,perfiles,datosUsuario,fotoUsuario"
+								update="@([id$=opcionesGuardar],[id$=messages])"
+								oncomplete="PF('pnldGuardar').show()" value="Guardar"
+								actionListener="#{usuarioController.verificacionesAntesGuardar()}"
+								icon="fa fa-paper-plane-o" styleClass="btn-info" />
+							<p:menuitem process="@this,perfiles,datosUsuario,fotoUsuario"
+								update="@([id$=tblDatos],[id$=perfiles],[id$=datosUsuario],[id$=mensaje])"
+								value="Actualizar"
+								actionListener="#{usuarioController.actualizarUsuario()}"
+								icon="fa fa-refresh" styleClass="btn-warning" />
+							<p:menuitem id="btnCancel" process="@this, btnCancel"
+								actionListener="#{usuarioController.clear()}" value="Cancelar"
+								update="formPrincipal" styleClass="btn-danger" icon="fa fa-ban" />
+
+						</p:menuButton>
+
+
+
+
+					</p:panelGrid>
+
+					<p:panelGrid columns="2" id="pnlTotal"
+						columnClasses="ui-grid-col-3 pnlgImagen, ui-grid-col-9"
+						layout="grid" style="border:none">
+
+
+						<p:graphicImage style="width: 100%;height: 100%;" id="fotoUsuario"
+							cache="false" value="#{usuarioController.fotoUsuario}" />
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-6, ui-grid-col-6" layout="grid"
+							style="border:none" id="datosUsuario">
+
+							<p:outputLabel value="Foto Perfil: " style="  FONT-WEIGHT: bold;" />
+							<p:outputLabel value="" />
+
+
+							<p:fileUpload mode="advanced" dragDropSupport="true" id="pnlFoto"
+								listener="#{usuarioController.handleFileUpload}"
+								process="@this,pnlFoto" sizeLimit="50000000" label="Escoger"
+								cancelLabel="Cancelar" uploadLabel="Agregar" showButtons="true"
+								multiple="false"
+								allowTypes="/(\.|\/)(gif|jpg|jpeg|gif|png|PNG|GIF|JPG|JPEG)$/"
+								invalidFileMessage="Tipo de formato incorrecto"
+								invalidSizeMessage="Tamaño no permitido" performVirusScan="true"
+								previewWidth="150" fileLimitMessage="Solo se acepta un archivo"
+								update="@([id$=fotoUsuario])" />
+
+
+							<p:panelGrid columns="3" layout="grid" style="border: none">
+								<p:outputLabel value="Activo?:" style="  FONT-WEIGHT: bold;" />
+								<p:inputSwitch value="#{usuarioController.usuario.activo}"
+									onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+									<p:ajax event="change" update="outActivo" />
+								</p:inputSwitch>
+								<p:outputLabel id="outActivo"
+									styleClass="#{usuarioController.usuario.activo ? 'label label-success':'label label-default'}"
+									value="#{usuarioController.usuario.activo ? 'ACTIVO':'INACTIVO'}" />
+
+							</p:panelGrid>
+
+
+							<p:panelGrid columns="2" layout="grid" style="border: none"
+								columnClasses="ui-grid-col-11, ui-grid-col-1">
+								<p:outputLabel value="Nombre de Usuario: "
+									style="  FONT-WEIGHT: bold;">
+									<span class="text-danger">*</span>
+								</p:outputLabel>
+								<p:outputLabel />
+
+								<p:inputText placeholder="Nombre Usuario" id="txtNombreUsr"
+									value="#{usuarioController.usuario.nombreUsuario}">
+								</p:inputText>
+								<p:outputLabel />
+
+								<p:outputLabel value="Apellidos y Nombres: "
+									style="  FONT-WEIGHT: bold;" for="txtNombres">
+									<span class="text-danger">*</span>
+								</p:outputLabel>
+								<p:outputLabel />
+
+								<p:inputText placeholder="Apellidos y Nombres"
+									value="#{usuarioController.usuario.nombres}" id="txtNombres">
+								</p:inputText>
+								<p:outputLabel />
+
+								<p:outputLabel value="Fecha Creación: "
+									style="  FONT-WEIGHT: bold;" />
+								<p:outputLabel />
+
+								<p:calendar placeholder="Fecha Creación" effect="fade"
+									mindate="new Date()" showButtonPanel="true"
+									value="#{usuarioController.usuario.fechaCreacion}">
+								</p:calendar>
+								<p:outputLabel />
+								<p:outputLabel value="Cliente " style="  FONT-WEIGHT: bold;" />
+								<p:outputLabel />
+								<p:selectOneMenu id="cmbCliente" tabindex="1"
+									value="#{usuarioController.idCliente}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{usuarioController.listCliente}"
+										itemLabel="#{item.nombreCliente}"
+										itemValue="#{item.idCliente}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbCliente" update="cmbEmpresa"
+										listener="#{usuarioController.findByClienteIdCliente}" />
+								</p:selectOneMenu>
+								<p:outputLabel />
+								<p:outputLabel value="Agencia: " style="  FONT-WEIGHT: bold;" />
+								<p:outputLabel />
+								<p:selectOneMenu id="cmbAgencia" tabindex="3"
+									style="width:auto;min-width: auto;"
+									value="#{usuarioController.idAgencia}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{usuarioController.listAgencia}"
+										itemLabel="#{item.nombreAgencia}"
+										itemValue="#{item.idAgencia}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbAgencia"
+										listener="#{usuarioController.findByAgenciaIdAgencia}"
+										update="cmbEmpleado" />
+								</p:selectOneMenu>
+
+
+							</p:panelGrid>
+
+
+
+							<p:panelGrid columns="2" layout="grid" style="border: none"
+								columnClasses="ui-grid-col-11, ui-grid-col-1">
+								<p:outputLabel value="Cédula: " style="  FONT-WEIGHT: bold;"
+									for="txtCedula" />
+								<p:outputLabel value="" />
+
+								<p:inputText placeholder="Cédula"
+									value="#{usuarioController.usuario.cedula}" id="txtCedula">
+								</p:inputText>
+								<p:message for="txtCedula" display="text" />
+
+								<p:outputLabel value="Email: " style="  FONT-WEIGHT: bold;" />
+								<p:outputLabel />
+
+								<p:inputText placeholder="Email"
+									value="#{usuarioController.usuario.email}" id="txtEmail">
+								</p:inputText>
+								<p:message for="txtEmail" display="text" />
+
+								<p:outputLabel value="Password: " style="  FONT-WEIGHT: bold;"/>
+								<p:outputLabel />
+
+								<p:password value="#{usuarioController.usuario.clave}"
+									placeholder="Clave Única de Usuario" id="txtPassword">
+								</p:password>
+								<p:outputLabel />
+								<p:outputLabel value="Empresa: " style="  FONT-WEIGHT: bold;" />
+								<p:outputLabel />
+								<p:selectOneMenu id="cmbEmpresa" tabindex="1"
+									value="#{usuarioController.idEmpresa}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{usuarioController.listEmpresa}"
+										itemLabel="#{item.nombreEmpresa}"
+										itemValue="#{item.idEmpresa}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbEmpresa" update="cmbAgencia"
+										listener="#{usuarioController.findByEmpresaIdEmpresa}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel />
+
+								<p:outputLabel value="Empleado: " style="  FONT-WEIGHT: bold;" />
+								<p:outputLabel />
+								<p:selectOneMenu id="cmbEmpleado" tabindex="1"
+									value="#{usuarioController.idEmpleado}" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="Todos" />
+									<f:selectItems var="item"
+										value="#{usuarioController.listEmpleado}"
+										itemLabel="#{item.nombreEmpleado}"
+										itemValue="#{item.idEmpleado}">
+									</f:selectItems>
+									<p:ajax event="change" process="cmbEmpleado"
+										update="@([id$=datosUsuario],[id$=fotoUsuario])"
+										listener="#{usuarioController.completar}" />
+								</p:selectOneMenu>
+
+
+
+
+
+							</p:panelGrid>
+
+
+
+
+						</p:panelGrid>
+					</p:panelGrid>
+					<p:spacer height="10" />
+					<div class="callout-card callout-info"
+						style="display: flex; justify-content: space-between;">
+						<h2 class="titulosH1">Perfil a ser Asignado</h2>
+						<p:commandButton icon="fa fa-eye" value="VER PERFILES"
+							style="width:auto" oncomplete="PF('sidebar2').show()" title="ver"
+							immediate="true" styleClass="btn-success">
+						</p:commandButton>
+
+					</div>
+
+
+					<h2 class="titulosH1 callout-card callout-info ">Usuarios del
+						Sistema</h2>
+					<p:dataTable var="item" value="#{usuarioController.listUsuarios}"
+						styleClass="box box-primary" widgetVar="tblDatos" id="tblDatos"
+						emptyMessage="No exiten Registros"
+						filteredValue="#{usuarioController.listUsuarioSelect}"
+						reflow="true" rows="10" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15">
+
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="tblDatos"
+											fileName="Usuarios" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('tblDatos').filter();hideBar()"
+										style="width:150px" placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="tblDatos" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista"
+									action="#{usuarioController.actualizarLista()}"
+									update="tblDatos" />
+							</p:panelGrid>
+
+
+
+
+
+
+						</f:facet>
+
+
+						<p:column filterBy="#{item.activo}" headerText="ESTADO ?"
+							filterMatchMode="contains">
+							<h:outputText
+								styleClass="#{item.activo ? 'label label-success' : 'label label-danger'}"
+								value="#{item.activo ? 'ACTIVO' : 'INACTIVO'}" />
+						</p:column>
+
+						<p:column filterBy="#{item.cedula}" headerText="Cédula"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.cedula}" />
+						</p:column>
+
+						<p:column filterBy="#{item.email}" headerText="Email"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.email}" />
+						</p:column>
+
+						<p:column filterBy="#{item.fechaCreacion}" headerText="Fecha"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.fechaCreacion}" />
+						</p:column>
+
+
+						<p:column filterBy="#{item.nombreUsuario}" headerText="Usuario"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.nombreUsuario}" />
+						</p:column>
+						<p:column filterBy="#{item.nombres}" headerText="Nombres"
+							filterMatchMode="contains">
+							<h:outputText value="#{item.nombres}" />
+						</p:column>
+
+						<p:column
+							filterBy="#{usuarioController.cargarPerfilesUsuario(item)}"
+							headerText="Perfiles" filterMatchMode="contains">
+							<h:outputText
+								value="#{usuarioController.cargarPerfilesUsuario(item)}" />
+						</p:column>
+
+						<p:column headerText="Opciones">
+							<p:panelGrid columns="4" layout="grid" style="border:none">
+
+								<p:commandButton title="Eliminar"
+									action="#{usuarioController.eliminarUsuario(item)}"
+									update="@([id$=mensaje],[id$=tblDatos])" icon="fa fa-trash"
+									process="tblDatos" styleClass="btn-danger">
+									<p:confirm header="Confirmación"
+										message="Está seguro de eliminar el USUARIO?"
+										icon="fa fa-exclamation-triangle" />
+								</p:commandButton>
+								<p:commandButton title="Editar"
+									action="#{usuarioController.pasarPerfilUsuario(item,false)}"
+									update="@([id$=datosUsuario],[id$=fotoUsuario],[id$=perfiles],[id$=mensaje])"
+									styleClass="btn-warning" icon="fa fa-edit" process="tblDatos">
+								</p:commandButton>
+
+								<p:commandButton
+									title="#{item.activo ? 'Desactivar' : 'Activar'}"
+									update="@([id$=datosUsuario],[id$=tblDatos],[id$=mensaje])"
+									action="#{usuarioController.activaDesactivaUsuario(item)}"
+									icon="#{item.activo ? 'fa fa-check-square-o' : 'fa fa-check-square'} "
+									process="tblDatos" styleClass="btn-success">
+								</p:commandButton>
+								<p:commandButton title="Restablecer Contraseña"
+									oncomplete="PF('sidebar3').show()"
+									update="@([id$=panelRestUsr])"
+									action="#{usuarioController.pasarPerfilUsuario(item,true)}"
+									icon="fa fa-undo" process="tblDatos" styleClass="btn-info">
+								</p:commandButton>
+							</p:panelGrid>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
+
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

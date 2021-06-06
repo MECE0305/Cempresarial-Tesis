@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:body>
+
+    <h1>JSF 2.2 Passing JSF Request Parameters</h1>
+
+    <h:form>
+        <h:commandButton value="Send..." action="#{requestController.parametersAction()}">
+            <f:param id="param1" name="param1Name" value="param1Value"/>
+            <f:param id="param2" name="param2Name" value="param2Value"/>
+        </h:commandButton>
+    </h:form>
+
+</h:body>
+</html>

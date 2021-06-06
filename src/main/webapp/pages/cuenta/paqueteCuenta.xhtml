@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+	<style>
+.transparente>div {
+	background: transparent !important
+}
+</style>
+
+	<ui:define name="title"> 
+        Paquete para Cuenta
+	</ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Paqueet para Cuenta"
+			link="/pages/configuracion/paqueteCuenta.jsf" />
+		<h:form>#{paqueteCuentaController.clear()}</h:form>
+
+		<h:form id="formPrincipal">
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+				styleClass="box-danger box-solid" responsive="true">
+				<div style="display: flex; justify-content: flex-end;">
+					<p:commandButton value="SI" type="button"
+						styleClass="btn-material btn-primary ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="NO" type="button"
+						styleClass="btn-material btn-danger ui-confirmdialog-no"
+						icon="fa fa-close" />
+				</div>
+			</p:confirmDialog>
+
+
+			<div style="display: flex; justify-content: flex-end;">
+				<div>
+					<p:commandButton icon="fa fa-trash" process="@this, pnlgDatos"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Eliminar"
+						styleClass="btn-danger"
+						actionListener="#{paqueteCuentaController.eliminar()}">
+						<p:confirm header="PAQUETE CUENTA"
+							message="Está SEGURO de ELIMINAR el PAQUETE PARA LA CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-edit" process="@this, pnlgDatos"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Editar"
+						styleClass="btn-warning"
+						actionListener="#{paqueteCuentaController.actualizar()}">
+						<p:confirm header="PAQUETE CUENTA"
+							message="Desea Actualizar el PAQUETE PARA LA CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-send" process="@this, pnlgDatos"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Guardar"
+						styleClass="btn-success"
+						actionListener="#{paqueteCuentaController.guardar()}">
+						<p:confirm header="PAQUETE CUENTA"
+							message="Desea Guardar el PAQUETE PARA LA CUENTA ?"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:commandButton icon="fa fa-plus"
+						update="@([id$=pnlgDatos],[id$=tblDatos])" value="Nuevo"
+						styleClass="btn-info"
+						actionListener="#{paqueteCuentaController.clear()}">
+					</p:commandButton>
+				</div>
+			</div>
+
+			<p:separator style="background-color: #33AFDE;" />
+
+
+
+			<div id="divPrincipal" class="ui-fluid" style="display: flex;">
+
+
+				<div>
+					<span style="border-radius: 50%;" class="info-box-icon bg-aqua"><i
+						class="fa fa-briefcase"></i></span>
+				</div>
+
+				<p:panel style="background:transparent;border:none;width:100%">
+					<p:panelGrid columns="4" layout="grid" id="pnlgDatos"
+						styleClass="box box-info" style="background:transparent;">
+
+						<p:outputLabel value="Número de Aplicación" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Aplicación" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroAplicacion}" />
+
+						<p:outputLabel value="Número de Incidentes" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Incidentes" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroIncidentes}" />
+
+						<p:outputLabel value="Número de Menús" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Menús" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroMenus}" />
+
+						<p:outputLabel value="Número de OTs" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de OTs" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroOrdenesTrabajo}" />
+
+						<p:outputLabel value="Número de Peril-Usuario" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Perfil-Usuario"
+							style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroPerfilUsuario}" />
+
+
+						<p:outputLabel value="Número de Perfiles" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Perfiles" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroPerfiles}" />
+
+						<p:outputLabel value="Número de Permisos" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Permisos" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroPermisos}" />
+
+						<p:outputLabel value="Número de Técnicos" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Técnicos" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroTecnicos}" />
+
+						<p:outputLabel value="Número de Usuarios" />
+						<p:inputNumber minValue="0" decimalPlaces="0" leadingZero="deny"
+							symbol="#" placeholder="# de Usuariosn" style="width: inherit;"
+							value="#{paqueteCuentaController.paquete.numeroUsuarios}" />
+					</p:panelGrid>
+				</p:panel>
+			</div>
+
+
+
+
+
+			<p:dataTable var="item" reflow="true"
+				styleClass="box box-solid box-primary"
+				value="#{paqueteCuentaController.listPaquete}"
+				filteredValue="#{paqueteCuentaController.listPaqueteFilter}"
+				widgetVar="tblDatos" id="tblDatos"
+				emptyMessage="No Account Type found with given criteria">
+
+				<f:facet name="header">
+					<p:outputPanel style="justify-content: flex-end; display: flex;">
+						<h:commandLink title="Exportar Excel">
+							<p:graphicImage value="/resources/images/excel.ico" width="24" />
+							<p:dataExporter type="xls" target="tblDatos"
+								fileName="Paquete para Cuenta" />
+						</h:commandLink>
+						<p:spacer width="40" />
+						<h:outputText value="Buscar en Todos los Campos:   " />
+						<p:spacer width="20" />
+						<p:inputText id="globalFilter" onkeyup="PF('tblDatos').filter()"
+							style="width:150px" placeholder="Ingrese Parámetro...." />
+					</p:outputPanel>
+				</f:facet>
+
+				<p:column filterBy="#{item.idPaquete}" headerText="Id"
+					exportable="false" filterMatchMode="contains">
+					<h:outputText value="#{item.idPaquete}" />
+					<p:spacer width="50" />
+					<p:commandLink title="Seleccionar" update="@([id$=pnlgDatos])"
+						styleClass="fa fa-search" process="tblDatos">
+						<f:setPropertyActionListener value="#{item}"
+							target="#{paqueteCuentaController.paquete}"></f:setPropertyActionListener>
+
+					</p:commandLink>
+				</p:column>
+
+
+				<p:column filterBy="#{item.numeroIncidentes}"
+					headerText="# Incidentes" filterMatchMode="contains">
+					<h:outputText value="#{item.numeroIncidentes}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroOrdenesTrabajo}" headerText="# OTs"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.numeroOrdenesTrabajo}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroTecnicos}" headerText="# Técnicos"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.numeroTecnicos}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroUsuarios}" headerText="# Usuarios"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.numeroUsuarios}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroAplicacion}"
+					headerText="# Aplicación" filterMatchMode="contains">
+					<h:outputText value="#{item.numeroAplicacion}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroMenus}" headerText="# Menús"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.numeroMenus}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroPerfilUsuario}"
+					headerText="# Perfil-Usuario" filterMatchMode="contains">
+					<h:outputText value="#{item.numeroPerfilUsuario}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroPerfiles}" headerText="# Perfiles"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.numeroPerfiles}" />
+				</p:column>
+
+				<p:column filterBy="#{item.numeroPermisos}" headerText="# Permisos"
+					filterMatchMode="contains">
+					<h:outputText value="#{item.numeroPermisos}" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

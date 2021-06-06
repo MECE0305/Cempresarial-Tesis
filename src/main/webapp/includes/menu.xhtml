@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<h:form>#{sesionUsuario.init()}</h:form>
+
+	<ul class="sidebar-menu tree" data-widget="tree">
+		<!-- <li><p:link outcome="/index" onclick="clearBreadCrumbs()">
+				<i class="fa fa-home"></i>
+				<span>Home</span>
+			</p:link></li>
+			 -->
+		<li><p:link outcome="/dashboard" onclick="clearBreadCrumbs()">
+				<i class="fa fa-home"></i>
+				<span>Dashboard</span>
+			</p:link></li>
+		<li><p:link outcome="/pages/graficos/graficos"
+				onclick="clearBreadCrumbs()">
+				<i class="pi pi-chart-bar"></i>
+				<span>Indicadores</span>
+			</p:link></li>
+
+		<li class="header">General</li>
+
+
+		<p:repeat var="item" value="#{sesionUsuario.listMenuPadre}">
+			<li class="treeview" style="height: auto;"><a href="#"> <i
+					class="#{item.icon}"></i> <span  style="font-size: larger !important;">#{item.nombre}</span>
+					<span class="label #{item.spanColor}">#{item.spanValor}</span>
+					<span class="pull-right-container"> <i
+						class="fa fa-angle-left pull-right"></i>
+				</span>
+			</a>
+				<ul class="treeview-menu">
+					<p:repeat var="subitem" value="#{item.menuList}">
+						<li><p:link outcome="#{subitem.url}">
+								<i class="#{subitem.icon}"></i>
+								<span>#{subitem.nombre}</span>
+								<span class="label pull-right #{subitem.spanColor}">#{subitem.spanValor}</span>
+							</p:link></li>
+
+					</p:repeat>
+				</ul></li>
+		</p:repeat>
+		<li><a href="https://adminlte.io/docs"><i class="fa fa-book"></i>
+				<span>Documentation</span></a></li>
+		<li class="header">LABELS</li>
+		<li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
+		<li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
+		<li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
+
+
+<!-- 
+		<li class="treeview"><p:link class="dropdown-toggle">
+				<i class="fa fa-cog"></i>
+				<span>Cuenta </span>
+			</p:link>
+
+			<ul class="treeview-menu" data-widget="collapse">
+				<li><p:link outcome="/pages/cuenta/cuenta">
+						<i class="fa fa-user"></i>
+						<span>Mi Cuenta</span>
+						<span class="label pull-right bg-red">new</span>
+					</p:link></li>
+				<li><p:link outcome="/pages/cuenta/paqueteCuenta">
+						<i class="fa fa-suitcase"></i>
+						<span>Paquetes</span>
+					</p:link></li>
+
+				<li><p:link outcome="/pages/cuenta/registroCuenta">
+						<i class="fa fa-plug"></i>
+						<span>Registro</span>
+					</p:link></li>
+				<li><p:link outcome="/pages/cuenta/tipoCuenta">
+						<i class="fa fa-code-fork"></i>
+						<span>Tipo</span>
+					</p:link></li>
+			</ul></li>
+
+		<li class="treeview"><p:link class="dropdown-toggle">
+				<i class="fa fa-users"></i>
+				<span>Clientes</span>
+			</p:link>
+
+			<ul class="treeview-menu" data-widget="collapse">
+				<li><p:link outcome="/clientes">
+						<i class="fa fa-list"></i>
+						<span>Organización</span>
+					</p:link></li>
+				<li><p:link outcome="/empresas">
+						<i class="fa fa-user"></i>
+						<span>Empresas</span>
+					</p:link></li>
+				<li><p:link outcome="/rango">
+						<i class="fa fa-star-half-o"></i>
+						<span>Rangos Desempeño</span>
+					</p:link></li>
+				<li><p:link outcome="/sucursales">
+						<i class="fa fa-building"></i>
+						<span>Sucursales</span>
+					</p:link></li>
+
+				<li><p:link outcome="/sector">
+						<i class="fa fa-industry"></i>
+						<span>Sector Industrial</span>
+					</p:link></li>
+
+				<li><p:link outcome="/empleados">
+						<i class="fa fa-user-circle"></i>
+						<span>Empleados</span>
+					</p:link></li>
+
+				<li><p:link outcome="/roles">
+						<i class="fa fa-users"></i>
+						<span>Roles</span>
+					</p:link></li>
+
+				<li><p:link outcome="/area">
+						<i class="fa fa-archive"></i>
+						<span>Área-Rol</span>
+					</p:link></li>
+			</ul></li>
+
+		<li class="treeview"><p:link class="dropdown-toggle">
+				<i class="fa fa-globe"></i>
+				<span>Segmentación</span>
+			</p:link>
+
+			<ul class="treeview-menu" data-widget="collapse">
+				<li><p:link outcome="/region">
+						<i class="fa fa-map"></i>
+						<span>Region</span>
+					</p:link></li>
+				<li><p:link outcome="/zona">
+						<i class="fa fa-navicon"></i>
+						<span>Zona</span>
+					</p:link></li>
+
+				<li><p:link outcome="/provincia">
+						<i class="fa fa-map-marker"></i>
+						<span>Provincia</span>
+					</p:link></li>
+
+				<li><p:link outcome="/ciudad">
+						<i class="fa fa-building"></i>
+						<span>Ciudad</span>
+					</p:link></li>
+
+				<li><p:link outcome="/zonaEstructural">
+						<i class="fa fa-navicon"></i>
+						<span>Zona Estructural</span>
+					</p:link></li>
+			</ul></li>
+
+		<li class="treeview"><p:link class="dropdown-toggle">
+				<i class="fa fa-users"></i>
+				<span>Formulario</span>
+			</p:link>
+
+			<ul class="treeview-menu" data-widget="collapse">
+				<li><p:link outcome="/categoria">
+						<i class="fa fa-list-alt"></i>
+						<span>Categorías</span>
+					</p:link></li>
+
+				<li><p:link outcome="/peso">
+						<i class="fa fa-balance-scale"></i>
+						<span>Peso</span>
+					</p:link></li>
+				<li><p:link outcome="/preguntas">
+						<i class="fa fa-list-ol"></i>
+						<span>Preguntas</span>
+					</p:link></li>
+				<li><p:link outcome="/catalogo">
+						<i class="fa fa-outdent"></i>
+						<span>Catálogo para Formulario</span>
+					</p:link></li>
+				<li><p:link outcome="/plantillaCheck">
+						<i class="fa fa-paste"></i>
+						<span>Formulario</span>
+					</p:link></li>
+
+
+
+			</ul></li>
+
+		<li class="treeview"><p:link class="dropdown-toggle">
+				<i class="fa fa-edit"></i>
+				<span>Mediciones</span>
+			</p:link>
+
+			<ul class="treeview-menu" data-widget="collapse">
+				<li><p:link outcome="/registroMedicion">
+						<i class="fa fa-tachometer"></i>
+						<span>Nueva Medición</span>
+					</p:link></li>
+				<li><p:link outcome="/listamediciones">
+						<i class="fa fa-newspaper-o"></i>
+						<span>Listado mediciones</span>
+					</p:link></li>
+				<li><p:link outcome="/listaevaluaciones">
+						<i class="fa fa-newspaper-o"></i>
+						<span>Evaluaciones</span>
+					</p:link></li>
+				<li><p:link outcome="/estadoevaluacion">
+						<i class="fa fa-server"></i>
+						<span>Estado Medición</span>
+					</p:link></li>
+				<li><p:link outcome="/encabezado">
+						<i class="fa fa-qrcode"></i>
+						<span>Encabezados Fichas</span>
+					</p:link></li>
+
+			</ul></li>
+
+
+
+		<li class="treeview"><p:link class="dropdown-toggle">
+				<i class="fa fa-cog"></i>
+				<span>Configuración </span>
+			</p:link>
+
+			<ul class="treeview-menu" data-widget="collapse">
+				<li><p:link outcome="/pages/admin/adminUsuarios">
+						<i class="fa fa-user"></i>
+						<span>Usuarios</span>
+					</p:link></li>
+				<li><p:link outcome="/pages/admin/adminMenus">
+						<i class="fa fa-navicon"></i>
+						<span>Menus</span>
+					</p:link></li>
+
+				<li><p:link outcome="/pages/admin/adminPerfil">
+						<i class="fa fa-users"></i>
+						<span>Perfiles</span>
+					</p:link></li>
+				<li><p:link outcome="/pages/admin/adminPermisos">
+						<i class="fa fa-key"></i>
+						<span>Permisos</span>
+					</p:link></li>
+				<li><p:link outcome="/pages/admin/adminPermisoAgencia">
+						<i class="fa fa-key"></i>
+						<span>Permisos Agencias</span>
+					</p:link></li>
+			</ul></li>
+			
+			-->
+	</ul>
+	 
+
+</ui:composition>

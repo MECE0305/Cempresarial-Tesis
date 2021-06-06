@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="title">
+        Gestión Perfiles
+    </ui:define>
+	<ui:define name="body">
+		<adm:breadcrumb title="Admin Perfil"
+			link="/pages/admin/adminPerfil.jsf" />
+
+
+		<div class="ui-fluid" id="divPrincipal">
+
+
+			<h:form id="formPrincipal">
+
+				<p:growl id="mensaje" showDetail="true" widgetVar="mensaje" />
+
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-danger box-solid" responsive="true">
+					<div style="display: flex; justify-content: flex-end;">
+						<p:commandButton value="SI" type="button"
+							styleClass="btn-material btn-primary ui-confirmdialog-yes"
+							icon="fa fa-check" />
+						<p:commandButton value="NO" type="button"
+							styleClass="btn-material btn-danger ui-confirmdialog-no"
+							icon="fa fa-close" />
+					</div>
+				</p:confirmDialog>
+
+				<p:dialog id="dlgGuardar" modal="true" widgetVar="pnldGuardar"
+					position="center" header="Registrar Perfil" draggable="false"
+					closable="false" resizable="false" showEffect="fade"
+					hideEffect="fade" responsive="true"
+					styleClass="box box-solid box-primary">
+					<p:messages id="messages" showDetail="true" closable="false" />
+					<p:panelGrid columns="2" layout="grid" id="opcionesGuardar"
+						style="border:none">
+						<p:commandButton value="Cancelar" styleClass="btn btn-danger"
+							oncomplete="PF('pnldGuardar').hide()" icon="fa fa-ban"
+							style="width:auto;">
+						</p:commandButton>
+						<p:commandButton
+							process="@this,@([id$=datosPerfil],[id$=dtAgencia])"
+							styleClass="btn btn-success"
+							disabled="#{!perfilController.guardarRender}" value="Guardar"
+							actionListener="#{perfilController.crearPerfil()}"
+							oncomplete="PF('pnldGuardar').hide()" update="formPrincipal"
+							icon="fa fa-user-plus" style="width:auto;">
+						</p:commandButton>
+					</p:panelGrid>
+				</p:dialog>
+
+
+				<p:dialog modal="true" showEffect="fade" hideEffect="fade"
+					width="50%" widgetVar="themesDialog" position="center"
+					responsive="true" resizable="false"
+					header="Asignación de Perfil Usuario"
+					styleClass="box box-solid box-primary">
+					<p:messages id="msgAsignacion" showDetail="true" closable="false" />
+
+					<p:panelGrid id="displayThemes" columns="1" layout="grid"
+						style="border:none">
+						<p:panelGrid columns="2" layout="grid">
+							<h:outputText value="Usuario: " style="font-weight:bold" />
+							<h:outputText value="#{perfilController.usuario.nombreUsuario}" />
+							<h:outputText value="" />
+							<h:outputText value="#{perfilController.usuario.nombres}" />
+							<h:outputText value="" />
+							<h:outputText value="#{perfilController.usuario.cedula}" />
+							<h:outputText value="" />
+							<h:outputText value="#{perfilController.usuario.activo}" />
+							<h:outputText value="" />
+							<h:outputText value="" />
+
+							<h:outputText value="Perfiles Seleccionados: "
+								style="font-weight:bold" />
+							<ui:repeat value="#{perfilController.perfiles.target}" var="item">
+								<h:outputText value="#{item.nombre}" style="margin-right:5px" />
+							</ui:repeat>
+							<h:outputText value="Perfiles Disponibles: "
+								style="font-weight:bold" />
+							<ui:repeat value="#{perfilController.perfiles.source}" var="item">
+								<h:outputText value="#{item.nombre}" style="margin-right:5px" />
+							</ui:repeat>
+						</p:panelGrid>
+						<p:separator />
+						<p:panelGrid columns="2" layout="grid" style="border:none">
+							<p:commandButton value="Cancelar" icon="fa fa-ban"
+								oncomplete="PF('themesDialog').hide()" styleClass="btn-danger" />
+							<p:commandButton value="Guardar" icon="fa fa-send"
+								styleClass="btn-success"
+								disabled="#{!perfilController.guardarUPRender}"
+								update="@([id$=tblDatosPerfilUser],[id$=mensaje])"
+								oncomplete="PF('themesDialog').hide()"
+								actionListener="#{perfilController.crearUsuarioPerfil()}"
+								process="@this, displayThemes" />
+						</p:panelGrid>
+
+					</p:panelGrid>
+				</p:dialog>
+
+
+
+				<p:dialog widgetVar="sidebar2" position="right" modal="true"
+					header="Agencias para Asignación de Permisos" responsive="true"
+					showEffect="fade" hideEffect="fade"
+					styleClass="box box-info box-solid" width="75%" height="100vh">
+
+					<p:panelGrid columns="1" layout="grid"
+						columnClasses="ui-grid-col-12">
+						<p:panelGrid id="pngTab0" columns="2" layout="grid"
+							columnClasses="ui-grid-col-2,ui-grid-col-10">
+							<p:outputLabel value="Cliente: " style="  FONT-WEIGHT: bold;" />
+							<p:selectOneMenu id="cmbCliente" tabindex="1" style="width:100%"
+								value="#{perfilController.idCliente}" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemLabel="Todos" />
+								<f:selectItems var="item"
+									value="#{perfilController.listCliente}"
+									itemLabel="#{item.nombreCliente}" itemValue="#{item.idCliente}">
+								</f:selectItems>
+								<p:ajax event="change" process="cmbCliente" update="cmbEmpresa"
+									listener="#{perfilController.findByClienteIdCliente}" />
+							</p:selectOneMenu>
+
+
+
+							<p:outputLabel for="cmbEmpresa" value="Empresa: "
+								style="  FONT-WEIGHT: bold;" />
+							<p:selectOneMenu id="cmbEmpresa"
+								requiredMessage="La Empresa es requerido"
+								value="#{perfilController.idEmpresa}" style="width:100%">
+								<f:selectItem itemLabel="Todos" itemValue="" />
+								<f:selectItems value="#{perfilController.listEmpresa}"
+									var="item" itemLabel="#{item.nombreEmpresa}"
+									itemValue="#{item.idEmpresa}" />
+								<p:ajax event="change" process="cmbEmpresa"
+									listener="#{perfilController.findByEmpresaIdEmpresa}"
+									update="dtAgencia" />
+							</p:selectOneMenu>
+
+
+						</p:panelGrid>
+
+
+						<p:dataTable id="dtAgencia" var="item" widgetVar="dtAgencia"
+							reflow="true" value="#{perfilController.listAgencia}"
+							selection="#{perfilController.listAgenciaSelect}"
+							rowKey="#{item.idAgencia}" rows="10" paginator="true"
+							styleClass="box box-primary">
+							<f:facet name="header">
+
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank">
+
+									<p:panelGrid layout="grid" columns="4" style="float:left"
+										columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+										<h:commandLink title="Exportar Excel" immediate="true"
+											style="width: min-content;">
+											<p:graphicImage value="/resources/images/excel.ico"
+												width="30px" />
+											<p:dataExporter type="xls" target="dtAgencia"
+												fileName="Agencias" />
+										</h:commandLink>
+										<h:outputText value="Buscar en Todos los Campos:   " />
+										<p:inputText id="globalFilter"
+											onkeyup="PF('dtAgencia').filter();hideBar()"
+											style="width:150px" placeholder="Ingrese Parámetro....">
+											<p:ajax event="keyup" />
+										</p:inputText>
+
+										<p:commandButton style="width: min-content;float:rigth"
+											id="toggler" type="button" icon="fa fa-list" />
+										<p:columnToggler datasource="dtAgencia" trigger="toggler" />
+
+									</p:panelGrid>
+									<p:commandButton icon="fa fa-refresh"
+										style="width: min-content;" styleClass="btn-default"
+										title="Actualizar Lista"
+										action="#{perfilController.findByEmpresaIdEmpresa()}"
+										update="dtAgencia" />
+								</p:panelGrid>
+							</f:facet>
+
+							<p:column selectionMode="multiple"
+								style="width:5%;text-align:center">
+							</p:column>
+
+							<p:column filterBy="#{item.nombreAgencia}"
+								sortBy="#{item.nombreAgencia}" filterMatchMode="contains"
+								headerText="Nombre Agencia">
+								<h:outputText value="#{item.nombreAgencia}"
+									title="#{item.activoAgencia ? 'ACTIVO':'INACTIVO'}"
+									styleClass="#{item.activoAgencia ? 'label label-success':'label danger'}"
+									style="font-size:12px;width:100%" />
+							</p:column>
+
+							<p:column filterBy="#{item.ceoAgencia}"
+								filterMatchMode="contains" headerText="CEO Agencia">
+								<h:outputText value="#{item.ceoAgencia}"
+									styleClass="label label-info" style="font-size:12px" />
+							</p:column>
+
+							<p:column filterBy="#{item.direccionAgencia}"
+								filterMatchMode="contains" headerText="Dirección">
+								<h:outputText value="#{item.direccionAgencia}" />
+							</p:column>
+
+							<p:column filterBy="#{item.telefonoAgencia}"
+								filterMatchMode="contains" headerText="Teléfono">
+								<h:outputText value="#{item.telefonoAgencia}" />
+							</p:column>
+
+
+
+							<p:column filterBy="#{item.ciudadIdCiudad.nombreCiudad}"
+								filterMatchMode="contains" headerText="Ciudad">
+								<h:outputText value="#{item.ciudadIdCiudad.nombreCiudad}" />
+							</p:column>
+
+
+
+
+						</p:dataTable>
+					</p:panelGrid>
+				</p:dialog>
+
+
+
+				<p:panel>
+					<p:tabView>
+						<p:tab>
+							<f:facet name="title">
+								<center>
+									<h:graphicImage value="/resources/images/gestion_perfil.png"
+										width="70" height="70" title="Datos Personales">
+									</h:graphicImage>
+								</center>
+                                Gestión Perfiles
+                            </f:facet>
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="callout-card callout-info "
+								columnClasses="ui-grid-col-11,ui-grid-col-1">
+								<h2 class="titulosH1">Datos de Perfil</h2>
+
+								<p:menuButton icon="fa fa-gears" title="Opciones de Acción"
+									styleClass="btn-primary">
+
+									<p:menuitem process="@this,datosPerfil" styleClass="btn-info"
+										update="@([id$=opcionesGuardar],[id$=messages])"
+										oncomplete="PF('pnldGuardar').show()" value="Guardar"
+										actionListener="#{perfilController.verificarAntesGuardar()}"
+										icon="fa fa-paper-plane-o" />
+									<p:menuitem process="@this,datosPerfil"
+										styleClass="btn-warning"
+										update="@([id$=mensaje],[id$=tblPerfil],[id$=dtAgencia])"
+										value="Actualizar"
+										actionListener="#{perfilController.actualizarPerfil()}"
+										icon="fa fa-refresh" />
+									<p:menuitem id="btnCancel" process="@this, btnCancel"
+										styleClass="btn-danger"
+										actionListener="#{perfilController.clear()}" value="Cancelar"
+										update="formPrincipal" icon="fa fa-ban" />
+
+								</p:menuButton>
+
+
+
+
+							</p:panelGrid>
+							<p:separator />
+
+
+							<p:commandButton icon="fa fa-industry" value="VER AGENCIAS"
+								oncomplete="PF('sidebar2').show()" title="ver" immediate="true"
+								styleClass="btn-success" style="width: auto;">
+							</p:commandButton>
+							<p:panelGrid columns="3"
+								columnClasses="ui-grid-col-4, ui-grid-col-4, ui-grid-col-4"
+								layout="grid" style="border:none" id="datosPerfil">
+								<p:inputText placeholder="Nombre Perfil"
+									value="#{perfilController.perfil.nombre}">
+								</p:inputText>
+								<p:inputText placeholder="Descripción Perfil"
+									value="#{perfilController.perfil.descripcion}">
+								</p:inputText>
+
+
+
+								<p:panelGrid columns="3" layout="grid" style="border: none">
+									<p:outputLabel value="Activo?:" style="  FONT-WEIGHT: bold;" />
+									<p:inputSwitch value="#{perfilController.perfil.activo}"
+										onLabel="ON" label="LABEL" offLabel="OFF" showLabels="true">
+										<p:ajax event="change" update="outActivo" />
+									</p:inputSwitch>
+									<p:outputLabel id="outActivo"
+										styleClass="#{perfilController.perfil.activo ? 'label label-success':'label label-default'}"
+										value="#{perfilController.perfil.activo ? 'ACTIVO':'INACTIVO'}" />
+								</p:panelGrid>
+							</p:panelGrid>
+
+
+
+							<h2 class="titulosH1 callout-card callout-info ">Perfiles
+								del Sistema</h2>
+							<p:separator />
+							<p:dataTable var="item" value="#{perfilController.listPerfil}"
+								widgetVar="tblPerfil" id="tblPerfil"
+								emptyMessage="No exiten Registros" styleClass="box box-primary"
+								reflow="true" rows="10" paginator="true"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+
+
+								<f:facet name="header">
+
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank">
+
+										<p:panelGrid layout="grid" columns="4" style="float:left"
+											columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+											<h:commandLink title="Exportar Excel" immediate="true"
+												style="width: min-content;">
+												<p:graphicImage value="/resources/images/excel.ico"
+													width="30px" />
+												<p:dataExporter type="xls" target="tblPerfil"
+													fileName="Perfiles" />
+											</h:commandLink>
+											<h:outputText value="Buscar en Todos los Campos:   " />
+											<p:inputText id="globalFilter"
+												onkeyup="PF('tblPerfil').filter();hideBar()"
+												style="width:150px" placeholder="Ingrese Parámetro....">
+												<p:ajax event="keyup" />
+											</p:inputText>
+
+											<p:commandButton style="width: min-content;float:rigth"
+												id="toggler" type="button" icon="fa fa-list" />
+											<p:columnToggler datasource="tblPerfil" trigger="toggler" />
+
+										</p:panelGrid>
+										<p:commandButton icon="fa fa-refresh"
+											style="width: min-content;" styleClass="btn-default"
+											title="Actualizar Lista"
+											action="#{perfilController.actualizarLista()}"
+											update="tblPerfil" />
+									</p:panelGrid>
+								</f:facet>
+
+
+								<p:column filterBy="#{item.activo}" headerText="ACTIVO ?"
+									filterMatchMode="contains">
+
+									<p:outputLabel
+										styleClass="#{item.activo ? 'label label-success':'label label-default'}"
+										value="#{item.activo ? 'ACTIVO':'INACTIVO'}" />
+								</p:column>
+
+								<p:column filterBy="#{item.nombre}" headerText="Nombre"
+									filterMatchMode="contains">
+									<h:outputText value="#{item.nombre}" />
+								</p:column>
+
+								<p:column filterBy="#{item.descripcion}"
+									headerText="Descripción" filterMatchMode="contains">
+									<h:outputText value="#{item.descripcion}" />
+								</p:column>
+
+
+
+								<p:column headerText="Opciones" exportable="false">
+									<p:panelGrid columns="3" layout="grid" style="border:none">
+
+										<p:commandButton
+											action="#{perfilController.eliminarPerfil(item)}"
+											update="@([id$=mensaje],[id$=tblPerfil])" icon="fa fa-trash"
+											process="tblPerfil" title="Eliminar" styleClass="btn-danger">
+											<p:confirm header="Confirmación"
+												message="Está seguro de eliminar el PERFIL?"
+												icon="fa fa-exclamation-triangle" />
+										</p:commandButton>
+										<p:commandButton update="@([id$=datosPerfil])"
+											title="Actualizar" icon="fa fa-edit" process="tblPerfil"
+											styleClass="btn-warning">
+											<f:setPropertyActionListener value="#{item}"
+												target="#{perfilController.perfil}" />
+										</p:commandButton>
+										<p:commandButton
+											update="@([id$=mensaje],[id$=datosPerfil],[id$=tblperfil],[id$=PojoPickList])"
+											action="#{perfilController.activaDesactivaPerfil(item)}"
+											title="Activa/Desactiva"
+											icon="#{item.activo ? 'fa fa-check-square-o' : 'fa fa-check-square'} "
+											process="tblPerfil"
+											styleClass="#{item.activo ? 'btn-success' : 'btn btn-default'}">
+										</p:commandButton>
+									</p:panelGrid>
+								</p:column>
+
+							</p:dataTable>
+						</p:tab>
+						<p:tab>
+							<f:facet name="title">
+								<center>
+									<h:graphicImage value="/resources/images/perfiles.ico"
+										width="70" height="70" title="Datos Personales">
+									</h:graphicImage>
+								</center>
+                                Asignación Perfiles-Usuario
+                            </f:facet>
+
+							<p:panelGrid columns="2" layout="grid"
+								columnClasses="ui-grid-col-11, ui-grid-col-1"
+								styleClass="callout-card callout-info ">
+								<h2 class="titulosH1">Asignación de Perfiles a Usuarios</h2>
+								<p:commandButton icon="fa fa-exchange" id="pojoSubmit"
+									process="@this, PojoPickList,pnlDatosUsuario"
+									styleClass="btn-warning"
+									actionListener="#{perfilController.verificarAntesGuradarUsuarioPerfil()}"
+									title="Asignación de Perfiles"
+									update="@([id$=msgAsignacion],[id$=displayThemes])"
+									oncomplete="PF('themesDialog').show()" style="margin-top:5px" />
+							</p:panelGrid>
+
+
+							<p:separator />
+							<p:panelGrid columns="2" layout="grid"
+								columnClasses="ui-grid-col-6, ui-grid-col-6" style="border:none">
+								<p:dataTable var="item" value="#{perfilController.listUsuario}"
+									widgetVar="tblDatos" id="tblUsuarios"
+									emptyMessage="No exiten Registros"
+									filteredValue="#{perfilController.listUsuarioSelect}"
+									reflow="true" rows="10" paginator="true"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									rowsPerPageTemplate="5,10,15">
+									<f:facet name="header">Usuarios del Sistema</f:facet>
+
+									<p:column filterBy="#{item.nombreUsuario}" headerText="Usuario"
+										filterMatchMode="contains">
+										<h:outputText value="#{item.nombreUsuario}"
+											style="display:inline-block" />
+									</p:column>
+									<p:column filterBy="#{item.cedula}" headerText="Cédula"
+										filterMatchMode="contains">
+										<h:outputText value="#{item.cedula}"
+											style="display:inline-block" />
+									</p:column>
+									<p:column filterBy="#{item.nombres}" headerText="Nombres"
+										filterMatchMode="contains">
+										<h:outputText value="#{item.nombres}"
+											style="display:inline-block" />
+									</p:column>
+
+									<p:column headerText="Selección">
+										<p:commandButton icon="fa fa-sign-in"
+											update="@([id$=pnlDatosUsuario])" styleClass="btn-success"
+											process="tblUsuarios">
+											<f:setPropertyActionListener value="#{item}"
+												target="#{perfilController.usuario}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+
+
+								<p:panel header="Usuario Seleccionado">
+									<p:panelGrid id="pnlDatosUsuario" layout="grid" columns="2"
+										style="border:none"
+										columnClasses="ui-grid-col-4 pnlGridFondoFilas, ui-grid-col-8">
+										<h:outputText value="USUARIO: " />
+										<p:outputLabel
+											value="#{perfilController.usuario.nombreUsuario}" />
+
+										<h:outputText value="ACIVO ?: " />
+										<p:outputLabel value="#{perfilController.usuario.activo}" />
+
+										<h:outputText value="CEDULA: " />
+										<p:outputLabel value="#{perfilController.usuario.cedula}" />
+
+										<h:outputText value="NOMBRES: " />
+										<p:outputLabel value="#{perfilController.usuario.nombres}" />
+
+										<h:outputText value="EMAIL: " />
+										<p:outputLabel value="#{perfilController.usuario.email}" />
+									</p:panelGrid>
+								</p:panel>
+							</p:panelGrid>
+
+
+
+							<p:spacer width="10" />
+							<p:panelGrid columns="2" layout="grid"
+								columnClasses="ui-grid-col-11, ui-grid-col-1"
+								styleClass="callout-card callout-info ">
+								<h2 class="titulosH1">Perfiles</h2>
+								<p:commandButton icon="fa fa-refresh" styleClass="btn-success"
+									update="@([id$=PojoPickList])" title="Actualizar Perfiles"
+									actionListener="#{perfilController.inicalizarModelPerfiles()}" />
+							</p:panelGrid>
+							<p:separator />
+							<p:pickList id="PojoPickList"
+								value="#{perfilController.perfiles}" var="item" effect="bounce"
+								itemValue="#{item}" itemLabel="#{item.nombre}"
+								showSourceControls="false" showTargetControls="false"
+								showCheckbox="true" showSourceFilter="true"
+								orientation="horizontal" showTargetFilter="true"
+								filterMatchMode="contains" responsive="true"
+								converter="perfilConverter">
+
+								<f:facet name="sourceCaption">Disponibles</f:facet>
+								<f:facet name="targetCaption">Seleccionados</f:facet>
+
+								<p:ajax event="transfer"
+									listener="#{perfilController.onTransfer}"
+									update="@([id$=mensaje])" />
+								<p:ajax event="select" listener="#{perfilController.onSelect}"
+									update="@([id$=mensaje])" />
+								<p:ajax event="unselect"
+									listener="#{perfilController.onUnselect}"
+									update="@([id$=mensaje])" />
+								<p:ajax event="reorder" listener="#{perfilController.onReorder}"
+									update="@([id$=mensaje])" />
+
+
+
+								<p:column style="width:85%;">
+									<h:outputText value="#{item.nombre}" />
+								</p:column>
+							</p:pickList>
+
+							<p:spacer height="10" />
+
+							<h2 class="titulosH1 callout-card callout-info">Lista de
+								Asignaciones Usuario-Perfil</h2>
+							<p:separator />
+							<p:dataTable var="item"
+								value="#{perfilController.listPerfilUsuario}"
+								widgetVar="tblDatosPerfilUser" id="tblDatosPerfilUser"
+								emptyMessage="No exiten Registros" reflow="true" rows="10"
+								paginator="true"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15">
+
+
+								<f:facet name="header">
+
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank">
+
+										<p:panelGrid layout="grid" columns="4" style="float:left"
+											columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+											<h:commandLink title="Exportar Excel" immediate="true"
+												style="width: min-content;">
+												<p:graphicImage value="/resources/images/excel.ico"
+													width="30px" />
+												<p:dataExporter type="xls" target="tblDatosPerfilUser"
+													fileName="Perfiles - Usuario" />
+											</h:commandLink>
+											<h:outputText value="Buscar en Todos los Campos:   " />
+											<p:inputText id="globalFilter"
+												onkeyup="PF('tblDatosPerfilUser').filter();hideBar()"
+												style="width:150px" placeholder="Ingrese Parámetro....">
+												<p:ajax event="keyup" />
+											</p:inputText>
+
+											<p:commandButton style="width: min-content;float:rigth"
+												id="toggler" type="button" icon="fa fa-list" />
+											<p:columnToggler datasource="tblDatosPerfilUser"
+												trigger="toggler" />
+
+										</p:panelGrid>
+										<p:commandButton icon="fa fa-refresh"
+											style="width: min-content;" styleClass="btn-default"
+											title="Actualizar Lista"
+											action="#{perfilController.actualizarListaPerfilUsuario()}"
+											update="tblDatosPerfilUser" />
+									</p:panelGrid>
+								</f:facet>
+
+								<p:column filterBy="#{item.usuario.nombreUsuario}"
+									headerText="Usuario" filterMatchMode="contains">
+									<h:outputText value="#{item.usuario.nombreUsuario}" />
+								</p:column>
+								<p:column filterBy="#{item.usuario.cedula}" headerText="Cédula"
+									filterMatchMode="contains">
+									<h:outputText value="#{item.usuario.cedula}" />
+								</p:column>
+
+								<p:column filterBy="#{item.perfil.nombre}" headerText="Perfil"
+									filterMatchMode="contains">
+									<h:outputText value="#{item.perfil.nombre}" />
+								</p:column>
+
+								<p:column filterBy="#{item.perfil.descripcion}"
+									headerText="Descripción" filterMatchMode="contains">
+									<h:outputText value="#{item.perfil.descripcion}" />
+								</p:column>
+
+
+
+								<p:column headerText="Opciones" width="7%" exportable="false">
+									<p:panelGrid columns="1" layout="grid" style="border:none;">
+
+										<p:commandButton
+											action="#{perfilController.eliminarPerfilUsuario(item)}"
+											update="@([id$=mensaje],[id$=tblDatosPerfilUser])"
+											icon="fa fa-trash" process="tblDatosPerfilUser"
+											title="Eliminar" styleClass="btn-danger">
+											<p:confirm header="Confirmación"
+												message="Está seguro de eliminar la Asignación?"
+												icon="fa fa-exclamation-triangle" />
+										</p:commandButton>
+
+									</p:panelGrid>
+								</p:column>
+
+							</p:dataTable>
+						</p:tab>
+
+					</p:tabView>
+
+
+
+
+					<p:spacer height="10" />
+
+
+
+
+
+
+				</p:panel>
+
+
+			</h:form>
+
+
+		</div>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Ciudad" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-selectonelistbox, .ui-selectmanymenu {
+	padding: 10px !important;
+	width: auto !important;
+	min-width: 12em !important;
+	background: #fff !important;
+	border: 1px solid #f39c12 !important;
+}
+</style>
+
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form>#{ciudadMB.init()}</h:form>
+		<div class="ui-fluid">
+
+			<h:form id="form" enctype="multipart/form-data">
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:sidebar widgetVar="sidebar2" position="right" baseZIndex="10000"
+					visible="false" blockScroll="false"
+					styleClass="box box-info box-solid"
+					style="width:40%;overflow: auto;">
+
+					<p:panelGrid layout="grid" columns="1"
+						styleClass="box-solid box-primary box customPanelGrid ui-noborder"
+						style="height: 95%;display: flex; flex-direction: column;  justify-content: space-between;border:none !important">
+						<div class="box box-primary">
+							<div class="box-header with-border">
+								<h1 class="box-title"></h1>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body callout callout-info">
+
+								<div style="display: flex; justify-content: space-between;">
+									<h1>!Indicaciones!</h1>
+									<img src="resources/images/ancla.gif" width="7%"
+										style="border-radius: 50%" />
+								</div>
+
+								<hr></hr>
+								<strong><i class="fa fa-book margin-r-5"></i> Cambio de
+									Provincia </strong>
+
+								<p class="text-muted" style="color: white !important;">Si
+									desea cambiar de Provincia debe seleccionar del listado de
+									Provincias Disponbles .!</p>
+
+
+							</div>
+							<!-- /.box-body -->
+						</div>
+						<p:panelGrid columns="1" layout="grid" id="pnlCiudadDetalle">
+							<p:outputLabel value="Nombre:" />
+							<p:inputText value="#{ciudadMB.ciudad.nombreCiudad}" />
+
+							<p:separator />
+
+
+							<p:outputLabel value="Provincia: " />
+
+							<p:tabView effect="fade" activeIndex="0">
+								<p:tab title="Listado">
+									<p:selectOneListbox id="cmbProvinciaDetalle"
+										styleClass="ui-selectonelistbox"
+										value="#{ciudadMB.idProvincia}" filterMatchMode="contains"
+										filter="true">
+
+										<f:selectItems value="#{ciudadMB.listaProvincia}" var="item"
+											itemLabel="#{item.nombreProvincia}"
+											itemValue="#{item.idProvincia}" />
+										<p:ajax event="change" process="cmbProvinciaDetalle" />
+									</p:selectOneListbox>
+								</p:tab>
+								<p:tab title="Grupo">
+									<p:selectOneRadio id="console" value="#{ciudadMB.idProvincia}"
+										columns="5" layout="grid">
+										<f:selectItems value="#{ciudadMB.listaProvincia}" var="item"
+											itemLabel="#{item.nombreProvincia}"
+											itemValue="#{item.idProvincia}" />
+										<p:ajax event="change" process="cmbProvinciaDetalle" />
+									</p:selectOneRadio>
+								</p:tab>
+
+							</p:tabView>
+
+
+
+							<p:separator />
+							<p:outputLabel value="Activo:" />
+							<p:inputSwitch value="#{ciudadMB.ciudad.activoCiudad}">
+							</p:inputSwitch>
+							<p:separator />
+						</p:panelGrid>
+						<f:facet name="footer">
+							<p:commandButton value="Cancel"
+								oncomplete="PF('sidebar2').hide()"
+								styleClass="btn btn-solid btn-danger"
+								style="width: max-content;" />
+							<p:commandButton value="Guardar Cambios"
+								actionListener="#{ciudadMB.sideActualiza()}" update="dtCiudad"
+								process="@this, @([id$=pnlCiudadDetalle])"
+								styleClass="btn btn-solid btn-primary"
+								style="width: max-content;" />
+						</f:facet>
+					</p:panelGrid>
+
+
+
+
+				</p:sidebar>
+
+				<p:panelGrid layout="grid" columns="2"
+					columnClasses="ui-grid-col-4,ui-grid-col-8">
+					<p:panel styleClass="box box-solid box-primary"
+						header="Datos de Ciudad">
+						<div class="card text-white">
+							<img
+								src="https://png.pngtree.com/thumb_back/fh260/background/20190220/ourmid/pngtree-creative-synthesis-city-comic-real-estate-image_8675.jpg"
+								class="card-img" alt="..." />
+							<div class="card-header text-primary">Datos de Registro</div>
+							<div class="card-body">
+								<h5 class="card-title"></h5>
+								<p class="card-text">
+
+									<p:panelGrid columns="2" layout="grid" id="pnlCiudad">
+										<p:outputLabel value="Nombre:" />
+										<p:inputText value="#{ciudadMB.ciudad.nombreCiudad}" />
+
+										<p:outputLabel value="Provincia: " />
+										<p:selectOneMenu id="cmbProvincia" filterMatchMode="contains"
+											filter="true" requiredMessage="Provincia Requerida"
+											value="#{ciudadMB.idProvincia}" required="true">
+											<f:selectItem itemLabel="Seleccionar Provincia" itemValue="" />
+											<f:selectItems value="#{ciudadMB.listaProvincia}" var="item"
+												itemLabel="#{item.nombreProvincia}"
+												itemValue="#{item.idProvincia}" />
+											<p:ajax event="change" process="cmbProvincia" />
+										</p:selectOneMenu>
+
+										<p:outputLabel value="Activo:" />
+										<p:inputSwitch value="#{ciudadMB.ciudad.activoCiudad}">
+										</p:inputSwitch>
+									</p:panelGrid>
+								</p>
+								<div style="display: flex; justify-content: flex-end;">
+									<p:commandButton
+										value="#{ciudadMB.ciudad.idCiudad == null ? 'Guardar':'Actualizar'}"
+										icon="fa fa-floppy-o"
+										styleClass="#{ciudadMB.ciudad.idCiudad== null ? 'btn-success':'btn-warning'}"
+										process="@this, pnlCiudad"
+										update="@([id$=dtCiudad], [id$=pnlCiudad],[id$=btnGuardar])"
+										actionListener="#{ciudadMB.guardar()}"
+										style="width: max-content" id="btnGuardar">
+									</p:commandButton>
+
+									<p:commandButton value="Cancelar" icon="fa fa-close"
+										styleClass="btn-danger" process="@this" update="@form"
+										action="#{ciudadMB.init()}" style="width: max-content" />
+								</div>
+							</div>
+						</div>
+					</p:panel>
+					<p:dataTable id="dtCiudad" var="item" widgetVar="dtCiudad"
+						reflow="true" value="#{ciudadMB.listaCiudad}" rows="10"
+						paginator="true" styleClass="box box-primary">
+
+						<f:facet name="header">
+
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank">
+
+								<p:panelGrid layout="grid" columns="4" style="float:left"
+									columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+									<h:commandLink title="Exportar Excel" immediate="true"
+										style="width: min-content;">
+										<p:graphicImage value="/resources/images/excel.ico"
+											width="30px" />
+										<p:dataExporter type="xls" target="dtCiudad"
+											fileName="Ciudades" />
+									</h:commandLink>
+									<h:outputText value="Buscar en Todos los Campos:   " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtCiudad').filter();hideBar()"
+										style="width:150px" placeholder="Ingrese Parámetro....">
+										<p:ajax event="keyup" />
+									</p:inputText>
+
+									<p:commandButton style="width: min-content;float:rigth"
+										id="toggler" type="button" icon="fa fa-list" />
+									<p:columnToggler datasource="dtCiudad" trigger="toggler" />
+
+								</p:panelGrid>
+								<p:commandButton icon="fa fa-refresh"
+									style="width: min-content;" styleClass="btn-default"
+									title="Actualizar Lista" action="#{ciudadMB.actualizarLista()}"
+									update="dtCiudad" />
+							</p:panelGrid>
+
+
+
+
+
+
+						</f:facet>
+
+
+
+						<p:column id="idCliente" filterBy="#{item.idCiudad}"
+							rendered="false" filterMatchMode="contains" headerText="Id"
+							style="width:40px;">
+							<h:outputText value="#{item.idCiudad}" />
+						</p:column>
+
+						<p:column filterBy="#{item.nombreCiudad}"
+							sortBy="#{item.nombreCiudad}" filterMatchMode="contains"
+							headerText="Nombre Ciudad">
+							<h:outputText value="#{item.nombreCiudad}"
+								styleClass="label label-info" style="font-size:12px" />
+						</p:column>
+
+						<p:column filterBy="#{item.provinciaIdProvincia.nombreProvincia}"
+							filterMatchMode="contains" headerText="Provincia">
+							<h:outputText
+								value="#{item.provinciaIdProvincia.nombreProvincia}" />
+						</p:column>
+
+						<p:column filterBy="#{item.activoCiudad}"
+							filterMatchMode="contains" headerText="Activo">
+							<h:outputText
+								styleClass="#{item.activoCiudad ? 'label label-success':'label label-default'}"
+								value="#{item.activoCiudad ? 'ACTIVO':'INACTIVO'}" />
+							<p:inputSwitch value="#{item.activoCiudad}" onLabel="ON"
+								label="LABEL" offLabel="OFF" showLabels="true">
+								<p:ajax event="change" process="dtCiudad"
+									listener="#{ciudadMB.switchActiva(item)}" update="dtCiudad" />
+							</p:inputSwitch>
+						</p:column>
+
+						<p:column filterBy="#{item.creaCiudad}"
+							sortBy="#{item.creaCiudad}" filterMatchMode="contains"
+							headerText="Creación">
+							<h:outputText value="#{item.creaCiudad}">
+								<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+
+
+
+
+						<p:column headerText="Opciones" width="150" exportable="false">
+							<p:commandButton process="dtCiudad" icon="fa fa-edit"
+								style="width: min-content" title="editar"
+								action="#{ciudadMB.pasarDatoseditar(item)}"
+								styleClass="btn-primary" immediate="true"
+								update="@([id$=pnlCiudad],[id$=btnGuardar])">
+							</p:commandButton>
+
+							<p:commandButton icon="fa fa-eye"
+								oncomplete="PF('sidebar2').show()" style="width: min-content"
+								action="#{ciudadMB.pasarDatoseditar(item)}" title="ver"
+								styleClass="btn-success" process="dtCiudad"
+								update="@([id$=pnlCiudadDetalle])">
+							</p:commandButton>
+
+							<p:commandButton update="@([id$=dtCiudad])" icon="fa fa-trash"
+								style="width: min-content" title="eliminar" process="dtCiudad"
+								action="#{ciudadMB.eliminar()}" styleClass="btn-danger">
+								<f:setPropertyActionListener value="#{item}"
+									target="#{ciudadMB.ciudad}" />
+								<p:confirm header="Confirmar Eliminación Ciudad"
+									message="¿Está usted seguro?" icon="fa fa-anchor" />
+							</p:commandButton>
+
+						</p:column>
+
+					</p:dataTable>
+
+
+				</p:panelGrid>
+
+
+
+
+			</h:form>
+
+		</div>
+
+
+
+	</ui:define>
+
+</ui:composition>

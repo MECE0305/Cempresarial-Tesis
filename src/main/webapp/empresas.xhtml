@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:adm="http://github.com/adminfaces"
+	template="#{layoutMB.template}">
+
+
+	<ui:define name="metadata">
+		<ui:param name="title" value="Empresas" />
+		<!-- Automatic create breadCrumb and page title when param 'title' is provided. -->
+
+		<style type="text/css">
+.ui-datatable .ui-datatable-header {
+	text-align: left !important;
+}
+
+.ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="body">
+
+		<h:form>
+	#{empresaMB.init()}
+	</h:form>
+
+		<div class="ui-fluid">
+			<h:form id="form" enctype="multipart/form-data">
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+					styleClass="box-warning box-solid">
+					<p:commandButton value="Si" type="button"
+						styleClass="btn btn-success ui-confirmdialog-yes"
+						icon="fa fa-check" />
+					<p:commandButton value="No" type="button"
+						styleClass="btn btn-danger ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+				<p:panel styleClass="box box-primary">
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-grid-col-3, ui-grid-col-9"
+						styleClass="customPanelGrid ui-noborder">
+
+						<p:panelGrid columns="1" layout="grid">
+
+							<p:graphicImage style="width: inherit;height: inherit;"
+								id="fotoPre" rendered="#{empresaMB.foto != null}" cache="true"
+								value="/resources/images/your-logo.jpg">
+							</p:graphicImage>
+							<p:graphicImage style="width: inherit;height: inherit;" id="foto"
+								value="#{empresaMB.foto}" cache="false" alt="Logo Empresa"
+								title="Logo de La Empresa" rendered="#{empresaMB.foto != null}" />
+
+							<p:fileUpload mode="advanced" dragDropSupport="true" id="pnlFoto"
+								listener="#{empresaMB.upload}" process="@this,pnlFoto"
+								sizeLimit="50000000" label="Escoger" cancelLabel="Cancelar"
+								uploadLabel="Agregar" showButtons="true" multiple="false"
+								allowTypes="/(\.|\/)(gif|jpg|jpeg|gif|png|PNG|GIF|JPG|JPEG)$/"
+								invalidFileMessage="Tipo de formato incorrecto"
+								invalidSizeMessage="Tamaño no permitido" performVirusScan="true"
+								previewWidth="150" fileLimitMessage="Solo se acepta un archivo"
+								update="@([id$=foto], [id$=fotoPre])" />
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="6" layout="grid"
+							columnClasses="ui-grid-col-2, ui-grid-col-3,ui-grid-col-1, ui-grid-col-2,ui-grid-col-3, ui-grid-col-1"
+							id="panelEmpresa">
+							<p:outputLabel for="cmbClientes" value="Cliente: ">
+								<span class="text-danger">*</span>
+							</p:outputLabel>
+							<p:selectOneMenu id="cmbClientes" style="min-width :100%; width:100%"
+								requiredMessage="El Cliente es requerido"
+								value="#{empresaMB.idCliente}" required="true">
+								<f:selectItem itemLabel="Seleccionar cliente" itemValue="" />
+								<f:selectItems value="#{empresaMB.listaClientes}"
+									var="emprCliente" itemLabel="#{emprCliente.nombreCliente}"
+									itemValue="#{emprCliente.idCliente}" />
+								<p:ajax event="change" process="cmbClientes" />
+							</p:selectOneMenu>
+							<p:message for="cmbClientes" display="text"
+								style="font-size:10px;" />
+
+							<p:outputLabel value="Nombre:">
+								<span class="text-danger">*</span>
+							</p:outputLabel>
+							<p:inputText id="nombreCl"
+								value="#{empresaMB.empresaSel.nombreEmpresa}" required="true"
+								requiredMessage="Obligatorio" />
+							<p:message for="nombreCl" display="text" style="font-size:10px;" />
+
+
+
+							<p:outputLabel value="Dirección:" />
+							<p:inputText id="direccionCl"
+								value="#{empresaMB.empresaSel.direccionEmpresa}" />
+							<p:outputLabel />
+
+							<p:outputLabel value="Teléfono:" />
+							<p:inputText id="telefonoCl"
+								value="#{empresaMB.empresaSel.telefonoEmpresa}" />
+							<p:outputLabel />
+
+							<p:outputLabel value="Activo:" />
+							<p:inputSwitch value="#{empresaMB.empresaSel.activoEmpresa}">
+							</p:inputSwitch>
+							<p:outputLabel />
+
+							<p:outputLabel for="cmbSector" value="Sector de Negocio: ">
+								<span class="text-danger">*</span>
+							</p:outputLabel>
+							<p:selectOneMenu id="cmbSector"
+								requiredMessage="Sector Requerido" value="#{empresaMB.idSector}"
+								required="true">
+								<f:selectItem itemLabel="Seleccionar Sector" itemValue="" />
+								<f:selectItems value="#{empresaMB.listaSector}" var="item"
+									itemLabel="#{item.nombreSector}" itemValue="#{item.idSector}" />
+								<p:ajax event="change" process="cmbSector" />
+							</p:selectOneMenu>
+							<p:message for="cmbSector" display="text" style="font-size:10px;" />
+						</p:panelGrid>
+					</p:panelGrid>
+					<div style="display: flex; justify-content: flex-end;">
+						<p:commandButton
+							value="#{empresaMB.empresaSel.idEmpresa == null ? 'Guardar':'Actualizar'}"
+							icon="fa fa-floppy-o"
+							styleClass="#{empresaMB.empresaSel.idEmpresa == null ? 'btn-success':'btn-warning'}"
+							process="@this, panelEmpresa"
+							update="@([id$=dtEmpresa], [id$=panelEmpresa],[id$=btnGuardar])"
+							actionListener="#{empresaMB.guardar()}"
+							style="width: max-content" id="btnGuardar">
+						</p:commandButton>
+
+						<p:commandButton value="Cancelar" icon="fa fa-close"
+							styleClass="btn-danger" process="@this" update="@form"
+							action="#{empresaMB.init()}" style="width: max-content" />
+					</div>
+				</p:panel>
+
+
+				<p:dataTable id="dtEmpresa" var="empresa" widgetVar="dtEmpresa"
+					reflow="true" value="#{empresaMB.listaEmpresas}" rows="10"
+					paginator="true" styleClass="box box-primary">
+
+					<f:facet name="header">
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank">
+
+							<p:panelGrid layout="grid" columns="4" style="float:left"
+								columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-4,ui-grid-col-1">
+								<h:commandLink title="Exportar Excel" immediate="true"
+									style="width: min-content;">
+									<p:graphicImage value="/resources/images/excel.ico"
+										width="30px" />
+									<p:dataExporter type="xls" target="dtEmpresa"
+										fileName="Empresas" />
+								</h:commandLink>
+								<h:outputText value="Buscar en Todos los Campos:   " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('dtEmpresa').filter();hideBar()"
+									style="width:150px" placeholder="Ingrese Parámetro....">
+									<p:ajax event="keyup" />
+								</p:inputText>
+
+								<p:commandButton style="width: min-content;float:rigth"
+									id="toggler" type="button" icon="fa fa-list" />
+								<p:columnToggler datasource="dtEmpresa" trigger="toggler" />
+
+							</p:panelGrid>
+							<p:commandButton icon="fa fa-refresh" style="width: min-content;"
+								styleClass="btn-default" title="Actualizar Lista"
+								action="#{empresaMB.listarEmpresas()}" update="dtEmpresa" />
+						</p:panelGrid>
+
+
+
+
+
+
+					</f:facet>
+
+
+
+					<p:column id="idCliente" filterBy="#{empresa.idEmpresa}"
+						rendered="false" filterMatchMode="contains" headerText="Id"
+						style="width:40px;">
+						<h:outputText value="#{empresa.idEmpresa}" />
+					</p:column>
+
+					<p:column headerText="Logo" width="150" exportable="false">
+						<p:graphicImage style="width: 100%;" value="#{empresaMB.image}"
+							cache="false" stream="true">
+							<f:param name="empresaId" value="#{empresa.idEmpresa}" />
+						</p:graphicImage>
+
+					</p:column>
+					<p:column filterBy="#{empresa.nombreEmpresa}"
+						sortBy="#{empresa.nombreEmpresa}" filterMatchMode="contains"
+						headerText="Nombre Empresa">
+						<h:outputText value="#{empresa.nombreEmpresa}"
+							styleClass="label label-info" style="font-size:12px" />
+					</p:column>
+
+					<p:column filterBy="#{empresa.direccionEmpresa}"
+						filterMatchMode="contains" headerText="Dirección">
+						<h:outputText value="#{empresa.direccionEmpresa}" />
+					</p:column>
+
+					<p:column filterBy="#{empresa.telefonoEmpresa}"
+						filterMatchMode="contains" headerText="Teléfono">
+						<h:outputText value="#{empresa.telefonoEmpresa}" />
+					</p:column>
+
+
+
+					<p:column filterBy="#{empresa.clienteIdCliente.nombreCliente}"
+						filterMatchMode="contains" headerText="Cliente">
+						<h:outputText value="#{empresa.clienteIdCliente.nombreCliente}" />
+					</p:column>
+
+					<p:column filterBy="#{empresa.sectorIdSector.nombreSector}"
+						filterMatchMode="contains" headerText="Sector">
+						<h:outputText value="#{empresa.sectorIdSector.nombreSector}" />
+					</p:column>
+
+					<p:column filterBy="#{empresa.activoEmpresa}"
+						filterMatchMode="contains" headerText="Activo">
+						<h:outputText
+							styleClass="#{empresa.activoEmpresa ? 'label label-success':'label label-default'}"
+							value="#{empresa.activoEmpresa ? 'ACTIVO':'INACTIVO'}" />
+						<p:inputSwitch value="#{empresa.activoEmpresa}" onLabel="ON"
+							label="LABEL" offLabel="OFF" showLabels="true">
+							<p:ajax event="change" process="dtEmpresa"
+								listener="#{empresaMB.switchActiva(empresa)}" update="dtEmpresa" />
+						</p:inputSwitch>
+					</p:column>
+					<p:column filterBy="#{empresa.creaEmpresa}"
+						sortBy="#{empresa.creaEmpresa}" filterMatchMode="contains"
+						headerText="Creación">
+						<h:outputText value="#{empresa.creaEmpresa}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm"></f:convertDateTime>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opciones" width="150" exportable="false">
+						<p:commandButton process="dtEmpresa" icon="fa fa-edit"
+							style="width: min-content" title="editar"
+							action="#{empresaMB.pasarDatoseditar(empresa)}"
+							styleClass="btn-primary"
+							update="@([id$=panelEmpresa],[id$=foto],[id$=btnGuardar])">
+														
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-arrow-right"
+							style="width: min-content" title="ver" styleClass="btn-success">
+						</p:commandButton>
+
+						<p:commandButton update="@([id$=dtEmpresa])" icon="fa fa-trash"
+							style="width: min-content" title="eliminar" process="dtEmpresa"
+							action="#{empresaMB.eliminar()}" styleClass="btn-danger">
+							<f:setPropertyActionListener value="#{empresa}"
+								target="#{empresaMB.empresaSel}" />
+							<p:confirm header="Confirmar Eliminación Empresa"
+								message="¿Está usted seguro?" icon="fa fa-anchor" />
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+
+
+			</h:form>
+
+		</div>
+
+	</ui:define>
+
+</ui:composition>

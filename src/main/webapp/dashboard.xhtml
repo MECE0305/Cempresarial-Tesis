@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="#{layoutMB.template}" xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+	<ui:param name="renderBreadCrumb" value="false" />
+
+	<ui:define name="header">
+		<style>
+body .ui-panel.ui-widget.box-success.box-solid .ui-panel-title {
+	color: #fff;
+	font-size: small;
+}
+
+body .ui-panel.ui-widget.box-default.box-solid .ui-panel-title {
+	color: #fff;
+	font-size: small;
+}
+
+.ui-panel .ui-panel-actions {
+	float: right;
+	width: 30%;
+}
+
+.ui-progressbar-label {
+	color: white;
+}
+
+.ui-tabs .ui-tabs-panel {
+	border-width: 0;
+	padding: 1em 0em !important;
+	background: 0;
+}
+
+.ui-widget-content {
+	border: none important!";
+	background: #fff;
+	color: #222;
+}
+</style>
+
+
+	</ui:define>
+
+	<ui:define name="title">
+		<h2 class="align-center">Dashboard
+			#{dashboard.listEvaluacion.size()}</h2>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form>
+
+
+
+			<div class="row">
+				<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+						<span class="info-box-icon"
+							style="background-color: ##{dashboard.rangoA.colorRango};"><i
+							class="fa fa-star" style="color: rgba(0, 0, 0, 0.15);"></i></span>
+
+						<div class="info-box-content">
+							<span class="info-box-text">#{dashboard.rangoA.nombreRango}</span>
+							<span class="info-box-number"><small>#</small>#{dashboard.rangoA.descripcionRango}</span>
+						</div>
+						<!-- /.info-box-content -->
+					</div>
+					<!-- /.info-box -->
+				</div>
+				<!-- /.col -->
+				<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+						<span class="info-box-icon"
+							style="background-color: ##{dashboard.rangoB.colorRango};"><i
+							class="fa fa-check" style="color: rgba(0, 0, 0, 0.15);"></i></span>
+
+						<div class="info-box-content">
+							<span class="info-box-text">#{dashboard.rangoB.nombreRango}</span>
+							<span class="info-box-number">#{dashboard.rangoB.descripcionRango}</span>
+						</div>
+						<!-- /.info-box-content -->
+					</div>
+					<!-- /.info-box -->
+				</div>
+				<!-- /.col -->
+
+				<!-- fix for small devices only -->
+				<div class="clearfix visible-sm-block"></div>
+
+				<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+						<span class="info-box-icon"
+							style="background-color: ##{dashboard.rangoC.colorRango};"><i
+							class="fa fa-ban" style="color: rgba(0, 0, 0, 0.15);"></i></span>
+
+						<div class="info-box-content">
+							<span class="info-box-text">#{dashboard.rangoC.nombreRango}</span>
+							<span class="info-box-number">#{dashboard.rangoC.descripcionRango}</span>
+						</div>
+						<!-- /.info-box-content -->
+					</div>
+					<!-- /.info-box -->
+				</div>
+				<!-- /.col -->
+				<div class="col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+						<span class="info-box-icon"
+							style="background-color: ##{dashboard.rangoD.colorRango};"><i
+							class="fa fa-warning" style="color: rgba(0, 0, 0, 0.15);"></i></span>
+
+						<div class="info-box-content">
+							<span class="info-box-text">#{dashboard.rangoD.nombreRango}</span>
+							<span class="info-box-number">#{dashboard.rangoD.descripcionRango}</span>
+						</div>
+						<!-- /.info-box-content -->
+					</div>
+					<!-- /.info-box -->
+				</div>
+				<!-- /.col -->
+			</div>
+			<div class="ui-fluid">
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank">
+
+					<p:panelGrid columns="1" layout="grid">
+						<p:panelGrid columns="2" layout="grid">
+							<p:panel
+								style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);">
+								<div class="box box-widget widget-user">
+									<!-- Add the bg color to the header using any of the bg-* classes -->
+									<div class="widget-user-header bg-black"
+										style="background-size: cover !important; background: url('https://www.teahub.io/photos/full/288-2881694_fondos-de-paisajes-oscuros.jpg') center center;">
+										<h3 class="widget-user-username">#{dashboard.empresa.nombreEmpresa}</h3>
+										<h5 class="widget-user-desc">#{dashboard.empresa.sectorIdSector.nombreSector}</h5>
+									</div>
+									<div class="profile-info">
+										<span class="span-text"><i class="fa fa-map-marker"></i>#{dashboard.empresa.direccionEmpresa}</span>
+										<br /> <span class="span-text"><i class="fa fa-phone"></i>#{dashboard.empresa.telefonoEmpresa}</span>
+									</div>
+									<div class="box-footer">
+
+										<div class="row">
+											<div class="col-sm-6 border-right">
+												<div class="description-block">
+													<h5 class="description-header">#{dashboard.listAgencia.size()}</h5>
+													<span class="description-text">AGENCIAS</span>
+												</div>
+												<!-- /.description-block -->
+											</div>
+											<!-- /.col -->
+											<div class="col-sm-6">
+												<div class="description-block">
+													<h5 class="description-header">#{dashboard.listEvaluacion.size()}</h5>
+													<span class="description-text">EVALUACIONES</span>
+												</div>
+												<!-- /.description-block -->
+											</div>
+										</div>
+										<!-- /.row -->
+									</div>
+
+
+								</div>
+							</p:panel>
+
+							<p:panel header="Rango Desempeño"
+								style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);">
+								<p:repeat var="item" value="#{dashboard.listRango}">
+									<p:panelGrid columns="3" layout="grid">
+										<p:outputLabel value="#{item.nombreRango}" />
+
+
+
+										<div class="progress" style="height: 15px;">
+											<div
+												style="background-color: ##{item.colorRango}; font-size:small; width: 100%;"></div>
+										</div>
+
+
+										<p:outputLabel
+											value="#{item.minimoRango} -#{item.maximoRango}" />
+									</p:panelGrid>
+
+								</p:repeat>
+							</p:panel>
+
+						</p:panelGrid>
+
+
+
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-3,ui-g-9"
+							style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);"
+							styleClass="callout-card callout-warning">
+							<h1>Agencias (#{dashboard.listAgencia.size()})</h1>
+							<p:dataGrid var="item" value="#{dashboard.listAgencia}"
+								layout="grid" columns="3" styleClass="ui-datagrid-no-border">
+								<h:outputText styleClass="label label-primary"
+									value="#{item.nombreAgencia}" />
+							</p:dataGrid>
+						</p:panelGrid>
+
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-3,ui-g-9"
+							style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);"
+							styleClass="callout-card callout-warning">
+							<h1>Roles (#{dashboard.listRol.size()})</h1>
+							<p:dataGrid var="item" value="#{dashboard.listRol}" layout="grid"
+								columns="3" styleClass="ui-datagrid-no-border">
+								<h:outputText styleClass="label label-primary"
+									value="#{item.nombreRol}" />
+							</p:dataGrid>
+						</p:panelGrid>
+
+
+
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-3,ui-g-9"
+							style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);"
+							styleClass="callout-card callout-warning">
+							<h1>Empleados (#{dashboard.listEmpleado.size()})</h1>
+							<p:dataGrid var="item" value="#{dashboard.listEmpleado}"
+								layout="grid" columns="3" styleClass="ui-datagrid-no-border">
+								<h:outputText styleClass="label label-primary"
+									value="#{item.nombreEmpleado}" />
+							</p:dataGrid>
+						</p:panelGrid>
+
+
+
+
+					</p:panelGrid>
+
+					<p:panelGrid columns="1" layout="grid">
+						<p:panel header="COMPARATIVA POR SEGMENTOS"
+							styleClass="box box-solid box-success"
+							style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);">
+							<p:radarChart style="width: 150%; height: 700px"
+								model="#{dashboard.radarModel}" />
+
+						</p:panel>
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-3,ui-g-9"
+							styleClass="callout-card callout-warning"
+							style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);">
+							<h1>Categorías (#{dashboard.listCategoria.size()})</h1>
+							<p:dataGrid var="item" value="#{dashboard.listCategoria}"
+								layout="grid" columns="3" styleClass="ui-datagrid-no-border">
+								<h:outputText styleClass="label label-primary"
+									value="#{item.nombreCategoria}" />
+							</p:dataGrid>
+						</p:panelGrid>
+					</p:panelGrid>
+
+
+					<p:panelGrid columns="1" layout="grid">
+						<p:panel header="Indicadores Nacionales por ROL"
+							class="box-success box box-solid"
+							style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);">
+							<p:barChart model="#{dashboard.barModel1}"
+								style="width: 50%; height: 100%;">
+								<p:ajax event="itemSelect" listener="#{dashboard.itemSelect}"
+									update="@([id$=growl])" />
+							</p:barChart>
+						</p:panel>
+					</p:panelGrid>
+
+
+
+					<p:panelGrid columns="1" layout="grid">
+						<p:panel header="Top 10 Agencias"
+							style="webkit-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);"
+							class="box-success box box-solid">
+							<p:barChart model="#{dashboard.hbarModel}"
+								style="width: 100%; height: 300px;" />
+						</p:panel>
+					</p:panelGrid>
+
+
+				</p:panelGrid>
+			</div>
+
+		</h:form>
+
+
+
+
+
+	</ui:define>
+
+
+</ui:composition>
